@@ -8,7 +8,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(indexes = {
+@Table(name = "users", indexes = {
         @Index(name = "idx_account_email", columnList = "email")
 })
 public class Account {

@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Entity
+@Table(name = "novels")
 public class Novel {
 
     @Id
@@ -45,7 +46,7 @@ public class Novel {
     }
 
     Novel(String title, String description, String coverImage, LocalDateTime createdAt, LocalDateTime updatedAt,
-          LocalDateTime deletedAt) {
+            LocalDateTime deletedAt) {
         this.title = title;
         this.description = description;
         this.coverImage = coverImage;

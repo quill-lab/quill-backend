@@ -7,6 +7,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import java.time.LocalDateTime;
 
 @Entity
+@Table(name = "contributors")
 public class Contributor {
 
     @Id
@@ -35,7 +36,7 @@ public class Contributor {
     }
 
     Contributor(Long accountId, ContributorGroup contributorGroup, LocalDateTime createdAt, LocalDateTime updatedAt,
-                LocalDateTime deletedAt) {
+            LocalDateTime deletedAt) {
         this.accountId = accountId;
         this.contributorGroup = contributorGroup;
         this.createdAt = createdAt;
