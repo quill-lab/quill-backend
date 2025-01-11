@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "contributors")
-public class Contributor {
+class Contributor {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -16,6 +16,10 @@ public class Contributor {
 
     @Column
     private Long accountId;
+
+    @Column
+    @Enumerated(EnumType.STRING)
+    private ContributorRole role;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "contributor_group_id", nullable = false, foreignKey = @ForeignKey(name = "fk_contributor_group"))
@@ -36,7 +40,7 @@ public class Contributor {
     }
 
     Contributor(Long accountId, ContributorGroup contributorGroup, LocalDateTime createdAt, LocalDateTime updatedAt,
-            LocalDateTime deletedAt) {
+                LocalDateTime deletedAt) {
         this.accountId = accountId;
         this.contributorGroup = contributorGroup;
         this.createdAt = createdAt;
@@ -44,7 +48,7 @@ public class Contributor {
         this.deletedAt = deletedAt;
     }
 
-    public static Contributor create(Long accountId, ContributorGroup contributorGroup, LocalDateTime now) {
+    static Contributor create(Long accountId, ContributorGroup contributorGroup, LocalDateTime now) {
         return new Contributor(accountId, contributorGroup, now, now, null);
     }
 }

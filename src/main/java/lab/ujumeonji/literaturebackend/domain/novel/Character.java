@@ -42,7 +42,7 @@ public class Character {
     }
 
     Character(String name, String description, String profileImage, LocalDateTime createdAt, LocalDateTime updatedAt,
-            LocalDateTime deletedAt) {
+              LocalDateTime deletedAt) {
         this.name = name;
         this.description = description;
         this.profileImage = profileImage;

@@ -5,7 +5,7 @@ import jakarta.validation.constraints.*
 data class CreateNovelRoomBodyRequest(
 
     @field:Min(value = 1, message = "최소 1명 이상의 기여자가 필요합니다")
-    @field:Max(value = 100, message = "최대 100명까지만 참여할 수 있습니다") 
+    @field:Max(value = 100, message = "최대 100명까지만 참여할 수 있습니다")
     val maxContributors: Int,
 
     @field:NotBlank(message = "제목은 필수입니다")
