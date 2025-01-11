@@ -7,24 +7,24 @@ import lab.ujumeonji.literaturebackend.api.novel.dto.NovelRoomsQueryRequest
 import org.springframework.web.bind.annotation.*
 
 @RestController
-@RequestMapping("/api/v1")
+@RequestMapping("/api/v1/novel-rooms")
 class NovelRoomApiController {
 
-    @GetMapping("/novel-rooms")
+    @GetMapping
     fun getNovelRooms(
         @Valid request: NovelRoomsQueryRequest
     ) {
         // TODO: Implement novel room query logic
     }
 
-    @PostMapping("/novel-rooms")
+    @PostMapping
     fun createNovelRoom(
         @Valid request: CreateNovelRoomBodyRequest
     ) {
         // TODO: Implement novel room creation logic
     }
 
-    @PostMapping("/novel-rooms/{novelRoomId}/recruitments")
+    @PostMapping("/{novelRoomId}/recruitments")
     fun createRecruitment(
         @PathVariable novelRoomId: Long,
         @Valid @RequestBody request: CreateNovelRoomRecruitmentRequest
