@@ -1,13 +1,9 @@
 package lab.ujumeonji.literaturebackend.domain.account;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Index;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lab.ujumeonji.literaturebackend.service.encrypt.PasswordEncoder;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDateTime;
 
@@ -21,31 +17,37 @@ public class Account {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(nullable = false)
+    @Column
     private String email;
 
-    @Column(nullable = false)
+    @Column
     private String password;
 
-    @Column(nullable = false)
+    @Column
     private String nickname;
 
-    @Column(nullable = false)
+    @Column
+    @CreatedDate
     private LocalDateTime createdAt;
 
-    @Column(nullable = false)
+    @Column
+    @LastModifiedDate
     private LocalDateTime updatedAt;
 
-    @Column(nullable = false)
+    @Column
     private LocalDateTime deletedAt;
 
-    protected Account(String email, String nickname, String password, LocalDateTime now) {
+    protected Account() {
+    }
+
+    Account(String email, String password, String nickname, LocalDateTime createdAt, LocalDateTime updatedAt,
+            LocalDateTime deletedAt) {
         this.email = email;
-        this.nickname = nickname;
         this.password = password;
-        this.createdAt = now;
-        this.updatedAt = now;
-        this.deletedAt = null;
+        this.nickname = nickname;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
+        this.deletedAt = deletedAt;
 
         validate();
     }
@@ -69,8 +71,7 @@ public class Account {
     }
 
     public static Account create(String email, String nickname, String password, LocalDateTime now) {
-        Account account = new Account(email, nickname, password, now);
-        return account;
+        return new Account(email, password, nickname, now, now, null);
     }
 
     public Long getId() {

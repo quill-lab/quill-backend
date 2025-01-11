@@ -7,7 +7,7 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import java.time.LocalDateTime
 import java.time.ZoneOffset
-import java.util.Date
+import java.util.*
 
 @Component
 class JwtTokenManager(
@@ -16,15 +16,16 @@ class JwtTokenManager(
     @Value("\${jwt.refresh-token-validity}") private val refreshTokenValidity: Long
 ) : TokenManager {
 
-    override fun createToken(payload: Map<String, *>, issuedAt: LocalDateTime): String = with(issuedAt.toInstant(ZoneOffset.UTC)) {
-        val now = Date.from(this)
-        val expirationDate = Date(now.time + accessTokenValidity)
+    override fun createToken(payload: Map<String, *>, issuedAt: LocalDateTime): String =
+        with(issuedAt.toInstant(ZoneOffset.UTC)) {
+            val now = Date.from(this)
+            val expirationDate = Date(now.time + accessTokenValidity)
 
-        Jwts.builder()
-            .issuedAt(now)
-            .expiration(expirationDate)
-            .signWith(Keys.hmacShaKeyFor(secret.toByteArray()))
-            .claims(payload)
-            .compact()
-    }
+            Jwts.builder()
+                .issuedAt(now)
+                .expiration(expirationDate)
+                .signWith(Keys.hmacShaKeyFor(secret.toByteArray()))
+                .claims(payload)
+                .compact()
+        }
 }

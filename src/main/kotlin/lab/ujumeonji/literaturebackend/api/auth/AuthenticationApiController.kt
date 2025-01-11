@@ -1,8 +1,8 @@
 package lab.ujumeonji.literaturebackend.api.auth
 
 import jakarta.validation.Valid
-import lab.ujumeonji.literaturebackend.api.auth.dto.SignInRequest
-import lab.ujumeonji.literaturebackend.api.auth.dto.SignUpRequest
+import lab.ujumeonji.literaturebackend.api.auth.dto.SignInBodyRequest
+import lab.ujumeonji.literaturebackend.api.auth.dto.SignUpBodyRequest
 import lab.ujumeonji.literaturebackend.api.auth.dto.SignUpResponse
 import lab.ujumeonji.literaturebackend.usecase.auth.SignInUseCase
 import org.springframework.web.bind.annotation.PostMapping
@@ -17,12 +17,12 @@ class AuthenticationApiController(
 ) {
 
     @PostMapping("/sign-up")
-    fun signUp(@RequestBody request: SignUpRequest): SignUpResponse {
+    fun signUp(@RequestBody request: SignUpBodyRequest): SignUpResponse {
         return SignUpResponse("success")
     }
 
     @PostMapping("/sign-in")
-    fun signIn(@Valid @RequestBody request: SignInRequest): SignUpResponse {
+    fun signIn(@Valid @RequestBody request: SignInBodyRequest): SignUpResponse {
         val result = signInUseCase.execute(SignInUseCase.Request(email = request.email, password = request.password))
 
         return SignUpResponse(accessToken = result.token)
