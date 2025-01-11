@@ -38,7 +38,7 @@ public class ChapterText {
     }
 
     ChapterText(Chapter chapter, String content, LocalDateTime createdAt, LocalDateTime updatedAt,
-            LocalDateTime deletedAt) {
+                LocalDateTime deletedAt) {
         this.chapter = chapter;
         this.content = content;
         this.createdAt = createdAt;

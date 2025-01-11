@@ -51,7 +51,7 @@ public class ContributorGroup {
     }
 
     ContributorGroup(String name, String description, Integer maxMemberCount, LocalDateTime createdAt,
-            LocalDateTime updatedAt, LocalDateTime deletedAt) {
+                     LocalDateTime updatedAt, LocalDateTime deletedAt) {
         this.name = name;
         this.description = description;
         this.maxMemberCount = maxMemberCount;

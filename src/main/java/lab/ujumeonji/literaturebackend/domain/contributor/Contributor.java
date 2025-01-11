@@ -1,10 +1,10 @@
 package lab.ujumeonji.literaturebackend.domain.contributor;
 
-import java.time.LocalDateTime;
-
 import jakarta.persistence.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+
+import java.time.LocalDateTime;
 
 @Entity
 public class Contributor {
@@ -35,7 +35,7 @@ public class Contributor {
     }
 
     Contributor(Long accountId, ContributorGroup contributorGroup, LocalDateTime createdAt, LocalDateTime updatedAt,
-            LocalDateTime deletedAt) {
+                LocalDateTime deletedAt) {
         this.accountId = accountId;
         this.contributorGroup = contributorGroup;
         this.createdAt = createdAt;
