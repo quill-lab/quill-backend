@@ -21,11 +21,5 @@ class NovelApiController {
         }
 
     @GetMapping("/{novelId}/characters")
-    fun getCharacters(): List<NovelCharacterResponse> =
-        NovelCategory.entries.map { category ->
-            NovelCategoriesResponse(
-                name = category.name,
-                alias = category.alias
-            )
-        }
+    fun getCharacters(): List<NovelCharacterResponse> = emptyList()
 }
