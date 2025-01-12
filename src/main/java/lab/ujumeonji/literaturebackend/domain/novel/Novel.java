@@ -62,4 +62,8 @@ public class Novel {
     public long getId() {
         return id;
     }
+
+    public List<Character> getCharacters() {
+        return characters;
+    }
 }

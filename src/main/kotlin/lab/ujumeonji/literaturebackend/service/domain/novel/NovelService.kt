@@ -19,4 +19,7 @@ class NovelService(
                 now,
             )
         )
+
+    fun findNovel(novelId: Long): Novel? =
+        novelRepository.findOneById(novelId)
 }

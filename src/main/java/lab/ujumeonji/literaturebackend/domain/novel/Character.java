@@ -54,4 +54,16 @@ public class Character {
     public static Character create(String name, String description, String profileImage, LocalDateTime now) {
         return new Character(name, description, profileImage, now, now, null);
     }
+
+    public String getName() {
+        return name;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public String getProfileImage() {
+        return profileImage;
+    }
 }

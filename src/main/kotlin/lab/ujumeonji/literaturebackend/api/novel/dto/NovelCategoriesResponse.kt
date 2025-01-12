@@ -1,6 +1,6 @@
 package lab.ujumeonji.literaturebackend.api.novel.dto
 
-data class ListNovelCategoriesResponse(
+data class NovelCategoriesResponse(
     val name: String,
     val alias: String,
 )
