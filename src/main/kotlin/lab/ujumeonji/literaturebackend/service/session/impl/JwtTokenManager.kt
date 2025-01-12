@@ -28,4 +28,11 @@ class JwtTokenManager(
                 .claims(payload)
                 .compact()
         }
+
+    override fun verifyToken(token: String): Map<String, *> =
+        Jwts.parser()
+            .verifyWith(Keys.hmacShaKeyFor(secret.toByteArray()))
+            .build()
+            .parseSignedClaims(token)
+            .payload
 }

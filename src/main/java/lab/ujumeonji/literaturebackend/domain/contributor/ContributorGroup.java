@@ -52,7 +52,7 @@ public class ContributorGroup {
     }
 
     ContributorGroup(String name, String description, int maxContributorCount, long novelId, LocalDateTime createdAt,
-            LocalDateTime updatedAt, LocalDateTime deletedAt) {
+                     LocalDateTime updatedAt, LocalDateTime deletedAt) {
         this.name = name;
         this.description = description;
         this.maxContributorCount = maxContributorCount;
@@ -111,7 +111,7 @@ public class ContributorGroup {
     }
 
     public static ContributorGroup create(String name, String description, int maxContributorCount, long novelId,
-            LocalDateTime now) {
+                                          LocalDateTime now) {
         return new ContributorGroup(name, description, maxContributorCount, novelId, now, now, null);
     }
 

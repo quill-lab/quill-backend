@@ -27,7 +27,7 @@ class CreateNovelRoomUseCase(
 
     private fun createNovel(request: Request) = novelService.createNovel(
         command = CreateNovelCommand(
-            name = request.name,
+            name = request.title,
             description = request.description,
             coverImage = request.novelCoverImage,
         ),
@@ -37,7 +37,7 @@ class CreateNovelRoomUseCase(
     private fun createContributorGroup(request: Request, novelId: Long) = contributorService.createContributorGroup(
         command = CreateContributorGroupCommand(
             novelId = novelId,
-            name = request.name,
+            name = request.title,
             description = request.description,
             maxContributorCount = request.maxContributorCount,
         ),
@@ -46,10 +46,10 @@ class CreateNovelRoomUseCase(
 
     data class Request(
         val creatorId: Long,
-        val name: String,
+        val title: String,
         val description: String,
         val maxContributorCount: Int,
-        val novelCoverImage: String,
+        val novelCoverImage: String?,
         val executedAt: LocalDateTime,
     )
 
