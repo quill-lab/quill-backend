@@ -1,4 +1,4 @@
-package lab.ujumeonji.literaturebackend.service.domain.account.command
+package lab.ujumeonji.literaturebackend.domain.account.command
 
 data class CreateAccountCommand(
     val email: String,

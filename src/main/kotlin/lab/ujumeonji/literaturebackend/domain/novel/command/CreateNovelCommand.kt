@@ -1,4 +1,4 @@
-package lab.ujumeonji.literaturebackend.service.domain.novel.command
+package lab.ujumeonji.literaturebackend.domain.novel.command
 
 data class CreateNovelCommand(
     val name: String,

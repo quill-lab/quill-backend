@@ -1,7 +1,7 @@
 package lab.ujumeonji.literaturebackend.domain.account;
 
 import jakarta.persistence.*;
-import lab.ujumeonji.literaturebackend.service.encrypt.PasswordEncoder;
+import lab.ujumeonji.literaturebackend.support.encrypt.PasswordEncoder;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
@@ -86,7 +86,7 @@ public class Account {
         return nickname;
     }
 
-    public boolean checkPassword(String password, PasswordEncoder passwordEncoder) {
+    boolean checkPassword(String password, PasswordEncoder passwordEncoder) {
         return passwordEncoder.matches(password, this.password);
     }
 }

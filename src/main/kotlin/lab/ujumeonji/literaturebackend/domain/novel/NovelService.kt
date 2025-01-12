@@ -1,7 +1,7 @@
-package lab.ujumeonji.literaturebackend.service.domain.novel
+package lab.ujumeonji.literaturebackend.domain.novel
 
 import lab.ujumeonji.literaturebackend.domain.novel.Novel
-import lab.ujumeonji.literaturebackend.service.domain.novel.command.CreateNovelCommand
+import lab.ujumeonji.literaturebackend.domain.novel.command.CreateNovelCommand
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 

@@ -1,4 +1,4 @@
-package lab.ujumeonji.literaturebackend.service.domain.contributor.command
+package lab.ujumeonji.literaturebackend.domain.contributor.command
 
 data class CreateContributorGroupCommand(
     val novelId: Long,

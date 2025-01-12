@@ -1,4 +1,4 @@
-package lab.ujumeonji.literaturebackend.service.domain.account
+package lab.ujumeonji.literaturebackend.domain.account
 
 import lab.ujumeonji.literaturebackend.domain.account.Account
 import org.springframework.data.repository.CrudRepository

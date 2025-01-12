@@ -1,6 +1,6 @@
-package lab.ujumeonji.literaturebackend.service.encrypt.impl
+package lab.ujumeonji.literaturebackend.support.encrypt.impl
 
-import lab.ujumeonji.literaturebackend.service.encrypt.PasswordEncoder
+import lab.ujumeonji.literaturebackend.support.encrypt.PasswordEncoder
 import org.springframework.stereotype.Component
 
 @Component

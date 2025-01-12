@@ -1,7 +1,7 @@
 package lab.ujumeonji.literaturebackend.usecase.novel
 
-import lab.ujumeonji.literaturebackend.service.domain.account.AccountService
-import lab.ujumeonji.literaturebackend.service.domain.novel.NovelService
+import lab.ujumeonji.literaturebackend.domain.account.AccountService
+import lab.ujumeonji.literaturebackend.domain.novel.NovelService
 import lab.ujumeonji.literaturebackend.usecase.UseCase
 import org.springframework.stereotype.Component
 import java.time.LocalDateTime

@@ -1,8 +1,8 @@
-package lab.ujumeonji.literaturebackend.service.session.impl
+package lab.ujumeonji.literaturebackend.support.session.impl
 
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.security.Keys
-import lab.ujumeonji.literaturebackend.service.session.TokenManager
+import lab.ujumeonji.literaturebackend.support.session.TokenManager
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import java.time.LocalDateTime

@@ -1,8 +1,8 @@
 package lab.ujumeonji.literaturebackend.usecase.auth
 
 import lab.ujumeonji.literaturebackend.domain.account.Account
-import lab.ujumeonji.literaturebackend.service.domain.account.AccountService
-import lab.ujumeonji.literaturebackend.service.session.TokenManager
+import lab.ujumeonji.literaturebackend.domain.account.AccountService
+import lab.ujumeonji.literaturebackend.support.session.TokenManager
 import lab.ujumeonji.literaturebackend.usecase.UseCase
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional

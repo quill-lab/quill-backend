@@ -1,9 +1,9 @@
 package lab.ujumeonji.literaturebackend.usecase.novel
 
-import lab.ujumeonji.literaturebackend.service.domain.contributor.ContributorService
-import lab.ujumeonji.literaturebackend.service.domain.contributor.command.CreateContributorGroupCommand
-import lab.ujumeonji.literaturebackend.service.domain.novel.NovelService
-import lab.ujumeonji.literaturebackend.service.domain.novel.command.CreateNovelCommand
+import lab.ujumeonji.literaturebackend.domain.contributor.ContributorService
+import lab.ujumeonji.literaturebackend.domain.contributor.command.CreateContributorGroupCommand
+import lab.ujumeonji.literaturebackend.domain.novel.NovelService
+import lab.ujumeonji.literaturebackend.domain.novel.command.CreateNovelCommand
 import lab.ujumeonji.literaturebackend.usecase.UseCase
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional

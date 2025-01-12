@@ -1,7 +1,7 @@
-package lab.ujumeonji.literaturebackend.service.domain.contributor
+package lab.ujumeonji.literaturebackend.domain.contributor
 
 import lab.ujumeonji.literaturebackend.domain.contributor.ContributorGroup
-import lab.ujumeonji.literaturebackend.service.domain.contributor.command.CreateContributorGroupCommand
+import lab.ujumeonji.literaturebackend.domain.contributor.command.CreateContributorGroupCommand
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime

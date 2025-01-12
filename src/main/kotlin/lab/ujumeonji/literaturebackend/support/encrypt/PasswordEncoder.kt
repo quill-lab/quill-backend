@@ -1,4 +1,4 @@
-package lab.ujumeonji.literaturebackend.service.encrypt
+package lab.ujumeonji.literaturebackend.support.encrypt
 
 interface PasswordEncoder {
 

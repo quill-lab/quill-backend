@@ -1,4 +1,4 @@
-package lab.ujumeonji.literaturebackend.service.session
+package lab.ujumeonji.literaturebackend.support.session
 
 import java.time.LocalDateTime
 

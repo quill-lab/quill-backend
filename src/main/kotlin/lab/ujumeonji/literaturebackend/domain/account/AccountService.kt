@@ -1,8 +1,7 @@
-package lab.ujumeonji.literaturebackend.service.domain.account
+package lab.ujumeonji.literaturebackend.domain.account
 
-import lab.ujumeonji.literaturebackend.domain.account.Account
-import lab.ujumeonji.literaturebackend.service.domain.account.command.CreateAccountCommand
-import lab.ujumeonji.literaturebackend.service.encrypt.PasswordEncoder
+import lab.ujumeonji.literaturebackend.domain.account.command.CreateAccountCommand
+import lab.ujumeonji.literaturebackend.support.encrypt.PasswordEncoder
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime

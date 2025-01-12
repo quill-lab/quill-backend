@@ -2,7 +2,7 @@ package lab.ujumeonji.literaturebackend.common.auth
 
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
-import lab.ujumeonji.literaturebackend.service.session.TokenManager
+import lab.ujumeonji.literaturebackend.support.session.TokenManager
 import org.springframework.http.HttpMethod
 import org.springframework.stereotype.Component
 import org.springframework.web.cors.CorsUtils
