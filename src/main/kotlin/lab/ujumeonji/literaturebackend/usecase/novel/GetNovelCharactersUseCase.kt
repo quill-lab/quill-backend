@@ -15,7 +15,7 @@ class GetNovelCharactersUseCase(
     override fun execute(request: Request, executedAt: LocalDateTime): List<Response> {
         val novel = novelService.findNovel(request.novelId) ?: throw IllegalArgumentException("Novel not found")
 
-        val accountIds = novel.characters.map { it.lastUpdatedBy }.filter { it != null }
+        val accountIds = novel.characters.mapNotNull { it.lastUpdatedBy }
 
         val accounts = accountService.findByIds(accountIds)
 
