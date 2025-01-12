@@ -1,6 +1,5 @@
 package lab.ujumeonji.literaturebackend.usecase.novel
 
-import lab.ujumeonji.literaturebackend.service.domain.account.AccountService
 import lab.ujumeonji.literaturebackend.service.domain.contributor.ContributorService
 import lab.ujumeonji.literaturebackend.service.domain.contributor.command.CreateContributorGroupCommand
 import lab.ujumeonji.literaturebackend.service.domain.novel.NovelService
@@ -13,35 +12,37 @@ import java.time.LocalDateTime
 @Component
 @Transactional
 class CreateNovelRoomUseCase(
-    private val accountService: AccountService,
     private val contributorService: ContributorService,
     private val novelService: NovelService,
 ) : UseCase<CreateNovelRoomUseCase.Request, CreateNovelRoomUseCase.Response> {
 
     override fun execute(request: Request): Response {
-        val novel = novelService.createNovel(
-            command = CreateNovelCommand(
-                name = request.name,
-                description = request.description,
-                coverImage = request.novelCoverImage,
-            ),
-            now = request.executedAt
-        )
-
-        val contributorGroup = contributorService.createContributorGroup(
-            command = CreateContributorGroupCommand(
-                novelId = novel.id,
-                name = request.name,
-                description = request.description,
-                maxContributorCount = request.maxContributorCount,
-            ),
-            now = request.executedAt
-        )
+        val novel = createNovel(request)
+        val contributorGroup = createContributorGroup(request, novel.id)
 
         contributorGroup.addHostContributor(request.creatorId, request.executedAt)
 
         return Response(contributorGroup.id)
     }
+
+    private fun createNovel(request: Request) = novelService.createNovel(
+        command = CreateNovelCommand(
+            name = request.name,
+            description = request.description,
+            coverImage = request.novelCoverImage,
+        ),
+        now = request.executedAt
+    )
+
+    private fun createContributorGroup(request: Request, novelId: Long) = contributorService.createContributorGroup(
+        command = CreateContributorGroupCommand(
+            novelId = novelId,
+            name = request.name,
+            description = request.description,
+            maxContributorCount = request.maxContributorCount,
+        ),
+        now = request.executedAt
+    )
 
     data class Request(
         val creatorId: Long,

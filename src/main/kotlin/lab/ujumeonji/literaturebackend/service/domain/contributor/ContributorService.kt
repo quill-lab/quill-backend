@@ -21,6 +21,7 @@ class ContributorService(
             command.name,
             command.description,
             command.maxContributorCount,
+            command.novelId,
             now,
         )
     )

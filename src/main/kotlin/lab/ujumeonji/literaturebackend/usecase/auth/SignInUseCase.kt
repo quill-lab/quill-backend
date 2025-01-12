@@ -1,5 +1,6 @@
 package lab.ujumeonji.literaturebackend.usecase.auth
 
+import lab.ujumeonji.literaturebackend.domain.account.Account
 import lab.ujumeonji.literaturebackend.service.domain.account.AccountService
 import lab.ujumeonji.literaturebackend.service.encrypt.PasswordEncoder
 import lab.ujumeonji.literaturebackend.service.session.TokenManager
@@ -17,20 +18,26 @@ class SignInUseCase(
 ) : UseCase<SignInUseCase.Request, SignInUseCase.Response> {
 
     override fun execute(request: Request): Response {
-        val now = LocalDateTime.now()
+        val account = findAccount(request.email)
 
-        val account =
-            accountService.findOneByEmail(request.email) ?: throw IllegalArgumentException("Account not found")
+        validatePassword(account, request.password)
 
-        if (!account.checkPassword(
-                request.password,
-                passwordEncoder,
-            )
-        ) {
+        val token = createAuthToken(account, request.executedAt)
+
+        return Response(token)
+    }
+
+    private fun findAccount(email: String) =
+        accountService.findOneByEmail(email) ?: throw IllegalArgumentException("Account not found")
+
+    private fun validatePassword(account: Account, password: String) {
+        if (!account.checkPassword(password, passwordEncoder)) {
             throw IllegalArgumentException("Invalid password")
         }
+    }
 
-        val token = tokenManager.createToken(
+    private fun createAuthToken(account: Account, now: LocalDateTime): String =
+        tokenManager.createToken(
             payload = mapOf(
                 "id" to account.id,
                 "email" to account.email,
@@ -38,11 +45,8 @@ class SignInUseCase(
             issuedAt = now
         )
 
-        return Response(token)
-    }
-
     data class Request(
-        val email: String, val password: String
+        val email: String, val password: String, val executedAt: LocalDateTime
     )
 
     data class Response(
