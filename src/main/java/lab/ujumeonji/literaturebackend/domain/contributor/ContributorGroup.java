@@ -51,13 +51,14 @@ public class ContributorGroup {
     protected ContributorGroup() {
     }
 
-    ContributorGroup(String name, String description, int maxContributorCount, LocalDateTime createdAt,
-                     LocalDateTime updatedAt, LocalDateTime deletedAt) {
+    ContributorGroup(String name, String description, int maxContributorCount, long novelId, LocalDateTime createdAt,
+            LocalDateTime updatedAt, LocalDateTime deletedAt) {
         this.name = name;
         this.description = description;
         this.maxContributorCount = maxContributorCount;
         this.currentContributorCount = 0;
         this.status = ContributorGroupStatus.PREPARING;
+        this.novelId = novelId;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.deletedAt = deletedAt;
@@ -103,11 +104,15 @@ public class ContributorGroup {
         if (status == null) {
             throw new IllegalArgumentException("상태는 필수입니다");
         }
+
+        if (novelId == null) {
+            throw new IllegalArgumentException("소설 ID는 필수입니다");
+        }
     }
 
-    public static ContributorGroup create(String name, String description, int maxContributorCount,
-                                          LocalDateTime now) {
-        return new ContributorGroup(name, description, maxContributorCount, now, now, null);
+    public static ContributorGroup create(String name, String description, int maxContributorCount, long novelId,
+            LocalDateTime now) {
+        return new ContributorGroup(name, description, maxContributorCount, novelId, now, now, null);
     }
 
     public void addHostContributor(long accountId, LocalDateTime now) {

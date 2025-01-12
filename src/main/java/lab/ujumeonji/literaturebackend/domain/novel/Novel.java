@@ -58,4 +58,8 @@ public class Novel {
     public static Novel create(String title, String description, String coverImage, LocalDateTime now) {
         return new Novel(title, description, coverImage, now, now, null);
     }
+
+    public long getId() {
+        return id;
+    }
 }
