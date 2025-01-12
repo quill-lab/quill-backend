@@ -82,6 +82,10 @@ public class Account {
         return email;
     }
 
+    public String getNickname() {
+        return nickname;
+    }
+
     public boolean checkPassword(String password, PasswordEncoder passwordEncoder) {
         return passwordEncoder.matches(password, this.password);
     }

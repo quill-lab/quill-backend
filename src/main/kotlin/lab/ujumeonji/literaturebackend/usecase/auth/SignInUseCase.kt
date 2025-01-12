@@ -17,12 +17,12 @@ class SignInUseCase(
     private val tokenManager: TokenManager,
 ) : UseCase<SignInUseCase.Request, SignInUseCase.Response> {
 
-    override fun execute(request: Request): Response {
+    override fun execute(request: Request, executedAt: LocalDateTime): Response {
         val account = findAccount(request.email)
 
         validatePassword(account, request.password)
 
-        val token = createAuthToken(account, request.executedAt)
+        val token = createAuthToken(account, executedAt)
 
         return Response(token)
     }
@@ -46,7 +46,7 @@ class SignInUseCase(
         )
 
     data class Request(
-        val email: String, val password: String, val executedAt: LocalDateTime
+        val email: String, val password: String
     )
 
     data class Response(

@@ -25,11 +25,11 @@ class AuthenticationApiController(
     @PostMapping("/sign-in")
     fun signIn(@Valid @RequestBody request: SignInBodyRequest): SignUpResponse {
         val result = signInUseCase.execute(
-            SignInUseCase.Request(
+            request = SignInUseCase.Request(
                 email = request.email,
                 password = request.password,
-                executedAt = LocalDateTime.now()
-            )
+            ),
+            executedAt = LocalDateTime.now()
         )
 
         return SignUpResponse(accessToken = result.token)

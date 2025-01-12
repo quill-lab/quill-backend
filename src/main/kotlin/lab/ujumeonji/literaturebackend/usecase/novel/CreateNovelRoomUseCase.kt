@@ -16,33 +16,34 @@ class CreateNovelRoomUseCase(
     private val novelService: NovelService,
 ) : UseCase<CreateNovelRoomUseCase.Request, CreateNovelRoomUseCase.Response> {
 
-    override fun execute(request: Request): Response {
-        val novel = createNovel(request)
-        val contributorGroup = createContributorGroup(request, novel.id)
+    override fun execute(request: Request, executedAt: LocalDateTime): Response {
+        val novel = createNovel(request, executedAt)
+        val contributorGroup = createContributorGroup(request, novel.id, executedAt)
 
-        contributorGroup.addHostContributor(request.creatorId, request.executedAt)
+        contributorGroup.addHostContributor(request.creatorId, executedAt)
 
         return Response(contributorGroup.id)
     }
 
-    private fun createNovel(request: Request) = novelService.createNovel(
+    private fun createNovel(request: Request, executedAt: LocalDateTime) = novelService.createNovel(
         command = CreateNovelCommand(
             name = request.title,
             description = request.description,
             coverImage = request.novelCoverImage,
         ),
-        now = request.executedAt
+        now = executedAt
     )
 
-    private fun createContributorGroup(request: Request, novelId: Long) = contributorService.createContributorGroup(
-        command = CreateContributorGroupCommand(
-            novelId = novelId,
-            name = request.title,
-            description = request.description,
-            maxContributorCount = request.maxContributorCount,
-        ),
-        now = request.executedAt
-    )
+    private fun createContributorGroup(request: Request, novelId: Long, executedAt: LocalDateTime) =
+        contributorService.createContributorGroup(
+            command = CreateContributorGroupCommand(
+                novelId = novelId,
+                name = request.title,
+                description = request.description,
+                maxContributorCount = request.maxContributorCount,
+            ),
+            now = executedAt
+        )
 
     data class Request(
         val creatorId: Long,
@@ -50,7 +51,6 @@ class CreateNovelRoomUseCase(
         val description: String,
         val maxContributorCount: Int,
         val novelCoverImage: String?,
-        val executedAt: LocalDateTime,
     )
 
     data class Response(

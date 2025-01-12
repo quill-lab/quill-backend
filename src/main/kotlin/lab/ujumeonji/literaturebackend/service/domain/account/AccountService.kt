@@ -11,4 +11,6 @@ class AccountService(
 ) {
 
     fun findOneByEmail(email: String): Account? = accountRepository.findByEmail(email)
+
+    fun findByIds(ids: List<Long>): List<Account> = accountRepository.findAllById(ids).toList()
 }

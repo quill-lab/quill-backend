@@ -29,14 +29,14 @@ class NovelRoomApiController(
         @Valid request: CreateNovelRoomBodyRequest
     ): CreateNovelRoomResponse {
         val result = createNovelRoomUseCase.execute(
-            CreateNovelRoomUseCase.Request(
+            request = CreateNovelRoomUseCase.Request(
                 creatorId = userId,
                 title = request.title,
                 description = request.description,
                 maxContributorCount = request.maxContributors,
                 novelCoverImage = request.coverImage,
-                executedAt = LocalDateTime.now()
-            )
+            ),
+            executedAt = LocalDateTime.now()
         )
 
         return CreateNovelRoomResponse(result.novelRoomId)
