@@ -2,7 +2,6 @@ package lab.ujumeonji.literaturebackend.usecase.auth
 
 import lab.ujumeonji.literaturebackend.domain.account.Account
 import lab.ujumeonji.literaturebackend.service.domain.account.AccountService
-import lab.ujumeonji.literaturebackend.service.encrypt.PasswordEncoder
 import lab.ujumeonji.literaturebackend.service.session.TokenManager
 import lab.ujumeonji.literaturebackend.usecase.UseCase
 import org.springframework.stereotype.Component
@@ -12,7 +11,6 @@ import java.time.LocalDateTime
 @Component
 @Transactional
 class SignInUseCase(
-    private val passwordEncoder: PasswordEncoder,
     private val accountService: AccountService,
     private val tokenManager: TokenManager,
 ) : UseCase<SignInUseCase.Request, SignInUseCase.Response> {
@@ -31,7 +29,7 @@ class SignInUseCase(
         accountService.findOneByEmail(email) ?: throw IllegalArgumentException("Account not found")
 
     private fun validatePassword(account: Account, password: String) {
-        if (!account.checkPassword(password, passwordEncoder)) {
+        if (!accountService.checkPassword(account, password)) {
             throw IllegalArgumentException("Invalid password")
         }
     }

@@ -70,8 +70,8 @@ public class Account {
         }
     }
 
-    public static Account create(String email, String nickname, String password, LocalDateTime now) {
-        return new Account(email, password, nickname, now, now, null);
+    public static Account create(String email, String nickname, String hashedPassword, LocalDateTime now) {
+        return new Account(email, hashedPassword, nickname, now, now, null);
     }
 
     public Long getId() {

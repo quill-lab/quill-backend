@@ -1,0 +1,38 @@
+package lab.ujumeonji.literaturebackend.usecase.auth
+
+import lab.ujumeonji.literaturebackend.service.domain.account.AccountService
+import lab.ujumeonji.literaturebackend.service.domain.account.command.CreateAccountCommand
+import lab.ujumeonji.literaturebackend.service.session.TokenManager
+import lab.ujumeonji.literaturebackend.usecase.UseCase
+import org.springframework.stereotype.Component
+import org.springframework.transaction.annotation.Transactional
+import java.time.LocalDateTime
+
+@Component
+@Transactional
+class SignUpUseCase(
+    private val accountService: AccountService,
+    private val tokenManager: TokenManager,
+) : UseCase<SignUpUseCase.Request, SignUpUseCase.Response> {
+
+    override fun execute(request: Request, executedAt: LocalDateTime): Response {
+        val account = accountService.create(
+            command = CreateAccountCommand(
+                email = request.email,
+                password = request.password,
+                nickname = request.nickname
+            ),
+            now = executedAt
+        )
+
+        return Response(account.id)
+    }
+
+    data class Request(
+        val email: String, val password: String, val nickname: String
+    )
+
+    data class Response(
+        val id: Long,
+    )
+}

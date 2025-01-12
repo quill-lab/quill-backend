@@ -47,8 +47,8 @@ public class Character {
     }
 
     Character(String name, String description, String profileImage, Long lastUpdatedBy, Novel novel,
-            LocalDateTime createdAt, LocalDateTime updatedAt,
-            LocalDateTime deletedAt) {
+              LocalDateTime createdAt, LocalDateTime updatedAt,
+              LocalDateTime deletedAt) {
         this.name = name;
         this.description = description;
         this.profileImage = profileImage;
@@ -72,7 +72,7 @@ public class Character {
     }
 
     public static Character create(Novel novel, String name, String description, String profileImage,
-            LocalDateTime now) {
+                                   LocalDateTime now) {
         return new Character(name, description, profileImage, null, novel, now, now, null);
     }
 
