@@ -55,7 +55,7 @@ public class Novel {
         this.deletedAt = deletedAt;
     }
 
-    public static Novel create(String title, String description, String coverImage, LocalDateTime now) {
+    static Novel create(String title, String description, String coverImage, LocalDateTime now) {
         return new Novel(title, description, coverImage, now, now, null);
     }
 

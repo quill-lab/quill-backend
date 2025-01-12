@@ -110,7 +110,7 @@ public class ContributorGroup {
         }
     }
 
-    public static ContributorGroup create(String name, String description, int maxContributorCount, long novelId,
+    static ContributorGroup create(String name, String description, int maxContributorCount, long novelId,
                                           LocalDateTime now) {
         return new ContributorGroup(name, description, maxContributorCount, novelId, now, now, null);
     }

@@ -47,7 +47,7 @@ public class ChapterText {
         this.deletedAt = deletedAt;
     }
 
-    public static ChapterText create(Chapter chapter, String content, LocalDateTime now) {
+    static ChapterText create(Chapter chapter, String content, LocalDateTime now) {
         return new ChapterText(chapter, content, now, now, null);
     }
 }

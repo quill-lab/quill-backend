@@ -70,8 +70,12 @@ public class Account {
         }
     }
 
-    public static Account create(String email, String nickname, String hashedPassword, LocalDateTime now) {
+    static Account create(String email, String nickname, String hashedPassword, LocalDateTime now) {
         return new Account(email, hashedPassword, nickname, now, now, null);
+    }
+
+    boolean checkPassword(String password, PasswordEncoder passwordEncoder) {
+        return passwordEncoder.matches(password, this.password);
     }
 
     public Long getId() {
@@ -84,9 +88,5 @@ public class Account {
 
     public String getNickname() {
         return nickname;
-    }
-
-    boolean checkPassword(String password, PasswordEncoder passwordEncoder) {
-        return passwordEncoder.matches(password, this.password);
     }
 }

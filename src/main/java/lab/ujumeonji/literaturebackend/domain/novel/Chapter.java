@@ -53,7 +53,7 @@ public class Chapter {
         this.deletedAt = deletedAt;
     }
 
-    public static Chapter create(String title, String description, Novel novel, LocalDateTime now) {
+    static Chapter create(String title, String description, Novel novel, LocalDateTime now) {
         return new Chapter(title, description, novel, now, now, null);
     }
 }
