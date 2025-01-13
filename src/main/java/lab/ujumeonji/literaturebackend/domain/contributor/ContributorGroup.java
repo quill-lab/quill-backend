@@ -31,11 +31,14 @@ public class ContributorGroup {
     @Column
     private ContributorGroupStatus status;
 
+    @Column
+    private Long novelId;
+
     @OneToMany(mappedBy = "contributorGroup", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Contributor> contributors = new ArrayList<>();
 
-    @Column
-    private Long novelId;
+    @OneToMany(mappedBy = "contributorGroup", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<ContributorRequest> contributorRequests = new ArrayList<>();
 
     @Column
     @CreatedDate
@@ -70,6 +73,7 @@ public class ContributorGroup {
         if (name == null || name.isBlank()) {
             throw new IllegalArgumentException("이름은 필수입니다");
         }
+
         if (name.length() > 100) {
             throw new IllegalArgumentException("이름은 100자를 초과할 수 없습니다");
         }
@@ -77,6 +81,7 @@ public class ContributorGroup {
         if (description == null || description.isBlank()) {
             throw new IllegalArgumentException("설명은 필수입니다");
         }
+
         if (description.length() > 1000) {
             throw new IllegalArgumentException("설명은 1000자를 초과할 수 없습니다");
         }
@@ -84,9 +89,11 @@ public class ContributorGroup {
         if (maxContributorCount == null) {
             throw new IllegalArgumentException("최대 기여자 수는 필수입니다");
         }
+
         if (maxContributorCount <= 0) {
             throw new IllegalArgumentException("최대 기여자 수는 0보다 커야 합니다");
         }
+
         if (maxContributorCount > 100) {
             throw new IllegalArgumentException("최대 기여자 수는 100을 초과할 수 없습니다");
         }
@@ -94,9 +101,11 @@ public class ContributorGroup {
         if (currentContributorCount == null) {
             throw new IllegalArgumentException("현재 기여자 수는 필수입니다");
         }
+
         if (currentContributorCount < 0) {
             throw new IllegalArgumentException("현재 기여자 수는 0보다 작을 수 없습니다");
         }
+
         if (currentContributorCount > maxContributorCount) {
             throw new IllegalArgumentException("현재 기여자 수는 최대 기여자 수를 초과할 수 없습니다");
         }
