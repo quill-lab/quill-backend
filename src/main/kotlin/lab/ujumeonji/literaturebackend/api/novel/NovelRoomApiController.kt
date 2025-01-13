@@ -6,7 +6,9 @@ import lab.ujumeonji.literaturebackend.api.novel.dto.CreateNovelRoomRecruitmentR
 import lab.ujumeonji.literaturebackend.api.novel.dto.CreateNovelRoomResponse
 import lab.ujumeonji.literaturebackend.api.novel.dto.NovelRoomsQueryRequest
 import lab.ujumeonji.literaturebackend.support.auth.RequiredAuth
+import lab.ujumeonji.literaturebackend.support.http.ApiResponse
 import lab.ujumeonji.literaturebackend.usecase.novel.CreateNovelRoomUseCase
+import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.*
 import java.time.LocalDateTime
 
@@ -27,7 +29,7 @@ class NovelRoomApiController(
     fun createNovelRoom(
         @RequiredAuth userId: Long,
         @Valid request: CreateNovelRoomBodyRequest
-    ): CreateNovelRoomResponse {
+    ): ApiResponse<CreateNovelRoomResponse> {
         val result = createNovelRoomUseCase.execute(
             request = CreateNovelRoomUseCase.Request(
                 creatorId = userId,
@@ -39,7 +41,7 @@ class NovelRoomApiController(
             executedAt = LocalDateTime.now()
         )
 
-        return CreateNovelRoomResponse(result.novelRoomId)
+        return ApiResponse(HttpStatus.CREATED.value(), "", CreateNovelRoomResponse(result.novelRoomId))
     }
 
     @PostMapping("/{novelRoomId}/recruitments")

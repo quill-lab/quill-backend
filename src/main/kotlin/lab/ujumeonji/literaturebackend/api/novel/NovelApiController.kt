@@ -3,7 +3,9 @@ package lab.ujumeonji.literaturebackend.api.novel
 import lab.ujumeonji.literaturebackend.api.novel.dto.NovelCategoriesResponse
 import lab.ujumeonji.literaturebackend.api.novel.dto.NovelCharacterResponse
 import lab.ujumeonji.literaturebackend.domain.novel.NovelCategory
+import lab.ujumeonji.literaturebackend.support.http.ApiResponse
 import lab.ujumeonji.literaturebackend.usecase.novel.GetNovelCharactersUseCase
+import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.RequestMapping
@@ -17,24 +19,28 @@ class NovelApiController(
 ) {
 
     @GetMapping("/categories")
-    fun getCategories(): List<NovelCategoriesResponse> =
-        NovelCategory.entries.map { category ->
-            NovelCategoriesResponse(
-                name = category.name,
-                alias = category.alias
-            )
-        }
+    fun getCategories(): ApiResponse<List<NovelCategoriesResponse>> =
+        ApiResponse(
+            HttpStatus.OK.value(), "",
+            NovelCategory.entries.map { category ->
+                NovelCategoriesResponse(
+                    name = category.name,
+                    alias = category.alias
+                )
+            })
 
     @GetMapping("/{novelId}/characters")
     fun getCharacters(
         @PathVariable novelId: Long,
-    ): List<NovelCharacterResponse> =
-        getNovelCharactersUseCase.execute(
+    ): ApiResponse<List<NovelCharacterResponse>> {
+        val result = getNovelCharactersUseCase.execute(
             request = GetNovelCharactersUseCase.Request(
                 novelId = novelId,
             ),
             executedAt = LocalDateTime.now()
-        ).map {
+        )
+
+        return ApiResponse(HttpStatus.OK.value(), "", result.map {
             NovelCharacterResponse(
                 id = it.id,
                 name = it.name,
@@ -48,5 +54,6 @@ class NovelApiController(
                     )
                 }
             )
-        }
+        })
+    }
 }

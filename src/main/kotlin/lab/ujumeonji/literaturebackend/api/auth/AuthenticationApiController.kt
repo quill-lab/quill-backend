@@ -5,8 +5,10 @@ import lab.ujumeonji.literaturebackend.api.auth.dto.SignInBodyRequest
 import lab.ujumeonji.literaturebackend.api.auth.dto.SignInResponse
 import lab.ujumeonji.literaturebackend.api.auth.dto.SignUpBodyRequest
 import lab.ujumeonji.literaturebackend.api.auth.dto.SignUpResponse
+import lab.ujumeonji.literaturebackend.support.http.ApiResponse
 import lab.ujumeonji.literaturebackend.usecase.auth.SignInUseCase
 import lab.ujumeonji.literaturebackend.usecase.auth.SignUpUseCase
+import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
@@ -21,7 +23,7 @@ class AuthenticationApiController(
 ) {
 
     @PostMapping("/sign-up")
-    fun signUp(@RequestBody request: SignUpBodyRequest): SignUpResponse {
+    fun signUp(@RequestBody request: SignUpBodyRequest): ApiResponse<SignUpResponse> {
         val result = signUpUseCase.execute(
             request = SignUpUseCase.Request(
                 email = request.email,
@@ -31,11 +33,11 @@ class AuthenticationApiController(
             executedAt = LocalDateTime.now()
         )
 
-        return SignUpResponse(id = result.id)
+        return ApiResponse(HttpStatus.OK.value(), "", SignUpResponse(id = result.id))
     }
 
     @PostMapping("/sign-in")
-    fun signIn(@Valid @RequestBody request: SignInBodyRequest): SignInResponse {
+    fun signIn(@Valid @RequestBody request: SignInBodyRequest): ApiResponse<SignInResponse> {
         val result = signInUseCase.execute(
             request = SignInUseCase.Request(
                 email = request.email,
@@ -44,6 +46,6 @@ class AuthenticationApiController(
             executedAt = LocalDateTime.now()
         )
 
-        return SignInResponse(accessToken = result.token)
+        return ApiResponse(HttpStatus.OK.value(), "", SignInResponse(accessToken = result.token))
     }
 }
