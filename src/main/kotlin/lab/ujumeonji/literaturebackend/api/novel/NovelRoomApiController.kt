@@ -5,7 +5,7 @@ import lab.ujumeonji.literaturebackend.api.novel.dto.CreateNovelRoomBodyRequest
 import lab.ujumeonji.literaturebackend.api.novel.dto.CreateNovelRoomRecruitmentRequest
 import lab.ujumeonji.literaturebackend.api.novel.dto.CreateNovelRoomResponse
 import lab.ujumeonji.literaturebackend.api.novel.dto.NovelRoomsQueryRequest
-import lab.ujumeonji.literaturebackend.common.auth.RequiredAuth
+import lab.ujumeonji.literaturebackend.support.auth.RequiredAuth
 import lab.ujumeonji.literaturebackend.usecase.novel.CreateNovelRoomUseCase
 import org.springframework.web.bind.annotation.*
 import java.time.LocalDateTime

@@ -1,4 +1,4 @@
-package lab.ujumeonji.literaturebackend.common.auth
+package lab.ujumeonji.literaturebackend.support.auth
 
 import org.springframework.core.MethodParameter
 import org.springframework.stereotype.Component

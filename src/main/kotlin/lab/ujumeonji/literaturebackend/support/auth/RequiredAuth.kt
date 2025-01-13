@@ -1,4 +1,4 @@
-package lab.ujumeonji.literaturebackend.common.auth
+package lab.ujumeonji.literaturebackend.support.auth
 
 @Target(AnnotationTarget.VALUE_PARAMETER)
 @Retention(AnnotationRetention.RUNTIME)

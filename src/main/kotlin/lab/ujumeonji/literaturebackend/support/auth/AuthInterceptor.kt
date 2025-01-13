@@ -1,4 +1,4 @@
-package lab.ujumeonji.literaturebackend.common.auth
+package lab.ujumeonji.literaturebackend.support.auth
 
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
