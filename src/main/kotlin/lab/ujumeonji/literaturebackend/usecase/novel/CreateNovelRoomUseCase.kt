@@ -20,8 +20,6 @@ class CreateNovelRoomUseCase(
         val novel = createNovel(request, executedAt)
         val contributorGroup = createContributorGroup(request, novel.id, executedAt)
 
-        contributorGroup.addHostContributor(request.creatorId, executedAt)
-
         return Response(contributorGroup.id)
     }
 
@@ -38,6 +36,7 @@ class CreateNovelRoomUseCase(
         contributorService.createContributorGroup(
             command = CreateContributorGroupCommand(
                 novelId = novelId,
+                ownerId = request.creatorId,
                 name = request.title,
                 description = request.description,
                 maxContributorCount = request.maxContributorCount,

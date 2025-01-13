@@ -16,13 +16,19 @@ class ContributorService(
     fun createContributorGroup(
         command: CreateContributorGroupCommand,
         now: LocalDateTime = LocalDateTime.now()
-    ): ContributorGroup = this.contributorGroupRepository.save(
-        ContributorGroup.create(
-            command.name,
-            command.description,
-            command.maxContributorCount,
-            command.novelId,
-            now,
+    ): ContributorGroup {
+        val contributorGroup = this.contributorGroupRepository.save(
+            ContributorGroup.create(
+                command.name,
+                command.description,
+                command.maxContributorCount,
+                command.novelId,
+                now,
+            )
         )
-    )
+
+        contributorGroup.addHostContributor(command.ownerId, now)
+
+        return contributorGroup;
+    }
 }

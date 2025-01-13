@@ -115,7 +115,7 @@ public class ContributorGroup {
         return new ContributorGroup(name, description, maxContributorCount, novelId, now, now, null);
     }
 
-    public void addHostContributor(long accountId, LocalDateTime now) {
+    void addHostContributor(long accountId, LocalDateTime now) {
         if (currentContributorCount >= maxContributorCount) {
             throw new IllegalStateException("최대 기여자 수를 초과했습니다");
         }
