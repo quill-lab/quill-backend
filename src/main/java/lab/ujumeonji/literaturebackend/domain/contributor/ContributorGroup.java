@@ -34,6 +34,9 @@ public class ContributorGroup {
     @Column
     private Long novelId;
 
+    @Column
+    private LocalDateTime completedAt;
+
     @OneToMany(mappedBy = "contributorGroup", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Contributor> contributors = new ArrayList<>();
 
@@ -136,5 +139,9 @@ public class ContributorGroup {
 
     public Long getId() {
         return id;
+    }
+
+    public ContributorGroupStatus getStatus() {
+        return status;
     }
 }

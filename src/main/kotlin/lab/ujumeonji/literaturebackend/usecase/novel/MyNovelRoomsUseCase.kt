@@ -1,10 +1,10 @@
 package lab.ujumeonji.literaturebackend.usecase.novel
 
+import lab.ujumeonji.literaturebackend.domain.account.AccountService
 import lab.ujumeonji.literaturebackend.domain.contributor.ContributorGroupStatus
+import lab.ujumeonji.literaturebackend.domain.contributor.ContributorRole
 import lab.ujumeonji.literaturebackend.domain.contributor.ContributorService
-import lab.ujumeonji.literaturebackend.domain.contributor.command.CreateContributorGroupCommand
 import lab.ujumeonji.literaturebackend.domain.novel.NovelService
-import lab.ujumeonji.literaturebackend.domain.novel.command.CreateNovelCommand
 import lab.ujumeonji.literaturebackend.usecase.UseCase
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
@@ -12,53 +12,47 @@ import java.time.LocalDateTime
 
 @Component
 @Transactional
-class CreateNovelRoomsUseCase(
+class MyNovelRoomsUseCase(
+    private val accountService: AccountService,
     private val contributorService: ContributorService,
     private val novelService: NovelService,
-) : UseCase<CreateNovelRoomsUseCase.Request, CreateNovelRoomsUseCase.Response> {
+) : UseCase<MyNovelRoomsUseCase.Request, MyNovelRoomsUseCase.Response> {
 
     override fun execute(request: Request, executedAt: LocalDateTime): Response {
-        return Response(emptyList())
+        return Response(emptyList(), 1, 1)
     }
 
     data class Request(
         val accountId: Long,
     )
 
-    /*
-        {
-            "id": 4,
-            "category": {
-                "id": 9,
-                "name": "공포/추리"
-            },
-            "title": "테스트 소설공방",
-            "createdAt": "2025-01-11 15:23",
-            "writerStatus": "attending",
-            "writerCategory": "host",
-            "type": 5,
-            "currentAttendCnt": 1,
-            "currentWriter": "테스트용진",
-            "status": "prepare",
-            "notifiedAt": null,
-            "exitedAt": null,
-            "completedAt": null
-        },
-     */
     data class Response(
-        val result: List<ResponseItem>
+        val result: List<ResponseItem>,
+        val totalCount: Int,
+        val page: Int,
     ) {
+
         data class ResponseItem(
             val id: Long,
             val category: Category,
             val title: String,
             val createdAt: LocalDateTime,
+            val completedAt: LocalDateTime,
+            val role: ContributorRole,
+            val contributorCount: Int,
+            val maxContributorCount: Int,
+            val author: Author,
             val status: ContributorGroupStatus,
-            val currentContributorCount: Int,
         ) {
+
             data class Category(
                 val name: String,
                 val alias: String,
+            )
+
+            data class Author(
+                val id: Long,
+                val name: String,
             )
         }
     }
