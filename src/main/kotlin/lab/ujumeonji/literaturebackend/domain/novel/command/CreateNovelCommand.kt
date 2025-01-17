@@ -5,4 +5,5 @@ data class CreateNovelCommand(
     val description: String,
     val coverImage: String?,
     val tags: List<String>,
+    val synopsis: String?,
 )

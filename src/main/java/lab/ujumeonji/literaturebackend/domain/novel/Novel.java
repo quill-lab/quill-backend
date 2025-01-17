@@ -30,6 +30,9 @@ public class Novel {
     @Enumerated(EnumType.STRING)
     private NovelCategory category;
 
+    @Column
+    private String synopsis;
+
     @CreatedDate
     private LocalDateTime createdAt;
 
@@ -52,7 +55,8 @@ public class Novel {
     protected Novel() {
     }
 
-    Novel(String title, String description, String coverImage, List<String> tags, LocalDateTime createdAt,
+    Novel(String title, String description, String coverImage, List<String> tags, String synopsis,
+          LocalDateTime createdAt,
           LocalDateTime updatedAt,
           LocalDateTime deletedAt) {
         this.title = title;
@@ -61,13 +65,15 @@ public class Novel {
         this.tags = tags.stream()
                 .map(tag -> NovelTag.create(tag, this, createdAt))
                 .collect(Collectors.toList());
+        this.synopsis = synopsis;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.deletedAt = deletedAt;
     }
 
-    static Novel create(String title, String description, String coverImage, List<String> tags, LocalDateTime now) {
-        return new Novel(title, description, coverImage, tags, now, now, null);
+    static Novel create(String title, String description, String coverImage, List<String> tags, String synopsis,
+                        LocalDateTime now) {
+        return new Novel(title, description, coverImage, tags, synopsis, now, now, null);
     }
 
     public long getId() {
