@@ -19,11 +19,52 @@ class MyNovelRoomsUseCase(
 ) : UseCase<MyNovelRoomsUseCase.Request, MyNovelRoomsUseCase.Response> {
 
     override fun execute(request: Request, executedAt: LocalDateTime): Response {
-        return Response(emptyList(), 1, 1)
+        val (contributorGroups, totalElements) = contributorService.findByAccountIdWithPaging(
+            accountId = request.accountId,
+            page = request.page,
+            size = request.size,
+        )
+
+        val me = accountService.findById(request.accountId) ?: throw IllegalArgumentException("Account not found")
+
+        val novels = novelService.findNovels(contributorGroups.map { it.novelId }).associateBy { it.id }
+
+        val result = contributorGroups.filter {
+            novels.containsKey(it.novelId)
+        }.map { contributorGroup ->
+            val novel = novels[contributorGroup.novelId]!!
+
+            Response.ResponseItem(
+                id = contributorGroup.id,
+                category = Response.ResponseItem.Category(
+                    name = novel.category.name,
+                    alias = novel.category.alias
+                ),
+                title = novel.title,
+                createdAt = contributorGroup.createdAt,
+                completedAt = contributorGroup.completedAt,
+                role = contributorGroup.findRoleByAccountId(me.id),
+                contributorCount = contributorGroup.contributorCount,
+                maxContributorCount = contributorGroup.maxContributorCount,
+                author = Response.ResponseItem.Author(
+                    id = me.id,
+                    name = me.name
+                ),
+                status = contributorGroup.status
+            )
+        }
+
+        return Response(
+            result = result,
+            totalCount = totalElements.toInt(),
+            page = 0
+        )
     }
 
     data class Request(
         val accountId: Long,
+        val page: Int = 0,
+        val size: Int = 20,
     )
 
     data class Response(
@@ -37,7 +78,7 @@ class MyNovelRoomsUseCase(
             val category: Category,
             val title: String,
             val createdAt: LocalDateTime,
-            val completedAt: LocalDateTime,
+            val completedAt: LocalDateTime?,
             val role: ContributorRole,
             val contributorCount: Int,
             val maxContributorCount: Int,

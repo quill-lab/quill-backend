@@ -1,5 +1,6 @@
 package lab.ujumeonji.literaturebackend.domain.contributor;
 
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -26,7 +27,7 @@ public class ContributorGroup {
     private Integer maxContributorCount;
 
     @Column
-    private Integer currentContributorCount;
+    private Integer contributorCount;
 
     @Column
     private ContributorGroupStatus status;
@@ -58,11 +59,11 @@ public class ContributorGroup {
     }
 
     ContributorGroup(String name, String description, int maxContributorCount, long novelId, LocalDateTime createdAt,
-                     LocalDateTime updatedAt, LocalDateTime deletedAt) {
+            LocalDateTime updatedAt, LocalDateTime deletedAt) {
         this.name = name;
         this.description = description;
+        this.contributorCount = 0;
         this.maxContributorCount = maxContributorCount;
-        this.currentContributorCount = 0;
         this.status = ContributorGroupStatus.PREPARING;
         this.novelId = novelId;
         this.createdAt = createdAt;
@@ -101,15 +102,15 @@ public class ContributorGroup {
             throw new IllegalArgumentException("최대 기여자 수는 100을 초과할 수 없습니다");
         }
 
-        if (currentContributorCount == null) {
+        if (contributorCount == null) {
             throw new IllegalArgumentException("현재 기여자 수는 필수입니다");
         }
 
-        if (currentContributorCount < 0) {
+        if (contributorCount < 0) {
             throw new IllegalArgumentException("현재 기여자 수는 0보다 작을 수 없습니다");
         }
 
-        if (currentContributorCount > maxContributorCount) {
+        if (contributorCount > maxContributorCount) {
             throw new IllegalArgumentException("현재 기여자 수는 최대 기여자 수를 초과할 수 없습니다");
         }
 
@@ -123,18 +124,18 @@ public class ContributorGroup {
     }
 
     static ContributorGroup create(String name, String description, int maxContributorCount, long novelId,
-                                          LocalDateTime now) {
+            LocalDateTime now) {
         return new ContributorGroup(name, description, maxContributorCount, novelId, now, now, null);
     }
 
     void addHostContributor(long accountId, LocalDateTime now) {
-        if (currentContributorCount >= maxContributorCount) {
+        if (contributorCount >= maxContributorCount) {
             throw new IllegalStateException("최대 기여자 수를 초과했습니다");
         }
 
         Contributor contributor = Contributor.create(accountId, this, now);
         contributors.add(contributor);
-        currentContributorCount++;
+        contributorCount++;
     }
 
     public Long getId() {
@@ -143,5 +144,37 @@ public class ContributorGroup {
 
     public ContributorGroupStatus getStatus() {
         return status;
+    }
+
+    public Long getNovelId() {
+        return novelId;
+    }
+
+    public Integer getMaxContributorCount() {
+        return maxContributorCount;
+    }
+
+    public Integer getContributorCount() {
+        return contributorCount;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public LocalDateTime getUpdatedAt() {
+        return updatedAt;
+    }
+
+    public LocalDateTime getCompletedAt() {
+        return completedAt;
+    }
+
+    public ContributorRole findRoleByAccountId(long accountId) {
+        return contributors.stream()
+                .filter(contributor -> contributor.getAccountId() == accountId)
+                .map(Contributor::getRole)
+                .findFirst()
+                .orElse(null);
     }
 }

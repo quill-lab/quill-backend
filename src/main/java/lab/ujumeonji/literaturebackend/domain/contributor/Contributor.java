@@ -51,4 +51,12 @@ class Contributor {
     static Contributor create(Long accountId, ContributorGroup contributorGroup, LocalDateTime now) {
         return new Contributor(accountId, contributorGroup, now, now, null);
     }
+
+    Long getAccountId() {
+        return accountId;
+    }
+
+    ContributorRole getRole() {
+        return role;
+    }
 }

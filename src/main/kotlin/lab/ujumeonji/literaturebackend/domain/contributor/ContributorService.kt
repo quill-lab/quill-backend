@@ -1,7 +1,7 @@
 package lab.ujumeonji.literaturebackend.domain.contributor
 
-import lab.ujumeonji.literaturebackend.domain.contributor.ContributorGroup
 import lab.ujumeonji.literaturebackend.domain.contributor.command.CreateContributorGroupCommand
+import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
@@ -30,5 +30,11 @@ class ContributorService(
         contributorGroup.addHostContributor(command.ownerId, now)
 
         return contributorGroup;
+    }
+
+    fun findByAccountIdWithPaging(accountId: Long, page: Int, size: Int): Pair<List<ContributorGroup>, Long> {
+        val pageable = PageRequest.of(page, size)
+        val result = contributorGroupRepository.findByAccountId(accountId, pageable)
+        return result.content to result.totalElements
     }
 }

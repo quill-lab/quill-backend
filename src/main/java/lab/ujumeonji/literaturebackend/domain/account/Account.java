@@ -24,7 +24,7 @@ public class Account {
     private String password;
 
     @Column
-    private String nickname;
+    private String name;
 
     @Column
     @CreatedDate
@@ -40,11 +40,11 @@ public class Account {
     protected Account() {
     }
 
-    Account(String email, String password, String nickname, LocalDateTime createdAt, LocalDateTime updatedAt,
+    Account(String email, String password, String name, LocalDateTime createdAt, LocalDateTime updatedAt,
             LocalDateTime deletedAt) {
         this.email = email;
         this.password = password;
-        this.nickname = nickname;
+        this.name = name;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.deletedAt = deletedAt;
@@ -70,8 +70,8 @@ public class Account {
         }
     }
 
-    static Account create(String email, String nickname, String hashedPassword, LocalDateTime now) {
-        return new Account(email, hashedPassword, nickname, now, now, null);
+    static Account create(String email, String name, String hashedPassword, LocalDateTime now) {
+        return new Account(email, hashedPassword, name, now, now, null);
     }
 
     boolean checkPassword(String password, PasswordEncoder passwordEncoder) {
@@ -86,7 +86,7 @@ public class Account {
         return email;
     }
 
-    public String getNickname() {
-        return nickname;
+    public String getName() {
+        return name;
     }
 }

@@ -32,7 +32,7 @@ class GetNovelCharactersUseCase(
                     accountMap[accountId]?.let { account ->
                         Response.LastCharacterUpdatedBy(
                             id = account.id,
-                            name = account.nickname,
+                            name = account.name,
                         )
                     }
                 },

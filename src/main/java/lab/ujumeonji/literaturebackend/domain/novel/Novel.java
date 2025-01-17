@@ -26,6 +26,9 @@ public class Novel {
     private String coverImage;
 
     @Column
+    @Enumerated(EnumType.STRING)
+    private NovelCategory category;
+
     @CreatedDate
     private LocalDateTime createdAt;
 
@@ -46,7 +49,7 @@ public class Novel {
     }
 
     Novel(String title, String description, String coverImage, LocalDateTime createdAt, LocalDateTime updatedAt,
-          LocalDateTime deletedAt) {
+            LocalDateTime deletedAt) {
         this.title = title;
         this.description = description;
         this.coverImage = coverImage;
@@ -65,5 +68,13 @@ public class Novel {
 
     public List<Character> getCharacters() {
         return characters;
+    }
+
+    public NovelCategory getCategory() {
+        return category;
+    }
+
+    public String getTitle() {
+        return title;
     }
 }
