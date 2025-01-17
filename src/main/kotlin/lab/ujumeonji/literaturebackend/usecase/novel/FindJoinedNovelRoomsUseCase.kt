@@ -11,7 +11,7 @@ import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
 
 @Component
-@Transactional
+@Transactional(readOnly = true)
 class FindJoinedNovelRoomsUseCase(
     private val accountService: AccountService,
     private val contributorService: ContributorService,

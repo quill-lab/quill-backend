@@ -4,9 +4,11 @@ import lab.ujumeonji.literaturebackend.domain.account.AccountService
 import lab.ujumeonji.literaturebackend.domain.novel.NovelService
 import lab.ujumeonji.literaturebackend.usecase.UseCase
 import org.springframework.stereotype.Component
+import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
 
 @Component
+@Transactional(readOnly = true)
 class FindNovelCharactersUseCase(
     private val novelService: NovelService,
     private val accountService: AccountService,
@@ -17,9 +19,7 @@ class FindNovelCharactersUseCase(
 
         val accountIds = novel.characters.mapNotNull { it.lastUpdatedBy }
 
-        val accounts = accountService.findByIds(accountIds)
-
-        val accountMap = accounts.associateBy { it.id }
+        val accountMap = accountService.findByIds(accountIds).associateBy { it.id }
 
         return novel.characters.map { character ->
             Response(
