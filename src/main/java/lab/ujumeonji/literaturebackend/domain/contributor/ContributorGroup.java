@@ -1,6 +1,5 @@
 package lab.ujumeonji.literaturebackend.domain.contributor;
 
-import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -59,7 +58,7 @@ public class ContributorGroup {
     }
 
     ContributorGroup(String name, String description, int maxContributorCount, long novelId, LocalDateTime createdAt,
-            LocalDateTime updatedAt, LocalDateTime deletedAt) {
+                     LocalDateTime updatedAt, LocalDateTime deletedAt) {
         this.name = name;
         this.description = description;
         this.contributorCount = 0;
@@ -124,7 +123,7 @@ public class ContributorGroup {
     }
 
     static ContributorGroup create(String name, String description, int maxContributorCount, long novelId,
-            LocalDateTime now) {
+                                   LocalDateTime now) {
         return new ContributorGroup(name, description, maxContributorCount, novelId, now, now, null);
     }
 

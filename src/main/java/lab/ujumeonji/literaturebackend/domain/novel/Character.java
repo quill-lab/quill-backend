@@ -72,7 +72,7 @@ public class Character {
     }
 
     static Character create(Novel novel, String name, String description, String profileImage,
-                                   LocalDateTime now) {
+                            LocalDateTime now) {
         return new Character(name, description, profileImage, null, novel, now, now, null);
     }
 
