@@ -57,7 +57,8 @@ class FindJoinedNovelRoomsUseCase(
         return Response(
             result = result,
             totalCount = totalElements.toInt(),
-            page = 0
+            size = request.size,
+            page = request.page,
         )
     }
 
@@ -70,6 +71,7 @@ class FindJoinedNovelRoomsUseCase(
     data class Response(
         val result: List<ResponseItem>,
         val totalCount: Int,
+        val size: Int,
         val page: Int,
     ) {
 

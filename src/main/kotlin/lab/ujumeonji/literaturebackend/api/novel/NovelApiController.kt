@@ -4,7 +4,7 @@ import lab.ujumeonji.literaturebackend.api.novel.dto.NovelCategoriesResponse
 import lab.ujumeonji.literaturebackend.api.novel.dto.NovelCharacterResponse
 import lab.ujumeonji.literaturebackend.domain.novel.NovelCategory
 import lab.ujumeonji.literaturebackend.support.http.ApiResponse
-import lab.ujumeonji.literaturebackend.usecase.novel.GetNovelCharactersUseCase
+import lab.ujumeonji.literaturebackend.usecase.novel.FindNovelCharactersUseCase
 import org.springframework.http.HttpStatus
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -15,7 +15,7 @@ import java.time.LocalDateTime
 @RestController
 @RequestMapping("/api/v1/novels")
 class NovelApiController(
-    private val getNovelCharactersUseCase: GetNovelCharactersUseCase
+    private val findNovelCharactersUseCase: FindNovelCharactersUseCase
 ) {
 
     @GetMapping("/categories")
@@ -33,8 +33,8 @@ class NovelApiController(
     fun getCharacters(
         @PathVariable novelId: Long,
     ): ApiResponse<List<NovelCharacterResponse>> {
-        val result = getNovelCharactersUseCase.execute(
-            request = GetNovelCharactersUseCase.Request(
+        val result = findNovelCharactersUseCase.execute(
+            request = FindNovelCharactersUseCase.Request(
                 novelId = novelId,
             ),
             executedAt = LocalDateTime.now()

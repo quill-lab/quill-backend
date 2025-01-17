@@ -7,10 +7,10 @@ import org.springframework.stereotype.Component
 import java.time.LocalDateTime
 
 @Component
-class GetNovelCharactersUseCase(
+class FindNovelCharactersUseCase(
     private val novelService: NovelService,
     private val accountService: AccountService,
-) : UseCase<GetNovelCharactersUseCase.Request, List<GetNovelCharactersUseCase.Response>> {
+) : UseCase<FindNovelCharactersUseCase.Request, List<FindNovelCharactersUseCase.Response>> {
 
     override fun execute(request: Request, executedAt: LocalDateTime): List<Response> {
         val novel = novelService.findNovel(request.novelId) ?: throw IllegalArgumentException("Novel not found")
