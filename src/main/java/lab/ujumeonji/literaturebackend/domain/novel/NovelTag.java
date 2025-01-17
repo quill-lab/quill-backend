@@ -46,4 +46,8 @@ public class NovelTag {
     static NovelTag create(String name, Novel novel, LocalDateTime now) {
         return new NovelTag(name, novel, now, now, null);
     }
+
+    public String getName() {
+        return name;
+    }
 }

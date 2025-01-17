@@ -37,4 +37,7 @@ class ContributorService(
         val result = contributorGroupRepository.findByAccountId(accountId, pageable)
         return result.content to result.totalElements
     }
+
+    fun findById(id: Long): ContributorGroup? =
+        contributorGroupRepository.findById(id).orElse(null)
 }

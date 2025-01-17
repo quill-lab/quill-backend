@@ -85,4 +85,13 @@ public class Novel {
     public String getTitle() {
         return title;
     }
+
+    public List<String> getHashtaggedTags() {
+        return tags.stream()
+                .map(tag -> {
+                    String name = tag.getName();
+                    return name.startsWith("#") ? name : "#" + name;
+                })
+                .collect(Collectors.toList());
+    }
 }
