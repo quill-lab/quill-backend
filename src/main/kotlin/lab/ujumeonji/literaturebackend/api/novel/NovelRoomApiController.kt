@@ -37,6 +37,7 @@ class NovelRoomApiController(
                 description = request.description,
                 maxContributorCount = request.maxContributors,
                 novelCoverImage = request.coverImage,
+                tags = request.tags,
             ),
             executedAt = LocalDateTime.now()
         )

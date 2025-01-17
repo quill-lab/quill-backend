@@ -15,6 +15,7 @@ class NovelService(
                 command.name,
                 command.description,
                 command.coverImage,
+                command.tags,
                 now,
             )
         )

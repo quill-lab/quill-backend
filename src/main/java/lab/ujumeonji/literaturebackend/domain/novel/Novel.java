@@ -7,6 +7,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "novels")
@@ -45,21 +46,28 @@ public class Novel {
     @OneToMany(mappedBy = "novel", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Chapter> chapters = new ArrayList<>();
 
+    @OneToMany(mappedBy = "novel", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<NovelTag> tags = new ArrayList<>();
+
     protected Novel() {
     }
 
-    Novel(String title, String description, String coverImage, LocalDateTime createdAt, LocalDateTime updatedAt,
+    Novel(String title, String description, String coverImage, List<String> tags, LocalDateTime createdAt,
+          LocalDateTime updatedAt,
           LocalDateTime deletedAt) {
         this.title = title;
         this.description = description;
         this.coverImage = coverImage;
+        this.tags = tags.stream()
+                .map(tag -> NovelTag.create(tag, this, createdAt))
+                .collect(Collectors.toList());
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.deletedAt = deletedAt;
     }
 
-    static Novel create(String title, String description, String coverImage, LocalDateTime now) {
-        return new Novel(title, description, coverImage, now, now, null);
+    static Novel create(String title, String description, String coverImage, List<String> tags, LocalDateTime now) {
+        return new Novel(title, description, coverImage, tags, now, now, null);
     }
 
     public long getId() {

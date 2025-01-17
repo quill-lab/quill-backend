@@ -28,6 +28,7 @@ class CreateNovelRoomUseCase(
             name = request.title,
             description = request.description,
             coverImage = request.novelCoverImage,
+            tags = request.tags,
         ),
         now = executedAt
     )
@@ -39,6 +40,7 @@ class CreateNovelRoomUseCase(
                 ownerId = request.creatorId,
                 name = request.title,
                 description = request.description,
+                tags = request.tags,
                 maxContributorCount = request.maxContributorCount,
             ),
             now = executedAt
@@ -48,6 +50,7 @@ class CreateNovelRoomUseCase(
         val creatorId: Long,
         val title: String,
         val description: String,
+        val tags: List<String>,
         val maxContributorCount: Int,
         val novelCoverImage: String?,
     )

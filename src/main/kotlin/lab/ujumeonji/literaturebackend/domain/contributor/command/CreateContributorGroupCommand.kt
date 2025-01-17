@@ -5,5 +5,6 @@ data class CreateContributorGroupCommand(
     val ownerId: Long,
     val name: String,
     val description: String,
+    val tags: List<String>,
     val maxContributorCount: Int,
 )
