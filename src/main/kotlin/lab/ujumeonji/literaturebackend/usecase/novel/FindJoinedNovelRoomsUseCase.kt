@@ -12,11 +12,11 @@ import java.time.LocalDateTime
 
 @Component
 @Transactional
-class MyNovelRoomsUseCase(
+class FindJoinedNovelRoomsUseCase(
     private val accountService: AccountService,
     private val contributorService: ContributorService,
     private val novelService: NovelService,
-) : UseCase<MyNovelRoomsUseCase.Request, MyNovelRoomsUseCase.Response> {
+) : UseCase<FindJoinedNovelRoomsUseCase.Request, FindJoinedNovelRoomsUseCase.Response> {
 
     override fun execute(request: Request, executedAt: LocalDateTime): Response {
         val (contributorGroups, totalElements) = contributorService.findByAccountIdWithPaging(
