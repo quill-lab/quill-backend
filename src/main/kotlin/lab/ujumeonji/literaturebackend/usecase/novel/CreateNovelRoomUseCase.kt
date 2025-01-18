@@ -30,7 +30,7 @@ class CreateNovelRoomUseCase(
 
     private fun createNovel(request: Request, executedAt: LocalDateTime) = novelService.createNovel(
         command = CreateNovelCommand(
-            name = request.title,
+            title = request.title,
             description = request.description,
             coverImage = request.novelCoverImage,
             synopsis = request.synopsis,
@@ -44,8 +44,6 @@ class CreateNovelRoomUseCase(
             command = CreateContributorGroupCommand(
                 novelId = novelId,
                 ownerId = request.creatorId,
-                name = request.title,
-                description = request.description,
                 tags = request.tags,
                 maxContributorCount = request.maxContributorCount,
             ),

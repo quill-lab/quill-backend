@@ -17,6 +17,6 @@ interface ContributorRepository : CrudRepository<Contributor, Long> {
     )
     fun findAllByAccountIdAndRole(
         @Param("accountId") accountId: Long,
-        @Param("role") role: ContributorRole = ContributorRole.PRIMARY_AUTHOR
+        @Param("role") role: ContributorRole = ContributorRole.MAIN
     ): List<Contributor>
 }

@@ -16,7 +16,7 @@ class NovelService(
     fun createNovel(command: CreateNovelCommand, now: LocalDateTime = LocalDateTime.now()): Novel =
         novelRepository.save(
             Novel.create(
-                command.name,
+                command.title,
                 command.description,
                 command.coverImage,
                 command.tags,

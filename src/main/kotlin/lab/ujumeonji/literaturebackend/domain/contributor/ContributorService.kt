@@ -20,8 +20,6 @@ class ContributorService(
     ): ContributorGroup {
         val contributorGroup = this.contributorGroupRepository.save(
             ContributorGroup.create(
-                command.name,
-                command.description,
                 command.maxContributorCount,
                 command.novelId,
                 now,
@@ -45,7 +43,7 @@ class ContributorService(
     fun hasManagePermission(contributorGroupId: Long, accountId: Long): Boolean {
         val contributorGroup = findById(contributorGroupId) ?: return false
         return contributorGroup.contributors.any { contributor ->
-            contributor.accountId == accountId && contributor.role == ContributorRole.PRIMARY_AUTHOR
+            contributor.accountId == accountId && contributor.role == ContributorRole.MAIN
         }
     }
 

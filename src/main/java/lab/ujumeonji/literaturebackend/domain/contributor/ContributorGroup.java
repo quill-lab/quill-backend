@@ -51,10 +51,8 @@ public class ContributorGroup {
     protected ContributorGroup() {
     }
 
-    ContributorGroup(String name, String description, int maxContributorCount, long novelId, LocalDateTime createdAt,
+    ContributorGroup(int maxContributorCount, long novelId, LocalDateTime createdAt,
                      LocalDateTime updatedAt, LocalDateTime deletedAt) {
-        this.name = name;
-        this.description = description;
         this.contributorCount = 0;
         this.maxContributorCount = maxContributorCount;
         this.status = ContributorGroupStatus.PREPARING;
@@ -67,22 +65,6 @@ public class ContributorGroup {
     }
 
     private void validate() {
-        if (name == null || name.isBlank()) {
-            throw new IllegalArgumentException("이름은 필수입니다");
-        }
-
-        if (name.length() > 100) {
-            throw new IllegalArgumentException("이름은 100자를 초과할 수 없습니다");
-        }
-
-        if (description == null || description.isBlank()) {
-            throw new IllegalArgumentException("설명은 필수입니다");
-        }
-
-        if (description.length() > 1000) {
-            throw new IllegalArgumentException("설명은 1000자를 초과할 수 없습니다");
-        }
-
         if (maxContributorCount == null) {
             throw new IllegalArgumentException("최대 기여자 수는 필수입니다");
         }
@@ -116,9 +98,9 @@ public class ContributorGroup {
         }
     }
 
-    static ContributorGroup create(String name, String description, int maxContributorCount, long novelId,
+    static ContributorGroup create(int maxContributorCount, long novelId,
                                    LocalDateTime now) {
-        return new ContributorGroup(name, description, maxContributorCount, novelId, now, now, null);
+        return new ContributorGroup(maxContributorCount, novelId, now, now, null);
     }
 
     void addHostContributor(long accountId, LocalDateTime now) {

@@ -1,7 +1,7 @@
 package lab.ujumeonji.literaturebackend.domain.contributor;
 
 public enum ContributorRole {
-    PRIMARY_AUTHOR("대표 작가"),
+    MAIN("대표 작가"),
     COLLABORATOR("참여 작가");
 
     private final String alias;
