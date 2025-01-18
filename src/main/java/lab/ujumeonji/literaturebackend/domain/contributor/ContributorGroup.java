@@ -58,7 +58,7 @@ public class ContributorGroup {
     }
 
     ContributorGroup(String name, String description, int maxContributorCount, long novelId, LocalDateTime createdAt,
-                     LocalDateTime updatedAt, LocalDateTime deletedAt) {
+            LocalDateTime updatedAt, LocalDateTime deletedAt) {
         this.name = name;
         this.description = description;
         this.contributorCount = 0;
@@ -123,7 +123,7 @@ public class ContributorGroup {
     }
 
     static ContributorGroup create(String name, String description, int maxContributorCount, long novelId,
-                                   LocalDateTime now) {
+            LocalDateTime now) {
         return new ContributorGroup(name, description, maxContributorCount, novelId, now, now, null);
     }
 
@@ -132,7 +132,7 @@ public class ContributorGroup {
             throw new IllegalStateException("최대 기여자 수를 초과했습니다");
         }
 
-        Contributor contributor = Contributor.create(accountId, this, now);
+        Contributor contributor = Contributor.create(accountId, this, 0, now);
         contributors.add(contributor);
         contributorCount++;
     }
@@ -167,6 +167,10 @@ public class ContributorGroup {
 
     public LocalDateTime getCompletedAt() {
         return completedAt;
+    }
+
+    List<Contributor> getContributors() {
+        return contributors;
     }
 
     public ContributorRole findRoleByAccountId(long accountId) {

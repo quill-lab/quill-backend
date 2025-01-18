@@ -35,6 +35,8 @@ class ViewJoinedNovelRoomUseCase(
                 alias = novel.category.alias
             ),
             title = novel.title,
+            description = novel.description,
+            synopsis = novel.synopsis,
             createdAt = contributorGroup.createdAt,
             completedAt = contributorGroup.completedAt,
             role = contributorGroup.findRoleByAccountId(me.id),
@@ -58,6 +60,8 @@ class ViewJoinedNovelRoomUseCase(
         val id: Long,
         val category: Category,
         val title: String,
+        val description: String,
+        val synopsis: String,
         val createdAt: LocalDateTime,
         val completedAt: LocalDateTime?,
         val role: ContributorRole,

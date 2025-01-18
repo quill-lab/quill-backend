@@ -21,6 +21,9 @@ class Contributor {
     @Enumerated(EnumType.STRING)
     private ContributorRole role;
 
+    @Column
+    private Integer writingOrder;
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "contributor_group_id", nullable = false, foreignKey = @ForeignKey(name = "fk_contributor_group"))
     private ContributorGroup contributorGroup;
@@ -39,17 +42,20 @@ class Contributor {
     protected Contributor() {
     }
 
-    Contributor(Long accountId, ContributorGroup contributorGroup, LocalDateTime createdAt, LocalDateTime updatedAt,
-                LocalDateTime deletedAt) {
+    Contributor(Long accountId, ContributorGroup contributorGroup, Integer writingOrder, LocalDateTime createdAt,
+            LocalDateTime updatedAt,
+            LocalDateTime deletedAt) {
         this.accountId = accountId;
         this.contributorGroup = contributorGroup;
+        this.writingOrder = writingOrder;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.deletedAt = deletedAt;
     }
 
-    static Contributor create(Long accountId, ContributorGroup contributorGroup, LocalDateTime now) {
-        return new Contributor(accountId, contributorGroup, now, now, null);
+    static Contributor create(Long accountId, ContributorGroup contributorGroup, Integer writingOrder,
+            LocalDateTime now) {
+        return new Contributor(accountId, contributorGroup, writingOrder, now, now, null);
     }
 
     Long getAccountId() {

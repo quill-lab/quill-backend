@@ -100,4 +100,12 @@ public class Novel {
                 })
                 .collect(Collectors.toList());
     }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public String getSynopsis() {
+        return synopsis;
+    }
 }
