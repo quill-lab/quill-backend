@@ -17,7 +17,12 @@ class CreateNovelRoomUseCase(
 ) : UseCase<CreateNovelRoomUseCase.Request, CreateNovelRoomUseCase.Response> {
 
     override fun execute(request: Request, executedAt: LocalDateTime): Response {
+        if (contributorService.hasOwnContributorGroup(request.creatorId)) {
+            throw IllegalArgumentException("The user already has a contributor group")
+        }
+
         val novel = createNovel(request, executedAt)
+
         val contributorGroup = createContributorGroup(request, novel.id, executedAt)
 
         return Response(contributorGroup.id)

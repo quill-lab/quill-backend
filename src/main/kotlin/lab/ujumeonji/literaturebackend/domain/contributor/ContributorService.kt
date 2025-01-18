@@ -9,7 +9,8 @@ import java.time.LocalDateTime
 @Service
 @Transactional(readOnly = true)
 class ContributorService(
-    private val contributorGroupRepository: ContributorGroupRepository
+    private val contributorGroupRepository: ContributorGroupRepository,
+    private val contributorRepository: ContributorRepository
 ) {
 
     @Transactional
@@ -47,4 +48,7 @@ class ContributorService(
             contributor.accountId == accountId && contributor.role == ContributorRole.PRIMARY_AUTHOR
         }
     }
+
+    fun hasOwnContributorGroup(accountId: Long): Boolean =
+        contributorRepository.findAllByAccountIdAndRole(accountId).isNotEmpty()
 }
