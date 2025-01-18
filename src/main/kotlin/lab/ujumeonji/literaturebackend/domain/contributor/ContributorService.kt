@@ -1,7 +1,6 @@
 package lab.ujumeonji.literaturebackend.domain.contributor
 
 import lab.ujumeonji.literaturebackend.domain.contributor.command.CreateContributorGroupCommand
-import lab.ujumeonji.literaturebackend.domain.contributor.command.UpdateContributorGroupCommand
 import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -44,25 +43,8 @@ class ContributorService(
 
     fun hasManagePermission(contributorGroupId: Long, accountId: Long): Boolean {
         val contributorGroup = findById(contributorGroupId) ?: return false
-        return contributorGroup.contributors.any { contributor -> 
+        return contributorGroup.contributors.any { contributor ->
             contributor.accountId == accountId && contributor.role == ContributorRole.PRIMARY_AUTHOR
         }
-    }
-
-    @Transactional
-    fun updateContributorGroup(
-        id: Long,
-        command: UpdateContributorGroupCommand
-    ): ContributorGroup {
-        val contributorGroup = findById(id) ?: throw IllegalArgumentException("ContributorGroup not found")
-        
-        contributorGroup.update(
-            name = name,
-            description = description, 
-            maxContributorCount = maxContributorCount,
-            updatedAt = now
-        )
-
-        return contributorGroup
     }
 }

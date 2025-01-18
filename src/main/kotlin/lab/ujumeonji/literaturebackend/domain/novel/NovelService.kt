@@ -1,6 +1,7 @@
 package lab.ujumeonji.literaturebackend.domain.novel
 
 import lab.ujumeonji.literaturebackend.domain.novel.command.CreateNovelCommand
+import lab.ujumeonji.literaturebackend.domain.novel.command.UpdateNovelCommand
 import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 
@@ -26,4 +27,23 @@ class NovelService(
     fun findNovels(ids: List<Long>): List<Novel> = novelRepository.findAllById(ids).toList()
 
     fun findById(id: Long): Novel? = novelRepository.findById(id).orElse(null)
+
+    fun update(id: Long, command: UpdateNovelCommand, now: LocalDateTime = LocalDateTime.now()): Novel {
+        val novel = findById(id) ?: throw IllegalArgumentException("Novel not found")
+
+        novel.updateBasicInfo(
+            command.title,
+            command.description,
+            command.synopsis,
+            command.category,
+            now,
+        )
+
+        novel.updateTags(
+            command.tags,
+            now,
+        )
+
+        return novelRepository.save(novel)
+    }
 }

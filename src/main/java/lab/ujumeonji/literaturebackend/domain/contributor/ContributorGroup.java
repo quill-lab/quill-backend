@@ -17,12 +17,6 @@ public class ContributorGroup {
     private Long id;
 
     @Column
-    private String name;
-
-    @Column
-    private String description;
-
-    @Column
     private Integer maxContributorCount;
 
     @Column
@@ -58,7 +52,7 @@ public class ContributorGroup {
     }
 
     ContributorGroup(String name, String description, int maxContributorCount, long novelId, LocalDateTime createdAt,
-            LocalDateTime updatedAt, LocalDateTime deletedAt) {
+                     LocalDateTime updatedAt, LocalDateTime deletedAt) {
         this.name = name;
         this.description = description;
         this.contributorCount = 0;
@@ -123,7 +117,7 @@ public class ContributorGroup {
     }
 
     static ContributorGroup create(String name, String description, int maxContributorCount, long novelId,
-            LocalDateTime now) {
+                                   LocalDateTime now) {
         return new ContributorGroup(name, description, maxContributorCount, novelId, now, now, null);
     }
 

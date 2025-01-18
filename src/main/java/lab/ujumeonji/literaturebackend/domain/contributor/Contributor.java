@@ -43,8 +43,8 @@ class Contributor {
     }
 
     Contributor(Long accountId, ContributorGroup contributorGroup, Integer writingOrder, LocalDateTime createdAt,
-            LocalDateTime updatedAt,
-            LocalDateTime deletedAt) {
+                LocalDateTime updatedAt,
+                LocalDateTime deletedAt) {
         this.accountId = accountId;
         this.contributorGroup = contributorGroup;
         this.writingOrder = writingOrder;
@@ -54,7 +54,7 @@ class Contributor {
     }
 
     static Contributor create(Long accountId, ContributorGroup contributorGroup, Integer writingOrder,
-            LocalDateTime now) {
+                              LocalDateTime now) {
         return new Contributor(accountId, contributorGroup, writingOrder, now, now, null);
     }
 

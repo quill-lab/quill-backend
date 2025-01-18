@@ -77,6 +77,21 @@ public class Novel {
         return new Novel(title, description, coverImage, tags, synopsis, now, now, null);
     }
 
+    void updateBasicInfo(String title, String description, String synopsis, NovelCategory category, LocalDateTime now) {
+        this.title = title;
+        this.description = description;
+        this.synopsis = synopsis;
+        this.category = category;
+        this.updatedAt = now;
+    }
+
+    void updateTags(List<String> tags, LocalDateTime now) {
+        this.tags = tags.stream()
+                .map(tag -> NovelTag.create(tag, this, now))
+                .collect(Collectors.toList());
+        this.updatedAt = now;
+    }
+
     public long getId() {
         return id;
     }
