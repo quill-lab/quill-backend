@@ -1,5 +1,6 @@
 package lab.ujumeonji.literaturebackend.domain.novel;
 
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -105,6 +106,7 @@ public class Novel {
         return description;
     }
 
+    @Nullable
     public String getSynopsis() {
         return synopsis;
     }

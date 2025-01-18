@@ -132,7 +132,7 @@ public class ContributorGroup {
             throw new IllegalStateException("최대 기여자 수를 초과했습니다");
         }
 
-        Contributor contributor = Contributor.create(accountId, this, 0, now);
+        Contributor contributor = Contributor.create(accountId, this, contributorCount, now);
         contributors.add(contributor);
         contributorCount++;
     }

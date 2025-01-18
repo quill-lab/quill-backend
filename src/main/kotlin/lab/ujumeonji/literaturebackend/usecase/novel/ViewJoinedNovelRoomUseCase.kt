@@ -61,7 +61,7 @@ class ViewJoinedNovelRoomUseCase(
         val category: Category,
         val title: String,
         val description: String,
-        val synopsis: String,
+        val synopsis: String?,
         val createdAt: LocalDateTime,
         val completedAt: LocalDateTime?,
         val role: ContributorRole,
