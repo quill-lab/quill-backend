@@ -7,6 +7,7 @@ import lab.ujumeonji.literaturebackend.api.novel.dto.*
 import lab.ujumeonji.literaturebackend.support.auth.RequiredAuth
 import lab.ujumeonji.literaturebackend.usecase.novel.CreateNovelRoomUseCase
 import lab.ujumeonji.literaturebackend.usecase.novel.FindJoinedNovelRoomsUseCase
+import lab.ujumeonji.literaturebackend.usecase.novel.ViewJoinedNovelRoomUseCase
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -17,8 +18,45 @@ import java.time.LocalDateTime
 @RequestMapping("/api/v1/novel-rooms")
 class NovelRoomApiController(
     private val createNovelRoomUseCase: CreateNovelRoomUseCase,
-    private val findJoinedNovelRoomsUseCase: FindJoinedNovelRoomsUseCase
+    private val findJoinedNovelRoomsUseCase: FindJoinedNovelRoomsUseCase,
+    private val viewJoinedNovelRoomUseCase: ViewJoinedNovelRoomUseCase,
 ) {
+
+    @Operation(summary = "소설 공방 조회", description = "소설 공방을 조회합니다.")
+    @GetMapping("/{novelRoomId}")
+    fun getNovelRoom(
+        @RequiredAuth accountId: Long,
+        @PathVariable novelRoomId: Long,
+    ): ResponseEntity<ViewNovelRoomResponse> {
+        val result = viewJoinedNovelRoomUseCase.execute(
+            request = ViewJoinedNovelRoomUseCase.Request(
+                accountId = accountId,
+                contributorGroupId = novelRoomId
+            ),
+            executedAt = LocalDateTime.now()
+        )
+
+        return ResponseEntity.ok(
+            ViewNovelRoomResponse(
+                id = result.id,
+                category = ViewNovelRoomResponse.Category(
+                    name = result.category.name,
+                    alias = result.category.alias
+                ),
+                title = result.title,
+                createdAt = result.createdAt.toString(),
+                completedAt = result.completedAt?.toString(),
+                role = result.role,
+                contributorCount = result.contributorCount,
+                maxContributorCount = result.maxContributorCount,
+                author = ViewNovelRoomResponse.Author(
+                    id = result.author.id,
+                    name = result.author.name
+                ),
+                status = result.status.name
+            )
+        )
+    }
 
     @Operation(summary = "소설 공방 목록 조회", description = "소설 공방 목록을 조회합니다.")
     @GetMapping
