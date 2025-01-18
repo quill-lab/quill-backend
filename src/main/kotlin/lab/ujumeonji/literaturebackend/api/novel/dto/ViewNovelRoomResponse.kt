@@ -1,13 +1,14 @@
 package lab.ujumeonji.literaturebackend.api.novel.dto
 
 import lab.ujumeonji.literaturebackend.domain.contributor.ContributorRole
+import java.time.LocalDateTime
 
 data class ViewNovelRoomResponse(
     val id: Long,
     val category: Category,
     val title: String,
-    val createdAt: String,
-    val completedAt: String?,
+    val createdAt: LocalDateTime,
+    val completedAt: LocalDateTime?,
     val role: ContributorRole,
     val contributorCount: Int,
     val maxContributorCount: Int,

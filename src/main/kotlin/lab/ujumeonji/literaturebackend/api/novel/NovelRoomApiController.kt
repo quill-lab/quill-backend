@@ -44,8 +44,8 @@ class NovelRoomApiController(
                     alias = result.category.alias
                 ),
                 title = result.title,
-                createdAt = result.createdAt.toString(),
-                completedAt = result.completedAt?.toString(),
+                createdAt = result.createdAt,
+                completedAt = result.completedAt,
                 role = result.role,
                 contributorCount = result.contributorCount,
                 maxContributorCount = result.maxContributorCount,
@@ -83,8 +83,8 @@ class NovelRoomApiController(
                             alias = it.category.alias
                         ),
                         title = it.title,
-                        createdAt = it.createdAt.toString(),
-                        completedAt = it.completedAt?.toString(),
+                        createdAt = it.createdAt,
+                        completedAt = it.completedAt,
                         role = it.role,
                         contributorCount = it.contributorCount,
                         maxContributorCount = it.maxContributorCount,
