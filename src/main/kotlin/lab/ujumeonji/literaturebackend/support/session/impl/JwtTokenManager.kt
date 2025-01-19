@@ -11,9 +11,8 @@ import java.util.*
 
 @Component
 class JwtTokenManager(
-    @Value("\${jwt.secret}") private val secret: String,
+    @Value("\${jwt.secret.access}") private val secret: String,
     @Value("\${jwt.access-token-validity}") private val accessTokenValidity: Long,
-    @Value("\${jwt.refresh-token-validity}") private val refreshTokenValidity: Long
 ) : TokenManager {
 
     override fun createToken(payload: Map<String, *>, issuedAt: LocalDateTime): String =
