@@ -44,6 +44,7 @@ spec:
                         )]) {
                             sh """
                                 ./gradlew jib \
+                                    -Dorg.gradle.jvmargs="-Xmx2048m -XX:MaxMetaspaceSize=512m" \
                                     -Djib.from.image=eclipse-temurin:21-jdk-jammy \
                                     -Djib.to.tags=${VERSION} \
                                     -Djib.to.auth.username=${DOCKER_HUB_USERNAME} \
