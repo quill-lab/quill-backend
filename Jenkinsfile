@@ -59,10 +59,10 @@ spec:
         stage('Update Helm Values') {
             steps {
                 container('gradle') {
-                    withCredentials([string(credentialsId: 'github-credential', variable: 'TOKEN')]) {
+                    withCredentials([usernamePassword(credentialsId: 'github-credential', usernameVariable: 'GIT_USERNAME', passwordVariable: 'GIT_PASSWORD')]) {
                         sh """
                             rm -rf deploy-repo
-                            git clone https://\${TOKEN}@github.com/dygma0/literature-backend.git deploy-repo
+                            git clone https://\${GIT_USERNAME}:\${GIT_PASSWORD}@github.com/dygma0/literature-backend.git deploy-repo
                             cd deploy-repo
                             sed -i 's/tag: ".*"/tag: "${VERSION}"/g' deploy/values.yaml
                             git config --global user.email "webdev0594@gmail.com" 
