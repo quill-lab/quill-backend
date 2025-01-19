@@ -5,6 +5,7 @@ plugins {
     id("io.spring.dependency-management") version "1.1.7"
     kotlin("plugin.jpa") version "1.9.25"
     id("io.gitlab.arturbosch.detekt") version "1.23.7"
+    id("com.google.cloud.tools.jib") version "3.4.4"
 }
 
 group = "lab.ujumeonji"
@@ -98,5 +99,27 @@ configurations.all {
         if (requested.group == "org.jetbrains.kotlin") {
             useVersion(io.gitlab.arturbosch.detekt.getSupportedKotlinVersion())
         }
+    }
+}
+
+jib {
+    from {
+        image = "eclipse-temurin:21-jre-alpine"
+    }
+    to {
+        image = "webdev0594/gow-api"
+        tags = setOf("latest", version.toString())
+        auth {
+            username = System.getenv("DOCKER_HUB_USERNAME")
+            password = System.getenv("DOCKER_HUB_PASSWORD")
+        }
+    }
+    container {
+        jvmFlags = listOf("-Xms1024m", "-Xmx1024m")
+        ports = listOf("8080")
+        environment = mapOf(
+            "SPRING_PROFILES_ACTIVE" to "prod"
+        )
+        creationTime.set("USE_CURRENT_TIMESTAMP")
     }
 }
