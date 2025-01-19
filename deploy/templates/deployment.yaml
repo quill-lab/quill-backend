@@ -50,6 +50,9 @@ spec:
           volumeMounts:
             {{- toYaml . | nindent 12 }}
           {{- end }}
+          envFrom:
+            - secretRef:
+                name: {{ include "deploy.fullname" . }}-secrets
       {{- with .Values.volumes }}
       volumes:
         {{- toYaml . | nindent 8 }}
