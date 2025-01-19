@@ -12,11 +12,11 @@ import java.time.LocalDateTime
 
 @Component
 @Transactional(readOnly = true)
-class UpdateNovelRoomUseCase(
+class UpdateNovelUseCase(
     private val accountService: AccountService,
     private val contributorService: ContributorService,
     private val novelService: NovelService,
-) : UseCase<UpdateNovelRoomUseCase.Request, UpdateNovelRoomUseCase.Response> {
+) : UseCase<UpdateNovelUseCase.Request, UpdateNovelUseCase.Response> {
 
     override fun execute(request: Request, executedAt: LocalDateTime): Response {
         accountService.findById(request.accountId) ?: throw IllegalArgumentException("Account not found")
