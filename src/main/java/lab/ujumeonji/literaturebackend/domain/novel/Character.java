@@ -19,7 +19,7 @@ public class Character {
     @Column
     private String name;
 
-    @Column
+    @Column(columnDefinition = "text")
     private String description;
 
     @Column
@@ -32,7 +32,7 @@ public class Character {
     private Integer priority;
 
     @ManyToOne
-    @JoinColumn(name = "novel_id")
+    @JoinColumn(name = "novel_id", nullable = false)
     private Novel novel;
 
     @Column

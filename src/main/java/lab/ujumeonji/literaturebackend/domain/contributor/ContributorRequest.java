@@ -18,10 +18,10 @@ public class ContributorRequest {
     @JoinColumn(name = "contributor_group_id", nullable = false, foreignKey = @ForeignKey(name = "fk_contributor_group"))
     private ContributorGroup contributorGroup;
 
-    @Column
+    @Column(nullable = false)
     private Long novelId;
 
-    @Column
+    @Column(nullable = false)
     private Long accountId;
 
     @Column

@@ -25,7 +25,7 @@ public class ContributorGroup {
     @Column
     private ContributorGroupStatus status;
 
-    @Column
+    @Column(nullable = false)
     private Long novelId;
 
     @Column

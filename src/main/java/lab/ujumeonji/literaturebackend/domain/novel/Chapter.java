@@ -19,7 +19,7 @@ public class Chapter {
     @Column
     private String title;
 
-    @Column
+    @Column(columnDefinition = "text")
     private String description;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)

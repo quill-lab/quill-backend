@@ -21,7 +21,7 @@ public class Novel {
     @Column
     private String title;
 
-    @Column
+    @Column(columnDefinition = "text")
     private String description;
 
     @Column
@@ -31,7 +31,7 @@ public class Novel {
     @Enumerated(EnumType.STRING)
     private NovelCategory category;
 
-    @Column
+    @Column(columnDefinition = "text")
     private String synopsis;
 
     @CreatedDate

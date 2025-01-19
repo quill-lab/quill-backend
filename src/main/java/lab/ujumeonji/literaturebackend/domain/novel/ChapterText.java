@@ -14,10 +14,10 @@ public class ChapterText {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
+    @Column(nullable = false)
     private Long accountId;
 
-    @Column
+    @Column(columnDefinition = "text")
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
