@@ -7,6 +7,7 @@ import lab.ujumeonji.literaturebackend.api.novel.dto.*
 import lab.ujumeonji.literaturebackend.support.auth.RequiredAuth
 import lab.ujumeonji.literaturebackend.usecase.novel.CreateNovelRoomUseCase
 import lab.ujumeonji.literaturebackend.usecase.novel.FindJoinedNovelRoomsUseCase
+import lab.ujumeonji.literaturebackend.usecase.novel.UpdateNovelRoomUseCase
 import lab.ujumeonji.literaturebackend.usecase.novel.ViewJoinedNovelRoomUseCase
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -20,6 +21,7 @@ class NovelRoomApiController(
     private val createNovelRoomUseCase: CreateNovelRoomUseCase,
     private val findJoinedNovelRoomsUseCase: FindJoinedNovelRoomsUseCase,
     private val viewJoinedNovelRoomUseCase: ViewJoinedNovelRoomUseCase,
+    private val updateNovelRoomUseCase: UpdateNovelRoomUseCase,
 ) {
 
     @Operation(summary = "소설 공방 조회", description = "소설 공방을 조회합니다.")
@@ -53,7 +55,7 @@ class NovelRoomApiController(
                     id = result.author.id,
                     name = result.author.name
                 ),
-                status = result.status.name
+                status = result.status
             )
         )
     }
@@ -92,7 +94,7 @@ class NovelRoomApiController(
                             id = it.author.id,
                             name = it.author.name
                         ),
-                        status = it.status.name
+                        status = it.status
                     )
                 },
                 totalCount = result.totalCount,
