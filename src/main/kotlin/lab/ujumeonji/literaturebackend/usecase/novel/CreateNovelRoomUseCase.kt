@@ -4,6 +4,8 @@ import lab.ujumeonji.literaturebackend.domain.contributor.ContributorService
 import lab.ujumeonji.literaturebackend.domain.contributor.command.CreateContributorGroupCommand
 import lab.ujumeonji.literaturebackend.domain.novel.NovelService
 import lab.ujumeonji.literaturebackend.domain.novel.command.CreateNovelCommand
+import lab.ujumeonji.literaturebackend.support.exception.BusinessException
+import lab.ujumeonji.literaturebackend.support.exception.ErrorCode
 import lab.ujumeonji.literaturebackend.usecase.UseCase
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
@@ -18,7 +20,7 @@ class CreateNovelRoomUseCase(
 
     override fun execute(request: Request, executedAt: LocalDateTime): Response {
         if (contributorService.hasOwnContributorGroup(request.creatorId)) {
-            throw IllegalArgumentException("The user already has a contributor group")
+            throw BusinessException(ErrorCode.DUPLICATE_CONTRIBUTOR_GROUP)
         }
 
         val novel = createNovel(request, executedAt)

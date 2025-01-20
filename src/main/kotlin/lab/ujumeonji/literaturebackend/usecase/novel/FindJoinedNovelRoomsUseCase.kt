@@ -5,6 +5,8 @@ import lab.ujumeonji.literaturebackend.domain.contributor.ContributorGroupStatus
 import lab.ujumeonji.literaturebackend.domain.contributor.ContributorRole
 import lab.ujumeonji.literaturebackend.domain.contributor.ContributorService
 import lab.ujumeonji.literaturebackend.domain.novel.NovelService
+import lab.ujumeonji.literaturebackend.support.exception.BusinessException
+import lab.ujumeonji.literaturebackend.support.exception.ErrorCode
 import lab.ujumeonji.literaturebackend.usecase.UseCase
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
@@ -25,14 +27,16 @@ class FindJoinedNovelRoomsUseCase(
             size = request.size,
         )
 
-        val me = accountService.findById(request.accountId) ?: throw IllegalArgumentException("Account not found")
+        val me = accountService.findById(request.accountId)
+            ?: throw BusinessException(ErrorCode.ACCOUNT_NOT_FOUND)
 
         val novels = novelService.findNovels(contributorGroups.map { it.novelId }).associateBy { it.id }
 
         val result = contributorGroups.filter {
             novels.containsKey(it.novelId)
         }.map { contributorGroup ->
-            val novel = novels[contributorGroup.novelId]!!
+            val novel = novels[contributorGroup.novelId]
+                ?: throw BusinessException(ErrorCode.NOVEL_NOT_FOUND)
 
             Response.ResponseItem(
                 id = contributorGroup.id,

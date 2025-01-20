@@ -5,6 +5,8 @@ import lab.ujumeonji.literaturebackend.domain.contributor.ContributorService
 import lab.ujumeonji.literaturebackend.domain.novel.NovelCategory
 import lab.ujumeonji.literaturebackend.domain.novel.NovelService
 import lab.ujumeonji.literaturebackend.domain.novel.command.UpdateNovelCommand
+import lab.ujumeonji.literaturebackend.support.exception.BusinessException
+import lab.ujumeonji.literaturebackend.support.exception.ErrorCode
 import lab.ujumeonji.literaturebackend.usecase.UseCase
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
@@ -19,13 +21,14 @@ class UpdateNovelUseCase(
 ) : UseCase<UpdateNovelUseCase.Request, UpdateNovelUseCase.Response> {
 
     override fun execute(request: Request, executedAt: LocalDateTime): Response {
-        accountService.findById(request.accountId) ?: throw IllegalArgumentException("Account not found")
+        accountService.findById(request.accountId)
+            ?: throw BusinessException(ErrorCode.ACCOUNT_NOT_FOUND)
 
         val contributorGroup = contributorService.findById(request.contributorGroupId)
-            ?: throw IllegalArgumentException("Contributor group not found")
+            ?: throw BusinessException(ErrorCode.CONTRIBUTOR_GROUP_NOT_FOUND)
 
         if (!contributorService.hasManagePermission(request.contributorGroupId, request.accountId)) {
-            throw IllegalArgumentException("You don't have permission to update this novel room")
+            throw BusinessException(ErrorCode.NO_PERMISSION_TO_UPDATE)
         }
 
         novelService.update(

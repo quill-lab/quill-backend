@@ -4,12 +4,14 @@ import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import lab.ujumeonji.literaturebackend.api.novel.dto.NovelCategoriesResponse
 import lab.ujumeonji.literaturebackend.api.novel.dto.NovelCharacterResponse
-import lab.ujumeonji.literaturebackend.api.novel.dto.UpdateNovelRequest
 import lab.ujumeonji.literaturebackend.domain.novel.NovelCategory
 import lab.ujumeonji.literaturebackend.usecase.novel.FindNovelCharactersUseCase
 import lab.ujumeonji.literaturebackend.usecase.novel.UpdateNovelUseCase
 import org.springframework.http.ResponseEntity
-import org.springframework.web.bind.annotation.*
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RestController
 import java.time.LocalDateTime
 
 @Tag(name = "Novel", description = "소설 API")

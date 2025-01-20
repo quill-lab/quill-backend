@@ -2,6 +2,8 @@ package lab.ujumeonji.literaturebackend.usecase.auth
 
 import lab.ujumeonji.literaturebackend.domain.account.Account
 import lab.ujumeonji.literaturebackend.domain.account.AccountService
+import lab.ujumeonji.literaturebackend.support.exception.BusinessException
+import lab.ujumeonji.literaturebackend.support.exception.ErrorCode
 import lab.ujumeonji.literaturebackend.support.session.TokenManager
 import lab.ujumeonji.literaturebackend.usecase.UseCase
 import org.springframework.stereotype.Component
@@ -17,20 +19,18 @@ class SignInUseCase(
 
     override fun execute(request: Request, executedAt: LocalDateTime): Response {
         val account = findAccount(request.email)
-
         validatePassword(account, request.password)
-
         val token = createAuthToken(account, executedAt)
-
         return Response(token)
     }
 
     private fun findAccount(email: String) =
-        accountService.findOneByEmail(email) ?: throw IllegalArgumentException("Account not found")
+        accountService.findOneByEmail(email)
+            ?: throw BusinessException(ErrorCode.ACCOUNT_NOT_FOUND)
 
     private fun validatePassword(account: Account, password: String) {
         if (!accountService.checkPassword(account, password)) {
-            throw IllegalArgumentException("Invalid password")
+            throw BusinessException(ErrorCode.INVALID_CREDENTIALS)
         }
     }
 
@@ -44,7 +44,8 @@ class SignInUseCase(
         )
 
     data class Request(
-        val email: String, val password: String
+        val email: String,
+        val password: String
     )
 
     data class Response(
