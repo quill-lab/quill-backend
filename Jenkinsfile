@@ -24,6 +24,7 @@ spec:
 
     environment {
         VERSION = sh(script: "echo \$(date +%s) | md5sum | cut -d' ' -f1", returnStdout: true).trim()
+        DISCORD_WEBHOOK = credentials('be-dev-deploy-discord-webhook-url')
     }
 
     stages {
@@ -74,6 +75,37 @@ spec:
                     }
                 }
             }
+        }
+    }
+
+    post {
+        success {
+            discordSend description: """⚓ 항해 성공! 새로운 버전이 무사히 배포되었습니다! 🚢
+
+🏴‍☠️ 배포 버전: ${VERSION}
+🗺️ 항해 일지: ${BUILD_URL}
+🎯 API 문서: https://gow-jvm-api-dev.cd80.run/swagger-ui/index.html
+⏱️ 항해 시간: ${currentBuild.durationString}
+
+순풍에 돛을 달고 새로운 버전이 안전하게 도착했습니다! 🌊""",
+                    link: env.BUILD_URL,
+                    result: currentBuild.currentResult,
+                    title: "🏴‍☠️ Literature Backend 배포 항해 #${BUILD_NUMBER}",
+                    webhookURL: DISCORD_WEBHOOK
+        }
+        failure {
+            discordSend description: """💥 난파 발생! 배포가 실패했습니다! ⚠️
+
+🏴‍☠️ 시도한 버전: ${VERSION}
+🗺️ 사고 위치: ${BUILD_URL}
+⏱️ 표류 시간: ${currentBuild.durationString}
+📜 사고 경위: ${currentBuild.description ?: '원인 불명의 사고입니다!'}
+
+긴급 수리가 필요합니다! 선원들의 신속한 확인 바랍니다! 🔧""",
+                    link: env.BUILD_URL,
+                    result: currentBuild.currentResult,
+                    title: "⚠️ Literature Backend 배포 사고 #${BUILD_NUMBER}",
+                    webhookURL: DISCORD_WEBHOOK
         }
     }
 }
