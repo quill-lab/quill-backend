@@ -20,29 +20,6 @@ class NovelApiController(
     private val updateNovelUseCase: UpdateNovelUseCase
 ) {
 
-    @Operation(summary = "소설 정보 수정", description = "소설 정보를 수정합니다.")
-    @PatchMapping("/{novelRoomId}")
-    fun updateNovel(
-        @PathVariable novelRoomId: Long,
-        @RequestBody request: UpdateNovelRequest,
-        @RequestAttribute accountId: Long
-    ): ResponseEntity<Unit> {
-        updateNovelUseCase.execute(
-            request = UpdateNovelUseCase.Request(
-                accountId = accountId,
-                contributorGroupId = novelRoomId,
-                title = request.title,
-                description = request.description,
-                category = request.category,
-                tags = request.tags,
-                synopsis = request.synopsis
-            ),
-            executedAt = LocalDateTime.now()
-        )
-
-        return ResponseEntity.noContent().build()
-    }
-
     @Operation(summary = "소설 카테고리 목록 조회", description = "소설 카테고리 목록을 조회합니다.")
     @GetMapping("/categories")
     fun getCategories(): ResponseEntity<List<NovelCategoriesResponse>> =

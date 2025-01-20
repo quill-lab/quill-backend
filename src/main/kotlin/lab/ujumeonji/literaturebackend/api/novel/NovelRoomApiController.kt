@@ -25,7 +25,7 @@ class NovelRoomApiController(
 ) {
 
     @Operation(summary = "소설 공방 수정", description = "소설 공방을 수정합니다.")
-    @PutMapping("/{novelRoomId}")
+    @PatchMapping("/{novelRoomId}")
     fun updateNovelRoom(
         @RequiredAuth accountId: Long,
         @PathVariable novelRoomId: Long,
