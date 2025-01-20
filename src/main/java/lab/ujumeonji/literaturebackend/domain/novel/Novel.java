@@ -50,7 +50,7 @@ public class Novel {
     @OneToMany(mappedBy = "novel", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Chapter> chapters = new ArrayList<>();
 
-    @OneToMany(mappedBy = "novel", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "novel", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<NovelTag> tags = new ArrayList<>();
 
     protected Novel() {
@@ -86,9 +86,16 @@ public class Novel {
     }
 
     void updateTags(List<String> tags, LocalDateTime now) {
-        this.tags = tags.stream()
-                .map(tag -> NovelTag.create(tag, this, now))
-                .collect(Collectors.toList());
+        this.tags.removeIf(existingTag -> !tags.contains(existingTag.getName()));
+
+        List<String> existingTagNames = this.tags.stream()
+                .map(NovelTag::getName)
+                .toList();
+
+        tags.stream()
+                .filter(tag -> !existingTagNames.contains(tag))
+                .forEach(tag -> this.tags.add(NovelTag.create(tag, this, now)));
+
         this.updatedAt = now;
     }
 
