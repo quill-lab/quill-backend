@@ -1,0 +1,3 @@
+package lab.ujumeonji.literaturebackend.api.auth
+
+class AuthenticationApiControllerTest
