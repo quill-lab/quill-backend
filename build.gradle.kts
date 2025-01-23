@@ -48,11 +48,20 @@ dependencies {
     runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.12.6")
     runtimeOnly("org.postgresql:postgresql")
     annotationProcessor("org.springframework.boot:spring-boot-configuration-processor")
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("io.projectreactor:reactor-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
     detektPlugins("io.gitlab.arturbosch.detekt:detekt-formatting:1.23.7")
+    testImplementation("io.kotest:kotest-runner-junit5:5.9.0")
+    testImplementation("io.kotest:kotest-assertions-core:5.9.0")
+    testImplementation("io.kotest:kotest-property:5.9.0")
+    testImplementation("io.kotest:kotest-framework-datatest:5.9.0")
+    testImplementation("io.kotest.extensions:kotest-extensions-spring:1.3.0")
+    testImplementation("io.mockk:mockk:1.13.16")
+    testImplementation("org.springframework.boot:spring-boot-starter-test") {
+        exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
+        exclude(module = "mockito-core")
+    }
 }
 
 kotlin {
