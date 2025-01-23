@@ -26,7 +26,7 @@ class SignInUseCase(
 
     private fun findAccount(email: String) =
         accountService.findOneByEmail(email)
-            ?: throw BusinessException(ErrorCode.ACCOUNT_NOT_FOUND)
+            ?: throw BusinessException(ErrorCode.INVALID_CREDENTIALS)
 
     private fun validatePassword(account: Account, password: String) {
         if (!accountService.checkPassword(account, password)) {
