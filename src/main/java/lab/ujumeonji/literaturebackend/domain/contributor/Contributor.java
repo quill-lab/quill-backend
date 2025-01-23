@@ -25,7 +25,7 @@ public class Contributor {
     private Integer writingOrder;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "contributor_group_id", nullable = false, foreignKey = @ForeignKey(name = "fk_contributor_group"))
+    @JoinColumn(name = "contributor_group_id", nullable = false, foreignKey = @ForeignKey(name = "fk_contributor_contributor_group"))
     private ContributorGroup contributorGroup;
 
     @Column

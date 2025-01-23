@@ -15,7 +15,7 @@ public class ContributorRequest {
     private Long id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "contributor_group_id", nullable = false, foreignKey = @ForeignKey(name = "fk_contributor_group"))
+    @JoinColumn(name = "contributor_group_id", nullable = false, foreignKey = @ForeignKey(name = "fk_contributor_request_contributor_group"))
     private ContributorGroup contributorGroup;
 
     @Column(nullable = false)
