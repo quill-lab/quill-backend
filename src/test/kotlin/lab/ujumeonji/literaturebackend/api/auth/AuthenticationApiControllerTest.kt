@@ -63,7 +63,7 @@ class AuthenticationApiControllerTest(
 
         given("사용자가 로그인 정보를 입력하고") {
             val signUpRequest = SignUpBodyRequest(
-                email = "test@example.com", 
+                email = "test@example.com",
                 password = "password123456789012345",
                 nickname = "testuser"
             )
