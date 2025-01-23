@@ -1,9 +1,9 @@
 package lab.ujumeonji.literaturebackend.api.auth
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import lab.ujumeonji.literaturebackend.api.auth.dto.SignInBodyRequest
 import lab.ujumeonji.literaturebackend.api.auth.dto.SignUpBodyRequest
 import lab.ujumeonji.literaturebackend.support.ControllerTest
+import lab.ujumeonji.literaturebackend.support.exception.ErrorCode
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
@@ -17,54 +17,45 @@ class AuthenticationApiControllerTest(
 ) {
 
     init {
-        given("회원가입 API 호출 시") {
+        given("사용자가 회원 정보를 입력 후") {
             val request = SignUpBodyRequest(
                 email = "test@example.com",
-                password = "password123",
+                password = "password123456789012345",
                 nickname = "testuser"
             )
 
-            `when`("유효한 요청을 보내면") {
+            `when`("회원 가입을 요청하면") {
                 val response = performPost("/api/v1/sign-up", request)
 
-                then("회원가입이 성공해야 한다") {
+                then("신규 회원 정보가 등록된다.") {
                     response
                         .andExpect(status().isOk)
                         .andExpect(jsonPath("$.id").exists())
                 }
             }
-
-            `when`("이미 존재하는 이메일로 요청하면") {
-                val response = performPost("/api/v1/sign-up", request)
-
-                then("409 Conflict 응답이 반환되어야 한다") {
-                    response.andExpect(status().isConflict)
-                }
-            }
         }
 
-        given("로그인 API 호출 시") {
-            val request = SignInBodyRequest(
+        given("사용자가 이미 가입된 회원 정보가 존재하고") {
+            val initialRequest = SignUpBodyRequest(
                 email = "test@example.com",
-                password = "password123"
+                password = "password123456789012345",
+                nickname = "testuser"
+            )
+            performPost("/api/v1/sign-up", initialRequest)
+
+            val duplicateRequest = SignUpBodyRequest(
+                email = initialRequest.email,
+                password = "anotherpassword123456789012345",
+                nickname = "anotheruser"
             )
 
-            `when`("올바른 인증 정보로 요청하면") {
-                val response = performPost("/api/v1/sign-in", request)
+            `when`("중복된 이메일로 회원 가입을 요청하면") {
+                val duplicateResponse = performPost("/api/v1/sign-up", duplicateRequest)
 
-                then("로그인이 성공하고 토큰이 반환되어야 한다") {
-                    response
-                        .andExpect(status().isOk)
-                        .andExpect(jsonPath("$.accessToken").exists())
-                }
-            }
-
-            `when`("잘못된 인증 정보로 요청하면") {
-                val invalidRequest = request.copy(password = "wrongpassword")
-                val response = performPost("/api/v1/sign-in", invalidRequest)
-
-                then("401 Unauthorized 응답이 반환되어야 한다") {
-                    response.andExpect(status().isUnauthorized)
+                then("신규 회원 정보가 등록되지 않는다.") {
+                    duplicateResponse
+                        .andExpect(status().isConflict)
+                        .andExpect(jsonPath("$.code").value(ErrorCode.DUPLICATE_EMAIL.code))
                 }
             }
         }

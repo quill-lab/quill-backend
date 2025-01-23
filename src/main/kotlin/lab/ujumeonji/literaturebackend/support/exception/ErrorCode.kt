@@ -18,5 +18,5 @@ enum class ErrorCode(
 
     // Auth 관련 에러
     INVALID_CREDENTIALS(401, "AUTH-001", "이메일 또는 비밀번호가 올바르지 않습니다."),
-    DUPLICATE_EMAIL(400, "AUTH-002", "이미 사용중인 이메일입니다."),
+    DUPLICATE_EMAIL(409, "AUTH-002", "이미 사용중인 이메일입니다."),
 }

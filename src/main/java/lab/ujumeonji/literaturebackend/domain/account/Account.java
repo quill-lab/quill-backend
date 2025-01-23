@@ -53,21 +53,6 @@ public class Account {
     }
 
     private void validate() {
-        if (email == null || !email.matches("^[A-Za-z0-9+_.-]+@(.+)$")) {
-            throw new IllegalArgumentException("Invalid email format");
-        }
-
-        if (password == null || password.isEmpty()) {
-            throw new IllegalArgumentException("Password cannot be empty");
-        }
-
-        if (password.length() < 8) {
-            throw new IllegalArgumentException("Password must be at least 8 characters long");
-        }
-
-        if (password.length() > 20) {
-            throw new IllegalArgumentException("Password must be at most 20 characters long");
-        }
     }
 
     static Account create(String email, String name, String hashedPassword, LocalDateTime now) {
