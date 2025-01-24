@@ -1,5 +1,6 @@
 package lab.ujumeonji.literaturebackend.domain.contributor;
 
+import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
@@ -31,6 +32,9 @@ public class ContributorGroup {
     @Column
     private LocalDateTime completedAt;
 
+    @Column
+    private Long activeContributorId;
+
     @OneToMany(mappedBy = "contributorGroup", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Contributor> contributors = new ArrayList<>();
 
@@ -53,6 +57,7 @@ public class ContributorGroup {
 
     ContributorGroup(int maxContributorCount, long novelId, LocalDateTime createdAt,
                      LocalDateTime updatedAt, LocalDateTime deletedAt) {
+        this.activeContributorId = null;
         this.contributorCount = 0;
         this.maxContributorCount = maxContributorCount;
         this.status = ContributorGroupStatus.PREPARING;
@@ -149,10 +154,19 @@ public class ContributorGroup {
         return contributors;
     }
 
-    public ContributorRole findRoleByAccountId(long accountId) {
+    @Nullable
+    public ContributorRole getCollaboratorRole(long accountId) {
         return contributors.stream()
                 .filter(contributor -> contributor.getAccountId() == accountId)
                 .map(Contributor::getRole)
+                .findFirst()
+                .orElse(null);
+    }
+
+    @Nullable
+    public Contributor getCurrentContributor() {
+        return contributors.stream()
+                .filter(contributor -> contributor.getId() == activeContributorId)
                 .findFirst()
                 .orElse(null);
     }

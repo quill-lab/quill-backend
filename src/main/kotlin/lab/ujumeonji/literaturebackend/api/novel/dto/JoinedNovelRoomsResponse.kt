@@ -19,7 +19,7 @@ data class JoinedNovelRoomsResponse(
         val role: ContributorRole,
         val contributorCount: Int,
         val maxContributorCount: Int,
-        val author: Author,
+        val author: Author?,
         val status: ContributorGroupStatus,
     ) {
         data class Category(

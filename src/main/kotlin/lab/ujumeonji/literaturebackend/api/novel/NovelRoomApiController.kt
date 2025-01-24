@@ -104,24 +104,26 @@ class NovelRoomApiController(
 
         return ResponseEntity.ok(
             JoinedNovelRoomsResponse(
-                items = result.result.map {
+                items = result.result.map { item ->
                     JoinedNovelRoomsResponse.ResponseItem(
-                        id = it.id,
+                        id = item.id,
                         category = JoinedNovelRoomsResponse.ResponseItem.Category(
-                            name = it.category.name,
-                            alias = it.category.alias
+                            name = item.category.name,
+                            alias = item.category.alias
                         ),
-                        title = it.title,
-                        createdAt = it.createdAt,
-                        completedAt = it.completedAt,
-                        role = it.role,
-                        contributorCount = it.contributorCount,
-                        maxContributorCount = it.maxContributorCount,
-                        author = JoinedNovelRoomsResponse.ResponseItem.Author(
-                            id = it.author.id,
-                            name = it.author.name
-                        ),
-                        status = it.status
+                        title = item.title,
+                        createdAt = item.createdAt,
+                        completedAt = item.completedAt,
+                        role = item.role,
+                        contributorCount = item.contributorCount,
+                        maxContributorCount = item.maxContributorCount,
+                        author = item.currentAuthor?.let {
+                            JoinedNovelRoomsResponse.ResponseItem.Author(
+                                id = it.id,
+                                name = it.name
+                            )
+                        },
+                        status = item.status
                     )
                 },
                 totalCount = result.totalCount,

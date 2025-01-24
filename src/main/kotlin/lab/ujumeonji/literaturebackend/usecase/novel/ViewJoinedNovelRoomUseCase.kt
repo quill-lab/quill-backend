@@ -41,7 +41,7 @@ class ViewJoinedNovelRoomUseCase(
             synopsis = novel.synopsis,
             createdAt = contributorGroup.createdAt,
             completedAt = contributorGroup.completedAt,
-            role = contributorGroup.findRoleByAccountId(me.id),
+            role = contributorGroup.getCollaboratorRole(me.id),
             contributorCount = contributorGroup.contributorCount,
             maxContributorCount = contributorGroup.maxContributorCount,
             author = Response.Author(
