@@ -1,5 +1,7 @@
 package lab.ujumeonji.literaturebackend.support.auth
 
+import lab.ujumeonji.literaturebackend.support.exception.BusinessException
+import lab.ujumeonji.literaturebackend.support.exception.ErrorCode
 import org.springframework.core.MethodParameter
 import org.springframework.stereotype.Component
 import org.springframework.web.bind.support.WebDataBinderFactory
@@ -23,8 +25,7 @@ class AuthArgumentResolver(
     ): Long? = when {
         parameter.hasParameterAnnotation(RequiredAuth::class.java) &&
                 parameter.parameterType == Long::class.java ->
-            authContext.userId ?: throw IllegalStateException("Unauthorized request")
-
+            authContext.userId ?: throw BusinessException(ErrorCode.UNAUTHORIZED)
         else -> authContext.userId
     }
 }
