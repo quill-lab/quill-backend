@@ -26,7 +26,7 @@ class AuthenticationApiController(
 
     @Operation(summary = "회원 가입", description = "회원 가입을 진행합니다.")
     @PostMapping("/sign-up")
-    fun signUp(@RequestBody request: SignUpBodyRequest): ResponseEntity<SignUpResponse> {
+    fun signUp(@Valid @RequestBody request: SignUpBodyRequest): ResponseEntity<SignUpResponse> {
         val result = signUpUseCase.execute(
             request = SignUpUseCase.Request(
                 email = request.email,
