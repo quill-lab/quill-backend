@@ -1,5 +1,6 @@
 package lab.ujumeonji.literaturebackend.domain.novel
 
+import lab.ujumeonji.literaturebackend.domain.novel.command.AddCharacterCommand
 import lab.ujumeonji.literaturebackend.domain.novel.command.CreateNovelCommand
 import lab.ujumeonji.literaturebackend.domain.novel.command.UpdateNovelCommand
 import org.springframework.stereotype.Service
@@ -50,4 +51,11 @@ class NovelService(
 
         return novelRepository.save(novel)
     }
+
+    @Transactional
+    fun addCharacter(id: Long, command: AddCharacterCommand, now: LocalDateTime = LocalDateTime.now()) =
+        findById(id)
+            ?.apply { addCharacter(command, now) }
+            ?.let { novelRepository.save(it) }?.characters?.last()
+            ?: throw IllegalArgumentException("Novel not found")
 }

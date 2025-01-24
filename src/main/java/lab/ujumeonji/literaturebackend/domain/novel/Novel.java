@@ -2,6 +2,7 @@ package lab.ujumeonji.literaturebackend.domain.novel;
 
 import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
+import lab.ujumeonji.literaturebackend.domain.novel.command.AddCharacterCommand;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
@@ -97,6 +98,16 @@ public class Novel {
                 .forEach(tag -> this.tags.add(NovelTag.create(tag, this, now)));
 
         this.updatedAt = now;
+    }
+
+    Character addCharacter(AddCharacterCommand command, LocalDateTime now) {
+        Character character = Character.create(this, command.getName(), command.getDescription(), command.getProfileImage(), command.getPriority(), now);
+
+        this.characters.add(character);
+
+        this.updatedAt = now;
+
+        return character;
     }
 
     public long getId() {

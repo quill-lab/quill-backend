@@ -113,4 +113,16 @@ public class Character {
 
         return updatedAt;
     }
+
+    public Integer getPriority() {
+        return priority;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public LocalDateTime getDeletedAt() {
+        return deletedAt;
+    }
 }
