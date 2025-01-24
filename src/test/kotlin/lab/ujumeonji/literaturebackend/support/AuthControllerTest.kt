@@ -11,42 +11,48 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import java.util.UUID
 
+data class TestAccount(
+    val email: String,
+    val password: String,
+    val nickname: String,
+    val accessToken: String,
+)
+
 abstract class AuthControllerTest(
     private val mockMvc: MockMvc,
     private val objectMapper: ObjectMapper,
 ) : ControllerTest(mockMvc, objectMapper) {
 
-    protected fun performAuthGet(url: String) = mockMvc.perform(
-        addAuthHeader(MockMvcRequestBuilders.get(url))
+    protected fun performAuthGet(url: String, account: TestAccount? = null) = mockMvc.perform(
+        addAuthHeader(MockMvcRequestBuilders.get(url), account)
             .accept(MediaType.APPLICATION_JSON)
     ).andDo(MockMvcResultHandlers.print())
 
-    protected fun performAuthPost(url: String, body: Any) = mockMvc.perform(
-        addAuthHeader(MockMvcRequestBuilders.post(url))
+    protected fun performAuthPost(url: String, body: Any, account: TestAccount? = null) = mockMvc.perform(
+        addAuthHeader(MockMvcRequestBuilders.post(url), account)
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
             .content(toJson(body))
     ).andDo(MockMvcResultHandlers.print())
 
-    protected fun performAuthPut(url: String, body: Any) = mockMvc.perform(
-        addAuthHeader(MockMvcRequestBuilders.put(url))
+    protected fun performAuthPut(url: String, body: Any, account: TestAccount? = null) = mockMvc.perform(
+        addAuthHeader(MockMvcRequestBuilders.put(url), account)
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
             .content(toJson(body))
     ).andDo(MockMvcResultHandlers.print())
 
-    protected fun performAuthDelete(url: String) = mockMvc.perform(
-        addAuthHeader(MockMvcRequestBuilders.delete(url))
+    protected fun performAuthDelete(url: String, account: TestAccount? = null) = mockMvc.perform(
+        addAuthHeader(MockMvcRequestBuilders.delete(url), account)
             .accept(MediaType.APPLICATION_JSON)
     ).andDo(MockMvcResultHandlers.print())
 
-    private fun addAuthHeader(builder: MockHttpServletRequestBuilder): MockHttpServletRequestBuilder {
-        val (email, password) = createTestAccount()
-        val token = signIn(email, password)
-        return builder.header(HttpHeaders.AUTHORIZATION, "Bearer $token")
+    private fun addAuthHeader(builder: MockHttpServletRequestBuilder, account: TestAccount?): MockHttpServletRequestBuilder {
+        val testAccount = account ?: createTestAccount()
+        return builder.header(HttpHeaders.AUTHORIZATION, "Bearer ${testAccount.accessToken}")
     }
 
-    private fun createTestAccount(): Pair<String, String> {
+    protected fun createTestAccount(): TestAccount {
         val uuid = UUID.randomUUID().toString()
         val email = "test$uuid@test.com"
         val password = "Password1!"
@@ -64,7 +70,13 @@ abstract class AuthControllerTest(
             .andExpect(MockMvcResultMatchers.status().isOk)
             .andReturn()
 
-        return email to password
+        val token = signIn(email, password)
+        return TestAccount(
+            email = email,
+            password = password,
+            nickname = nickname,
+            accessToken = token
+        )
     }
 
     private fun signIn(email: String, password: String): String {
