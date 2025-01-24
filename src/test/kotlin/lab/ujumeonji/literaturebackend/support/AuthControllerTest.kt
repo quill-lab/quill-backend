@@ -56,7 +56,7 @@ abstract class AuthControllerTest(
         val uuid = UUID.randomUUID().toString()
         val email = "test$uuid@test.com"
         val password = "Password1!"
-        val nickname = "tester$uuid"
+        val nickname = "test123"
 
         mockMvc.perform(
             MockMvcRequestBuilders.post("/api/v1/sign-up")
