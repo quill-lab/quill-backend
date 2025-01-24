@@ -30,6 +30,10 @@ class ViewJoinedNovelRoomUseCase(
         val novel = novelService.findById(contributorGroup.novelId)
             ?: throw BusinessException(ErrorCode.NOVEL_NOT_FOUND)
 
+        val currentAuthorAccountId = contributorGroup.currentContributor?.accountId
+
+        val currentAuthor = currentAuthorAccountId?.let { accountService.findById(it) }
+
         return Response(
             id = contributorGroup.id,
             category = Response.Category(
@@ -44,10 +48,12 @@ class ViewJoinedNovelRoomUseCase(
             role = contributorGroup.getCollaboratorRole(me.id),
             contributorCount = contributorGroup.contributorCount,
             maxContributorCount = contributorGroup.maxContributorCount,
-            author = Response.Author(
-                id = me.id,
-                name = me.name
-            ),
+            author = currentAuthor?.let {
+                Response.Author(
+                    id = it.id,
+                    name = it.name
+                )
+            },
             status = contributorGroup.status,
             tags = novel.hashtaggedTags
         )
@@ -69,7 +75,7 @@ class ViewJoinedNovelRoomUseCase(
         val role: ContributorRole,
         val contributorCount: Int,
         val maxContributorCount: Int,
-        val author: Author,
+        val author: Author?,
         val status: ContributorGroupStatus,
         val tags: List<String>
     ) {

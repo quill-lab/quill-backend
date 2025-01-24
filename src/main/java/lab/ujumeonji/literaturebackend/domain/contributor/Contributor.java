@@ -58,15 +58,11 @@ public class Contributor {
         return new Contributor(accountId, contributorGroup, writingOrder, now, now, null);
     }
 
-    Long getAccountId() {
+    public Long getAccountId() {
         return accountId;
     }
 
     ContributorRole getRole() {
         return role;
-    }
-
-    public Long getId() {
-        return id;
     }
 }
