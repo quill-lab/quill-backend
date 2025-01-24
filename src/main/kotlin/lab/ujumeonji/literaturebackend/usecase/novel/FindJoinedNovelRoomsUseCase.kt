@@ -32,7 +32,7 @@ class FindJoinedNovelRoomsUseCase(
 
         val novels = novelService.findNovels(contributorGroups.map { it.novelId }).associateBy { it.id }
 
-        val activeContributorIds = contributorGroups.map { it.currentContributor?.accountId }.filterNotNull()
+        val activeContributorIds = contributorGroups.mapNotNull { it.currentContributor?.accountId }
 
         val contributorAccount = accountService.findByIds(activeContributorIds)
             .associateBy { it.id }
