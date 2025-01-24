@@ -135,7 +135,7 @@ class NovelRoomApiController(
     @PostMapping
     fun createNovelRoom(
         @RequiredAuth accountId: Long,
-        @Valid request: CreateNovelRoomBodyRequest
+        @Valid @RequestBody request: CreateNovelRoomBodyRequest
     ): ResponseEntity<CreateNovelRoomResponse> {
         val result = createNovelRoomUseCase.execute(
             request = CreateNovelRoomUseCase.Request(

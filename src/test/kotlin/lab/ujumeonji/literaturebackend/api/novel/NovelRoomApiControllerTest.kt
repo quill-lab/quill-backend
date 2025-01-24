@@ -33,7 +33,7 @@ class NovelRoomApiControllerTest(
                 then("소설 공방이 생성된다") {
                     response
                         .andExpect(status().isCreated)
-                        .andExpect(jsonPath("$.novelRoomId").exists())
+                        .andExpect(jsonPath("$.id").exists())
                 }
             }
 
