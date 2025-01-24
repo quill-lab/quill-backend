@@ -9,7 +9,7 @@ import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilde
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers
-import java.util.UUID
+import java.util.*
 
 data class TestAccount(
     val email: String,
@@ -47,7 +47,10 @@ abstract class AuthControllerTest(
             .accept(MediaType.APPLICATION_JSON)
     ).andDo(MockMvcResultHandlers.print())
 
-    private fun addAuthHeader(builder: MockHttpServletRequestBuilder, account: TestAccount?): MockHttpServletRequestBuilder {
+    private fun addAuthHeader(
+        builder: MockHttpServletRequestBuilder,
+        account: TestAccount?
+    ): MockHttpServletRequestBuilder {
         val testAccount = account ?: createTestAccount()
         return builder.header(HttpHeaders.AUTHORIZATION, "Bearer ${testAccount.accessToken}")
     }
@@ -61,11 +64,15 @@ abstract class AuthControllerTest(
         mockMvc.perform(
             MockMvcRequestBuilders.post("/api/v1/sign-up")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(toJson(mapOf(
-                    "email" to email,
-                    "password" to password,
-                    "nickname" to nickname
-                )))
+                .content(
+                    toJson(
+                        mapOf(
+                            "email" to email,
+                            "password" to password,
+                            "nickname" to nickname
+                        )
+                    )
+                )
         )
             .andExpect(MockMvcResultMatchers.status().isOk)
             .andReturn()
@@ -83,10 +90,14 @@ abstract class AuthControllerTest(
         val signInResult = mockMvc.perform(
             MockMvcRequestBuilders.post("/api/v1/sign-in")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(toJson(mapOf(
-                    "email" to email,
-                    "password" to password
-                )))
+                .content(
+                    toJson(
+                        mapOf(
+                            "email" to email,
+                            "password" to password
+                        )
+                    )
+                )
         )
             .andExpect(MockMvcResultMatchers.status().isOk)
             .andReturn()
