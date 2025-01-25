@@ -3,11 +3,12 @@ package lab.ujumeonji.literaturebackend.api.novel
 import com.fasterxml.jackson.databind.ObjectMapper
 import lab.ujumeonji.literaturebackend.support.AuthControllerTest
 import lab.ujumeonji.literaturebackend.support.exception.ErrorCode
+import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-class NovelRoomApiControllerTest(
+class NovelRoomApiControllerTest @Autowired constructor(
     mockMvc: MockMvc,
     objectMapper: ObjectMapper,
 ) : AuthControllerTest(
@@ -64,6 +65,98 @@ class NovelRoomApiControllerTest(
                     response
                         .andExpect(status().isCreated)
                         .andExpect(jsonPath("$.id").exists())
+                }
+            }
+        }
+
+        given("소설 공방 목록 조회시") {
+            val account = fixtureAccount()
+            val novelRoomId = fixtureNovelRoom(account)
+
+            `when`("인증된 사용자가 조회하면") {
+                val response = performAuthGet("/api/v1/novel-rooms?page=0&size=10", account)
+
+                then("소설 공방 목록이 반환된다") {
+                    response
+                        .andExpect(status().isOk)
+                        .andExpect(jsonPath("$.items").isArray)
+                        .andExpect(jsonPath("$.totalCount").exists())
+                        .andExpect(jsonPath("$.size").value(10))
+                        .andExpect(jsonPath("$.page").value(0))
+                }
+            }
+
+            `when`("인증되지 않은 사용자가 조회하면") {
+                val response = performGet("/api/v1/novel-rooms?page=0&size=10")
+
+                then("인증 오류가 발생한다") {
+                    response
+                        .andExpect(status().isUnauthorized)
+                        .andExpect(jsonPath("$.code").value(ErrorCode.UNAUTHORIZED.code))
+                }
+            }
+        }
+
+        given("특정 소설 공방 조회시") {
+            val account = fixtureAccount()
+            val novelRoomId = fixtureNovelRoom(account)
+
+            `when`("인증된 사용자가 조회하면") {
+                val response = performAuthGet("/api/v1/novel-rooms/$novelRoomId", account)
+
+                then("소설 공방 정보가 반환된다") {
+                    response
+                        .andExpect(status().isOk)
+                        .andExpect(jsonPath("$.id").value(novelRoomId))
+                        .andExpect(jsonPath("$.title").exists())
+                        .andExpect(jsonPath("$.category").exists())
+                }
+            }
+
+            `when`("존재하지 않는 소설 공방을 조회하면") {
+                val response = performAuthGet("/api/v1/novel-rooms/999999", account)
+
+                then("Not Found 오류가 발생한다") {
+                    response
+                        .andExpect(status().isNotFound)
+                }
+            }
+        }
+
+        given("소설 공방 수정시") {
+            val account = fixtureAccount()
+            val novelRoomId = fixtureNovelRoom(account)
+
+            val request = mapOf(
+                "title" to "수정된 제목",
+                "description" to "수정된 설명",
+                "category" to "GENERAL",
+                "tags" to listOf("수정태그1", "수정태그2"),
+                "synopsis" to "수정된 줄거리입니다."
+            )
+
+            `when`("인증된 사용자가 수정하면") {
+                val response = performAuthPatch("/api/v1/novel-rooms/$novelRoomId", request, account)
+
+                then("소설 공방이 수정된다") {
+                    response
+                        .andExpect(status().isOk)
+                        .andExpect(jsonPath("$.id").exists())
+                }
+            }
+        }
+
+        given("소설 등장인물 목록 조회시") {
+            val account = fixtureAccount()
+            val novelRoomId = fixtureNovelRoom(account)
+
+            `when`("등장인물 목록을 조회하면") {
+                val response = performGet("/api/v1/novel-rooms/$novelRoomId/characters")
+
+                then("등장인물 목록이 반환된다") {
+                    response
+                        .andExpect(status().isOk)
+                        .andExpect(jsonPath("$").isArray)
                 }
             }
         }
