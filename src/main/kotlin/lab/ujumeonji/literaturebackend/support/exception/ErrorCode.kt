@@ -10,6 +10,7 @@ enum class ErrorCode(
     CONTRIBUTOR_GROUP_NOT_FOUND(404, "CONTRIBUTOR-002", "기여자 그룹을 찾을 수 없습니다."),
     NO_PERMISSION_TO_UPDATE(403, "CONTRIBUTOR-003", "수정할 권한이 없습니다."),
     NO_PERMISSION_TO_VIEW(403, "CONTRIBUTOR-004", "조회 권한이 없습니다."),
+    CONTRIBUTOR_NOT_FOUND(404, "CONTRIBUTOR-005", "기여자를 찾을 수 없습니다."),
 
     // Account 관련 에러
     ACCOUNT_NOT_FOUND(404, "ACCOUNT-001", "계정을 찾을 수 없습니다."),

@@ -22,6 +22,7 @@ class NovelRoomApiController(
     private val findNovelCharactersUseCase: FindNovelCharactersUseCase,
     private val addNovelCharacterUseCase: AddNovelCharacterUseCase,
     private val findNovelRoomParticipantsUseCase: FindNovelRoomParticipantsUseCase,
+    private val updateParticipantOrderUseCase: UpdateParticipantOrderUseCase,
 ) {
 
     @Operation(summary = "소설 공방 수정", description = "소설 공방을 수정합니다.")
@@ -217,8 +218,8 @@ class NovelRoomApiController(
     @Operation(summary = "소설 공방 참여자 목록 조회", description = "소설 공방의 참여자 목록을 조회합니다.")
     @GetMapping("/{novelRoomId}/participants")
     fun getParticipants(
-        @RequiredAuth accountId: Long,
         @PathVariable novelRoomId: Long,
+        @RequiredAuth accountId: Long,
     ): ResponseEntity<List<NovelRoomParticipantsResponse>> {
         val result = findNovelRoomParticipantsUseCase.execute(
             request = FindNovelRoomParticipantsUseCase.Request(
@@ -238,6 +239,31 @@ class NovelRoomApiController(
                     joinedAt = response.joinedAt,
                 )
             }
+        )
+    }
+
+    @Operation(summary = "소설 공방 참여자 작성 순서 변경", description = "소설 공방의 참여자 작성 순서를 변경합니다.")
+    @PatchMapping("/{novelRoomId}/participants/{participantId}/order")
+    fun updateParticipantOrder(
+        @PathVariable novelRoomId: Long,
+        @PathVariable participantId: Long,
+        @Valid @RequestBody request: UpdateParticipantOrderRequest,
+        @RequiredAuth accountId: Long,
+    ): ResponseEntity<UpdateParticipantResponse> {
+        val result = updateParticipantOrderUseCase.execute(
+            request = UpdateParticipantOrderUseCase.Request(
+                accountId = accountId,
+                novelRoomId = novelRoomId,
+                participantId = participantId,
+                writingOrder = request.writingOrder,
+            ),
+            executedAt = LocalDateTime.now()
+        )
+
+        return ResponseEntity.ok(
+            UpdateParticipantResponse(
+                id = result.id,
+            )
         )
     }
 

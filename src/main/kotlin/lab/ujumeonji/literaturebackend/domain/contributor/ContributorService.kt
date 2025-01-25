@@ -43,7 +43,7 @@ class ContributorService(
     fun hasManagePermission(contributorGroupId: Long, accountId: Long): Boolean {
         val contributorGroup = findGroupById(contributorGroupId) ?: return false
         return contributorGroup.contributors.any { contributor ->
-            contributor.accountId == accountId && contributor.role == ContributorRole.MAIN
+            contributor.accountId == accountId && contributor.role == ContributorRole.MAIN && !contributor.isDeleted
         }
     }
 
@@ -55,5 +55,16 @@ class ContributorService(
         return contributorGroup.contributors.any { contributor ->
             contributor.accountId == accountId && !contributor.isDeleted
         }
+    }
+
+    fun updateParticipantOrder(
+        contributorGroupId: Long,
+        contributorId: Long,
+        writingOrder: Int,
+        now: LocalDateTime,
+    ) {
+        val contributorGroup = findGroupById(contributorGroupId)
+
+        contributorGroup?.updateWritingOrder(contributorId, writingOrder)
     }
 }

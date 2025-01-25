@@ -12,6 +12,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import java.util.*
 
 data class TestAccount(
+    val id: Long,
     val email: String,
     val password: String,
     val nickname: String,
@@ -68,7 +69,7 @@ abstract class AuthControllerTest(
         val password = "Password1!"
         val nickname = "test123"
 
-        mockMvc.perform(
+        val response = mockMvc.perform(
             MockMvcRequestBuilders.post("/api/v1/sign-up")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(
@@ -84,8 +85,12 @@ abstract class AuthControllerTest(
             .andExpect(MockMvcResultMatchers.status().isOk)
             .andReturn()
 
+        val accountId = objectMapper.readTree(response.response.contentAsString)
+            .get("id").asLong()
+
         val token = signIn(email, password)
         return TestAccount(
+            id = accountId,
             email = email,
             password = password,
             nickname = nickname,

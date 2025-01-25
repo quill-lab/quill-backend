@@ -176,4 +176,46 @@ public class ContributorGroup {
         Contributor currentContributor = getCurrentContributor();
         return currentContributor != null ? currentContributor.getAccountId() : null;
     }
+
+    void updateWritingOrder(Long contributorId, Integer writingOrder) {
+        contributors.stream()
+                .filter(c -> c.getId().equals(contributorId))
+                .findFirst()
+                .ifPresent(contributor -> {
+                    if (contributor.isDeleted()) {
+                        return;
+                    }
+
+                    int currentOrder = contributor.getWritingOrder();
+                    int maxOrder = (int) contributors.stream()
+                            .filter(c -> !c.isDeleted())
+                            .count() - 1;
+
+                    int targetOrder = Math.min(writingOrder, maxOrder);
+
+                    if (targetOrder < currentOrder) {
+                        shiftOrdersUp(contributorId, targetOrder, currentOrder);
+                    } else if (targetOrder > currentOrder) {
+                        shiftOrdersDown(contributorId, currentOrder, targetOrder);
+                    }
+
+                    contributor.updateWritingOrder(targetOrder);
+                });
+    }
+
+    private void shiftOrdersUp(Long contributorId, int targetOrder, int currentOrder) {
+        contributors.stream()
+                .filter(c -> !c.getId().equals(contributorId)
+                        && c.getWritingOrder() >= targetOrder
+                        && c.getWritingOrder() < currentOrder)
+                .forEach(c -> c.updateWritingOrder(c.getWritingOrder() + 1));
+    }
+
+    private void shiftOrdersDown(Long contributorId, int currentOrder, int targetOrder) {
+        contributors.stream()
+                .filter(c -> !c.getId().equals(contributorId)
+                        && c.getWritingOrder() <= targetOrder
+                        && c.getWritingOrder() > currentOrder)
+                .forEach(c -> c.updateWritingOrder(c.getWritingOrder() - 1));
+    }
 }

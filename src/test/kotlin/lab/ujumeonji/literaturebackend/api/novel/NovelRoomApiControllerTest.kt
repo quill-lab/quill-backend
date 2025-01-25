@@ -201,5 +201,131 @@ class NovelRoomApiControllerTest @Autowired constructor(
                 }
             }
         }
+
+        given("소설 공방 참여자 순서 변경시") {
+            val mainAccount = fixtureAccount()
+            val novelRoomId = fixtureNovelRoom(mainAccount)  // MAIN 권한으로 생성됨
+
+            val subAccount = fixtureAccount()
+            // SUB 권한으로 참여자 추가
+            performAuthPost(
+                "/api/v1/novel-rooms/$novelRoomId/participants",
+                mapOf("accountId" to subAccount.id), mainAccount
+            )
+
+            `when`("소설 공방 대표 작가가 참여자 순서를 변경하면") {
+                val request = mapOf(
+                    "writingOrder" to 1
+                )
+                val response = performAuthPatch(
+                    "/api/v1/novel-rooms/$novelRoomId/participants/${subAccount.id}/order",
+                    request,
+                    mainAccount
+                )
+
+                then("참여자 순서가 변경된다") {
+                    response
+                        .andExpect(status().isOk)
+                        .andExpect(jsonPath("$.id").exists())
+                }
+            }
+
+            `when`("일반 참여자가 다른 참여자의 순서를 변경하면") {
+                val request = mapOf(
+                    "writingOrder" to 0
+                )
+                val response = performAuthPatch(
+                    "/api/v1/novel-rooms/$novelRoomId/participants/${mainAccount.id}/order",
+                    request,
+                    subAccount
+                )
+
+                then("수정 권한 없음 오류가 발생한다") {
+                    response
+                        .andExpect(status().isForbidden)
+                        .andExpect(jsonPath("$.code").value(ErrorCode.NO_PERMISSION_TO_UPDATE.code))
+                }
+            }
+
+            `when`("일반 참여자가 자신의 순서를 변경하려고 하면") {
+                val request = mapOf(
+                    "writingOrder" to 0
+                )
+                val response = performAuthPatch(
+                    "/api/v1/novel-rooms/$novelRoomId/participants/${subAccount.id}/order",
+                    request,
+                    subAccount
+                )
+
+                then("수정 권한 없음 오류가 발생한다") {
+                    response
+                        .andExpect(status().isForbidden)
+                        .andExpect(jsonPath("$.code").value(ErrorCode.NO_PERMISSION_TO_UPDATE.code))
+                }
+            }
+
+            `when`("참여하지 않은 사용자가 순서를 변경하면") {
+                val otherAccount = fixtureAccount()
+                val request = mapOf(
+                    "writingOrder" to 1
+                )
+                val response = performAuthPatch(
+                    "/api/v1/novel-rooms/$novelRoomId/participants/${subAccount.id}/order",
+                    request,
+                    otherAccount
+                )
+
+                then("수정 권한 없음 오류가 발생한다") {
+                    response
+                        .andExpect(status().isForbidden)
+                        .andExpect(jsonPath("$.code").value(ErrorCode.NO_PERMISSION_TO_UPDATE.code))
+                }
+            }
+
+            `when`("인증되지 않은 사용자가 순서를 변경하면") {
+                val request = mapOf(
+                    "writingOrder" to 1
+                )
+                val response =
+                    performPatch("/api/v1/novel-rooms/$novelRoomId/participants/${subAccount.id}/order", request)
+
+                then("인증 오류가 발생한다") {
+                    response
+                        .andExpect(status().isUnauthorized)
+                        .andExpect(jsonPath("$.code").value(ErrorCode.UNAUTHORIZED.code))
+                }
+            }
+
+            `when`("존재하지 않는 참여자의 순서를 변경하면") {
+                val request = mapOf(
+                    "writingOrder" to 1
+                )
+                val response =
+                    performAuthPatch("/api/v1/novel-rooms/$novelRoomId/participants/999999/order", request, mainAccount)
+
+                then("참여자를 찾을 수 없다는 오류가 발생한다") {
+                    response
+                        .andExpect(status().isNotFound)
+                        .andExpect(jsonPath("$.code").value(ErrorCode.CONTRIBUTOR_NOT_FOUND.code))
+                }
+            }
+
+            `when`("참여자 수보다 큰 순서로 변경하면") {
+                val request = mapOf(
+                    "writingOrder" to 999
+                )
+                val response = performAuthPatch(
+                    "/api/v1/novel-rooms/$novelRoomId/participants/${subAccount.id}/order",
+                    request,
+                    mainAccount
+                )
+
+                then("가능한 최대 순서로 조정되어 변경된다") {
+                    response
+                        .andExpect(status().isOk)
+                        .andExpect(jsonPath("$.id").exists())
+                }
+            }
+        }
     }
 }

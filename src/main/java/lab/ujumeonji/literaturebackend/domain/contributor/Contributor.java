@@ -84,4 +84,8 @@ public class Contributor {
     boolean isDeleted() {
         return deletedAt != null;
     }
+
+    void updateWritingOrder(Integer writingOrder) {
+        this.writingOrder = writingOrder;
+    }
 }

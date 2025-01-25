@@ -59,4 +59,11 @@ abstract class ControllerTest(
         MockMvcRequestBuilders.delete(url)
             .accept(MediaType.APPLICATION_JSON)
     ).andDo(MockMvcResultHandlers.print())
+
+    fun performPatch(url: String, body: Any) = mockMvc.perform(
+        MockMvcRequestBuilders.patch(url)
+            .contentType(MediaType.APPLICATION_JSON)
+            .accept(MediaType.APPLICATION_JSON)
+            .content(toJson(body))
+    ).andDo(MockMvcResultHandlers.print())
 }
