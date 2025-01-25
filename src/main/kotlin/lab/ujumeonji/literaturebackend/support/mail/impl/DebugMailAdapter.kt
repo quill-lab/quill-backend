@@ -7,7 +7,7 @@ import org.springframework.stereotype.Component
 
 @Component
 class DebugMailAdapter : MailPort {
-    override suspend fun sendHtmlEmail(to: String, subject: String, htmlContent: String) {
+    override fun sendHtmlEmail(to: String, subject: String, htmlContent: String) {
         logger.info("Sending email:")
         logger.info("To: $to")
         logger.info("Subject: $subject")

@@ -4,6 +4,8 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import io.kotest.core.spec.style.BehaviorSpec
 import io.kotest.core.test.TestCase
 import io.kotest.extensions.spring.SpringExtension
+import io.mockk.mockk
+import lab.ujumeonji.literaturebackend.support.mail.MailPort
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
@@ -20,11 +22,11 @@ abstract class ControllerTest(
     val objectMapper: ObjectMapper,
 ) : BehaviorSpec() {
 
+    protected val mailPort: MailPort = mockk<MailPort>()
+
     override fun extensions() = listOf(SpringExtension)
 
-    override suspend fun beforeEach(testCase: TestCase) {
-        // 각 테스트 전에 실행될 공통 설정
-    }
+    override suspend fun beforeEach(testCase: TestCase) = Unit
 
     protected fun toJson(obj: Any): String {
         return objectMapper.writeValueAsString(obj)
