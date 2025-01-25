@@ -150,7 +150,7 @@ public class ContributorGroup {
         return completedAt;
     }
 
-    List<Contributor> getContributors() {
+    public List<Contributor> getContributors() {
         return contributors;
     }
 

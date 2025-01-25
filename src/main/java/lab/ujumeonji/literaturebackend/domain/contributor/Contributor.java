@@ -65,11 +65,19 @@ public class Contributor {
         return accountId;
     }
 
-    ContributorRole getRole() {
+    public ContributorRole getRole() {
         return role;
     }
 
     Long getId() {
         return id;
+    }
+
+    public Integer getWritingOrder() {
+        return writingOrder;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
     }
 }
