@@ -17,7 +17,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultHandlers
 @ActiveProfiles("test")
 abstract class ControllerTest(
     private val mockMvc: MockMvc,
-    private val objectMapper: ObjectMapper,
+    val objectMapper: ObjectMapper,
 ) : BehaviorSpec() {
 
     override fun extensions() = listOf(SpringExtension)
@@ -39,7 +39,7 @@ abstract class ControllerTest(
             .accept(MediaType.APPLICATION_JSON)
     ).andDo(MockMvcResultHandlers.print())
 
-    protected fun performPost(url: String, body: Any) = mockMvc.perform(
+    fun performPost(url: String, body: Any) = mockMvc.perform(
         MockMvcRequestBuilders.post(url)
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
