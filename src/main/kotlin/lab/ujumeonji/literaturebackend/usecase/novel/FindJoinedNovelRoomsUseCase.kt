@@ -30,41 +30,39 @@ class FindJoinedNovelRoomsUseCase(
         val me = accountService.findById(request.accountId)
             ?: throw BusinessException(ErrorCode.ACCOUNT_NOT_FOUND)
 
-        val novels = novelService.findNovels(contributorGroups.map { it.novelId }).associateBy { it.id }
-
-        val accountIds = contributorGroups.mapNotNull { it.activeContributorAccountId }
-
-        val accountMap = accountService.findByIds(accountIds)
+        val novels = novelService.findNovels(contributorGroups.map { it.novelId })
             .associateBy { it.id }
 
-        val result = contributorGroups.filter {
-            novels.containsKey(it.novelId)
-        }.map { contributorGroup ->
-            val novel = novels[contributorGroup.novelId]
-                ?: throw BusinessException(ErrorCode.NOVEL_NOT_FOUND)
+        val accounts = accountService.findByIds(contributorGroups.mapNotNull { it.activeContributorAccountId })
+            .associateBy { it.id }
 
-            Response.ResponseItem(
-                id = contributorGroup.id,
-                category = Response.ResponseItem.Category(
-                    name = novel.category.name,
-                    alias = novel.category.alias
-                ),
-                title = novel.title,
-                createdAt = contributorGroup.createdAt,
-                completedAt = contributorGroup.completedAt,
-                role = contributorGroup.getCollaboratorRole(me.id),
-                contributorCount = contributorGroup.contributorCount,
-                maxContributorCount = contributorGroup.maxContributorCount,
-                currentAuthor = contributorGroup.activeContributorAccountId?.let { contributorId ->
-                    accountMap[contributorId]?.run {
-                        Response.ResponseItem.Author(
-                            id = id,
-                            name = name
-                        )
-                    }
-                },
-                status = contributorGroup.status
-            )
+        val result = contributorGroups.mapNotNull { contributorGroup ->
+            novels[contributorGroup.novelId]?.let { novel ->
+                with(contributorGroup) {
+                    Response.ResponseItem(
+                        id = id,
+                        category = Response.ResponseItem.Category(
+                            name = novel.category.name,
+                            alias = novel.category.alias
+                        ),
+                        title = novel.title,
+                        createdAt = createdAt,
+                        completedAt = completedAt,
+                        role = getCollaboratorRole(me.id),
+                        contributorCount = contributorCount,
+                        maxContributorCount = maxContributorCount,
+                        currentAuthor = activeContributorAccountId?.let { contributorId ->
+                            accounts[contributorId]?.let { account ->
+                                Response.ResponseItem.Author(
+                                    id = account.id,
+                                    name = account.name
+                                )
+                            }
+                        },
+                        status = status
+                    )
+                }
+            }
         }
 
         return Response(
@@ -87,7 +85,6 @@ class FindJoinedNovelRoomsUseCase(
         val size: Int,
         val page: Int,
     ) {
-
         data class ResponseItem(
             val id: Long,
             val category: Category,
@@ -100,7 +97,6 @@ class FindJoinedNovelRoomsUseCase(
             val currentAuthor: Author?,
             val status: ContributorGroupStatus,
         ) {
-
             data class Category(
                 val name: String,
                 val alias: String,
