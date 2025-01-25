@@ -182,8 +182,10 @@ class NovelRoomApiController(
                             id = updatedBy.id,
                             name = updatedBy.name
                         )
-                    })
-            })
+                    }
+                )
+            }
+        )
     }
 
     @Operation(summary = "캐릭터 추가", description = "소설 공방에 캐릭터를 추가합니다.")

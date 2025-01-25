@@ -4,7 +4,6 @@ import lab.ujumeonji.literaturebackend.domain.account.AccountService
 import lab.ujumeonji.literaturebackend.domain.account.command.CreateAccountCommand
 import lab.ujumeonji.literaturebackend.support.exception.BusinessException
 import lab.ujumeonji.literaturebackend.support.exception.ErrorCode
-import lab.ujumeonji.literaturebackend.support.session.TokenManager
 import lab.ujumeonji.literaturebackend.usecase.UseCase
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
@@ -14,7 +13,6 @@ import java.time.LocalDateTime
 @Transactional
 class SignUpUseCase(
     private val accountService: AccountService,
-    private val tokenManager: TokenManager,
 ) : UseCase<SignUpUseCase.Request, SignUpUseCase.Response> {
 
     override fun execute(request: Request, executedAt: LocalDateTime): Response {
