@@ -47,5 +47,25 @@ class NovelRoomApiControllerTest(
                 }
             }
         }
+
+        given("대표 작가가 유효한 등장인물 정보로") {
+            val account = fixtureAccount()
+            val novelRoomId = fixtureNovelRoom(account)
+
+            val request = mapOf(
+                "name" to "테스트 캐릭터",
+                "description" to "테스트 캐릭터 설명"
+            )
+
+            `when`("등장인물을 추가하면") {
+                val response = performAuthPost("/api/v1/novel-rooms/$novelRoomId/characters", request, account)
+
+                then("소설에 등장인물이 추가된다.") {
+                    response
+                        .andExpect(status().isCreated)
+                        .andExpect(jsonPath("$.id").exists())
+                }
+            }
+        }
     }
 }

@@ -20,6 +20,7 @@ class NovelRoomApiController(
     private val viewJoinedNovelRoomUseCase: ViewJoinedNovelRoomUseCase,
     private val updateNovelUseCase: UpdateNovelUseCase,
     private val findNovelCharactersUseCase: FindNovelCharactersUseCase,
+    private val addNovelCharacterUseCase: AddNovelCharacterUseCase,
 ) {
 
     @Operation(summary = "소설 공방 수정", description = "소설 공방을 수정합니다.")
@@ -183,6 +184,30 @@ class NovelRoomApiController(
                         )
                     })
             })
+    }
+
+    @Operation(summary = "캐릭터 추가", description = "소설 공방에 캐릭터를 추가합니다.")
+    @PostMapping("/{novelRoomId}/characters")
+    fun addCharacter(
+        @RequiredAuth accountId: Long,
+        @PathVariable novelRoomId: Long,
+        @Valid @RequestBody request: AddCharacterRequest
+    ): ResponseEntity<AddCharacterResponse> {
+        val result = addNovelCharacterUseCase.execute(
+            request = AddNovelCharacterUseCase.Request(
+                accountId = accountId,
+                contributorGroupId = novelRoomId,
+                name = request.name,
+                description = request.description,
+            ),
+            executedAt = LocalDateTime.now()
+        )
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(
+            AddCharacterResponse(
+                id = result.id,
+            )
+        )
     }
 
     @Operation(summary = "소설 공방 모집글 생성", description = "소설 공방의 모집글을 생성합니다.")

@@ -53,9 +53,9 @@ class NovelService(
     }
 
     @Transactional
-    fun addCharacter(id: Long, command: AddCharacterCommand, now: LocalDateTime = LocalDateTime.now()) =
-        findById(id)
+    fun addCharacter(novelId: Long, command: AddCharacterCommand, now: LocalDateTime = LocalDateTime.now()): Long =
+        findById(novelId)
             ?.apply { addCharacter(command, now) }
-            ?.let { novelRepository.save(it) }?.characters?.last()
+            ?.let { novelRepository.save(it) }?.characters?.last()?.id
             ?: throw IllegalArgumentException("Novel not found")
 }

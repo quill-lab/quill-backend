@@ -51,11 +51,11 @@ abstract class AuthControllerTest(
         builder: MockHttpServletRequestBuilder,
         account: TestAccount?
     ): MockHttpServletRequestBuilder {
-        val testAccount = account ?: createTestAccount()
+        val testAccount = account ?: fixtureAccount()
         return builder.header(HttpHeaders.AUTHORIZATION, "Bearer ${testAccount.accessToken}")
     }
 
-    protected fun createTestAccount(): TestAccount {
+    protected fun fixtureAccount(): TestAccount {
         val uuid = UUID.randomUUID().toString()
         val email = "test$uuid@test.com"
         val password = "Password1!"
@@ -104,5 +104,24 @@ abstract class AuthControllerTest(
 
         val response = objectMapper.readValue(signInResult.response.contentAsString, SignInResponse::class.java)
         return response.accessToken
+    }
+
+    protected fun fixtureNovelRoom(account: TestAccount?): Long {
+        val request = mapOf(
+            "maxContributors" to 5,
+            "title" to "test title",
+            "description" to "test description",
+            "category" to "GENERAL",
+            "tags" to listOf("test tag"),
+            "synopsis" to "test synopsis",
+            "coverImage" to "test cover image"
+        )
+
+        val response = performAuthPost("/api/v1/novel-rooms", request, account)
+            .andExpect(MockMvcResultMatchers.status().isCreated)
+            .andReturn()
+
+        val responseBody = objectMapper.readTree(response.response.contentAsString)
+        return responseBody.get("id").asLong()
     }
 }

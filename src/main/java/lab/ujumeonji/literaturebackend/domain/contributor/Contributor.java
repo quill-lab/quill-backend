@@ -42,20 +42,23 @@ public class Contributor {
     protected Contributor() {
     }
 
-    Contributor(Long accountId, ContributorGroup contributorGroup, Integer writingOrder, LocalDateTime createdAt,
+    Contributor(Long accountId, ContributorGroup contributorGroup, ContributorRole role, Integer writingOrder,
+                LocalDateTime createdAt,
                 LocalDateTime updatedAt,
                 LocalDateTime deletedAt) {
         this.accountId = accountId;
         this.contributorGroup = contributorGroup;
+        this.role = role;
         this.writingOrder = writingOrder;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.deletedAt = deletedAt;
     }
 
-    static Contributor create(Long accountId, ContributorGroup contributorGroup, Integer writingOrder,
+    static Contributor create(Long accountId, ContributorGroup contributorGroup, ContributorRole role,
+                              Integer writingOrder,
                               LocalDateTime now) {
-        return new Contributor(accountId, contributorGroup, writingOrder, now, now, null);
+        return new Contributor(accountId, contributorGroup, role, writingOrder, now, now, null);
     }
 
     public Long getAccountId() {

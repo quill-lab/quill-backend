@@ -101,7 +101,7 @@ public class Novel {
     }
 
     Character addCharacter(AddCharacterCommand command, LocalDateTime now) {
-        Character character = Character.create(this, command.getName(), command.getDescription(), command.getProfileImage(), command.getPriority(), now);
+        Character character = Character.create(this, command.getName(), command.getDescription(), null, null, now);
 
         this.characters.add(character);
 
