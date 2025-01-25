@@ -53,7 +53,7 @@ class ContributorService(
     fun isParticipating(contributorGroupId: Long, accountId: Long): Boolean {
         val contributorGroup = findGroupById(contributorGroupId) ?: return false
         return contributorGroup.contributors.any { contributor ->
-            contributor.accountId == accountId && contributor.deletedAt == null
+            contributor.accountId == accountId && !contributor.isDeleted
         }
     }
 }

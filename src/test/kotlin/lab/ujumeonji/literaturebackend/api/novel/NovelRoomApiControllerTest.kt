@@ -160,5 +160,46 @@ class NovelRoomApiControllerTest @Autowired constructor(
                 }
             }
         }
+
+        given("소설 공방 참여자 목록 조회시") {
+            val account = fixtureAccount()
+            val novelRoomId = fixtureNovelRoom(account)
+
+            `when`("참여자가 목록을 조회하면") {
+                val response = performAuthGet("/api/v1/novel-rooms/$novelRoomId/participants", account)
+
+                then("참여자 목록이 반환된다") {
+                    response
+                        .andExpect(status().isOk)
+                        .andExpect(jsonPath("$").isArray)
+                        .andExpect(jsonPath("$[0].id").exists())
+                        .andExpect(jsonPath("$[0].nickname").exists())
+                        .andExpect(jsonPath("$[0].role").exists())
+                        .andExpect(jsonPath("$[0].writingOrder").exists())
+                        .andExpect(jsonPath("$[0].joinedAt").exists())
+                }
+            }
+
+            `when`("참여하지 않은 사용자가 목록을 조회하면") {
+                val otherAccount = fixtureAccount()
+                val response = performAuthGet("/api/v1/novel-rooms/$novelRoomId/participants", otherAccount)
+
+                then("조회 권한 없음 오류가 발생한다") {
+                    response
+                        .andExpect(status().isForbidden)
+                        .andExpect(jsonPath("$.code").value(ErrorCode.NO_PERMISSION_TO_VIEW.code))
+                }
+            }
+
+            `when`("인증되지 않은 사용자가 목록을 조회하면") {
+                val response = performGet("/api/v1/novel-rooms/$novelRoomId/participants")
+
+                then("인증 오류가 발생한다") {
+                    response
+                        .andExpect(status().isUnauthorized)
+                        .andExpect(jsonPath("$.code").value(ErrorCode.UNAUTHORIZED.code))
+                }
+            }
+        }
     }
 }

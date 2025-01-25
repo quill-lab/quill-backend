@@ -80,4 +80,8 @@ public class Contributor {
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
+
+    boolean isDeleted() {
+        return deletedAt != null;
+    }
 }
