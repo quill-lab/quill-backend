@@ -65,4 +65,8 @@ public class Contributor {
     ContributorRole getRole() {
         return role;
     }
+
+    Long getId() {
+        return id;
+    }
 }
