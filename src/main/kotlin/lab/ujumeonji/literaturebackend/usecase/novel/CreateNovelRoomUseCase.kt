@@ -2,6 +2,7 @@ package lab.ujumeonji.literaturebackend.usecase.novel
 
 import lab.ujumeonji.literaturebackend.domain.contributor.ContributorService
 import lab.ujumeonji.literaturebackend.domain.contributor.command.CreateContributorGroupCommand
+import lab.ujumeonji.literaturebackend.domain.novel.NovelCategory
 import lab.ujumeonji.literaturebackend.domain.novel.NovelService
 import lab.ujumeonji.literaturebackend.domain.novel.command.CreateNovelCommand
 import lab.ujumeonji.literaturebackend.support.exception.BusinessException
@@ -34,6 +35,7 @@ class CreateNovelRoomUseCase(
         command = CreateNovelCommand(
             title = request.title,
             description = request.description,
+            category = request.category,
             coverImage = request.novelCoverImage,
             synopsis = request.synopsis,
             tags = request.tags,
@@ -56,6 +58,7 @@ class CreateNovelRoomUseCase(
         val creatorId: Long,
         val title: String,
         val description: String,
+        val category: NovelCategory,
         val tags: List<String>,
         val synopsis: String?,
         val maxContributorCount: Int,

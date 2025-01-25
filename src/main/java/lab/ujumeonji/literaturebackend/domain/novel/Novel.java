@@ -58,6 +58,7 @@ public class Novel {
     }
 
     Novel(String title, String description, String coverImage, List<String> tags, String synopsis,
+          NovelCategory category,
           LocalDateTime createdAt,
           LocalDateTime updatedAt,
           LocalDateTime deletedAt) {
@@ -68,14 +69,16 @@ public class Novel {
                 .map(tag -> NovelTag.create(tag, this, createdAt))
                 .collect(Collectors.toList());
         this.synopsis = synopsis;
+        this.category = category;
         this.createdAt = createdAt;
         this.updatedAt = updatedAt;
         this.deletedAt = deletedAt;
     }
 
-    static Novel create(String title, String description, String coverImage, List<String> tags, String synopsis,
+    static Novel create(String title, String description, NovelCategory category, String coverImage, List<String> tags,
+                        String synopsis,
                         LocalDateTime now) {
-        return new Novel(title, description, coverImage, tags, synopsis, now, now, null);
+        return new Novel(title, description, coverImage, tags, synopsis, category, now, now, null);
     }
 
     void updateBasicInfo(String title, String description, String synopsis, NovelCategory category, LocalDateTime now) {

@@ -145,6 +145,7 @@ class NovelRoomApiController(
                 creatorId = accountId,
                 title = request.title,
                 description = request.description,
+                category = request.category,
                 maxContributorCount = request.maxContributors,
                 novelCoverImage = request.coverImage,
                 synopsis = request.synopsis,

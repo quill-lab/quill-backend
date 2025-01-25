@@ -1,6 +1,7 @@
 package lab.ujumeonji.literaturebackend.api.novel.dto
 
 import jakarta.validation.constraints.*
+import lab.ujumeonji.literaturebackend.domain.novel.NovelCategory
 
 data class CreateNovelRoomBodyRequest(
 
@@ -17,11 +18,7 @@ data class CreateNovelRoomBodyRequest(
     val description: String,
 
     @field:NotNull(message = "카테고리는 필수입니다")
-    @field:Pattern(
-        regexp = "^(GENERAL|ROMANCE_DRAMA|COMIC|ESSAY|FANTASY|FUSION|ACTION|SPORTS|HORROR)$",
-        message = "유효하지 않은 카테고리입니다"
-    )
-    val category: String,
+    val category: NovelCategory,
 
     @field:Size(max = 5, message = "태그는 최대 5개까지만 등록할 수 있습니다")
     val tags: List<String> = emptyList(),
