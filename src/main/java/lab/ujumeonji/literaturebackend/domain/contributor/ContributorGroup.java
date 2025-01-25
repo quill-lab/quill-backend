@@ -164,10 +164,16 @@ public class ContributorGroup {
     }
 
     @Nullable
-    public Contributor getCurrentContributor() {
+    private Contributor getCurrentContributor() {
         return contributors.stream()
                 .filter(contributor -> contributor.getId() == activeContributorId)
                 .findFirst()
                 .orElse(null);
+    }
+
+    @Nullable
+    public Long getActiveContributorAccountId() {
+        Contributor currentContributor = getCurrentContributor();
+        return currentContributor != null ? currentContributor.getAccountId() : null;
     }
 }

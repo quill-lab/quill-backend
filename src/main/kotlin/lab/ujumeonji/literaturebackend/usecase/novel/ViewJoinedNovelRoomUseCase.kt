@@ -30,7 +30,7 @@ class ViewJoinedNovelRoomUseCase(
         val novel = novelService.findById(contributorGroup.novelId)
             ?: throw BusinessException(ErrorCode.NOVEL_NOT_FOUND)
 
-        val currentAuthorAccountId = contributorGroup.currentContributor?.accountId
+        val currentAuthorAccountId = contributorGroup.activeContributorAccountId
 
         val currentAuthor = currentAuthorAccountId?.let { accountService.findById(it) }
 
