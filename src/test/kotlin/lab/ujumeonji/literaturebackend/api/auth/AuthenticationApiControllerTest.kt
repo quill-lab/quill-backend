@@ -21,7 +21,7 @@ class AuthenticationApiControllerTest(
         given("사용자가 회원 정보를 입력 후") {
             val request = SignUpBodyRequest(
                 email = "test@example.com",
-                password = "password123456789012345",
+                password = "Password!@#\$1",
                 nickname = "testuser"
             )
 
@@ -39,15 +39,15 @@ class AuthenticationApiControllerTest(
         given("사용자가 이미 가입된 회원 정보가 존재하고") {
             val initialRequest = SignUpBodyRequest(
                 email = "test@example.com",
-                password = "password123456789012345",
+                password = "Password!@#\$1",
                 nickname = "testuser"
             )
             performPost("/api/v1/sign-up", initialRequest)
 
             val duplicateRequest = SignUpBodyRequest(
                 email = initialRequest.email,
-                password = "anotherpassword123456789012345",
-                nickname = "anotheruser"
+                password = "anotherpa!@#\$1",
+                nickname = "another"
             )
 
             `when`("중복된 이메일로 회원 가입을 요청하면") {
@@ -64,14 +64,14 @@ class AuthenticationApiControllerTest(
         given("사용자가 로그인 정보를 입력하고") {
             val signUpRequest = SignUpBodyRequest(
                 email = "test@example.com",
-                password = "password123456789012345",
+                password = "Password!@#\$1",
                 nickname = "testuser"
             )
             performPost("/api/v1/sign-up", signUpRequest)
 
             val signInRequest = SignInBodyRequest(
                 email = "test@example.com",
-                password = "password123456789012345"
+                password = "Password!@#\$1"
             )
 
             `when`("로그인을 요청하면") {
@@ -88,7 +88,7 @@ class AuthenticationApiControllerTest(
         given("사용자가 잘못된 로그인 정보를 입력하고") {
             val signInRequest = SignInBodyRequest(
                 email = "wrong@example.com",
-                password = "wrongpassword123456789012345"
+                password = "Wrong!@#\$1"
             )
 
             `when`("로그인을 요청하면") {
