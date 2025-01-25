@@ -21,7 +21,7 @@ class ViewJoinedNovelRoomUseCase(
 ) : UseCase<ViewJoinedNovelRoomUseCase.Request, ViewJoinedNovelRoomUseCase.Response> {
 
     override fun execute(request: Request, executedAt: LocalDateTime): Response {
-        val contributorGroup = contributorService.findById(request.contributorGroupId)
+        val contributorGroup = contributorService.findGroupById(request.contributorGroupId)
             ?: throw BusinessException(ErrorCode.CONTRIBUTOR_GROUP_NOT_FOUND)
 
         val me = accountService.findById(request.accountId)

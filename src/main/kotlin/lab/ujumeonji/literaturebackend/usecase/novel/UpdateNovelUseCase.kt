@@ -24,7 +24,7 @@ class UpdateNovelUseCase(
         accountService.findById(request.accountId)
             ?: throw BusinessException(ErrorCode.ACCOUNT_NOT_FOUND)
 
-        val contributorGroup = contributorService.findById(request.contributorGroupId)
+        val contributorGroup = contributorService.findGroupById(request.contributorGroupId)
             ?: throw BusinessException(ErrorCode.CONTRIBUTOR_GROUP_NOT_FOUND)
 
         if (!contributorService.hasManagePermission(request.contributorGroupId, request.accountId)) {

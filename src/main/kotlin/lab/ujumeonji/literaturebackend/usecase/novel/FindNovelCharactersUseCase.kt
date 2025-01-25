@@ -1,6 +1,7 @@
 package lab.ujumeonji.literaturebackend.usecase.novel
 
 import lab.ujumeonji.literaturebackend.domain.account.AccountService
+import lab.ujumeonji.literaturebackend.domain.contributor.ContributorService
 import lab.ujumeonji.literaturebackend.domain.novel.NovelService
 import lab.ujumeonji.literaturebackend.support.exception.BusinessException
 import lab.ujumeonji.literaturebackend.support.exception.ErrorCode
@@ -13,11 +14,15 @@ import java.time.LocalDateTime
 @Transactional(readOnly = true)
 class FindNovelCharactersUseCase(
     private val novelService: NovelService,
+    private val contributorService: ContributorService,
     private val accountService: AccountService,
 ) : UseCase<FindNovelCharactersUseCase.Request, List<FindNovelCharactersUseCase.Response>> {
 
     override fun execute(request: Request, executedAt: LocalDateTime): List<Response> {
-        val novel = novelService.findNovel(request.novelId)
+        val contributor = contributorService.findGroupById(request.novelRoomId)
+            ?: throw BusinessException(ErrorCode.CONTRIBUTOR_GROUP_NOT_FOUND)
+
+        val novel = novelService.findNovel(contributor.novelId)
             ?: throw BusinessException(ErrorCode.NOVEL_NOT_FOUND)
 
         val accountIds = novel.characters.mapNotNull { it.lastUpdatedBy }
@@ -43,7 +48,7 @@ class FindNovelCharactersUseCase(
     }
 
     data class Request(
-        val novelId: Long,
+        val novelRoomId: Long,
     )
 
     data class Response(

@@ -37,11 +37,11 @@ class ContributorService(
         return result.content to result.totalElements
     }
 
-    fun findById(id: Long): ContributorGroup? =
+    fun findGroupById(id: Long): ContributorGroup? =
         contributorGroupRepository.findById(id).orElse(null)
 
     fun hasManagePermission(contributorGroupId: Long, accountId: Long): Boolean {
-        val contributorGroup = findById(contributorGroupId) ?: return false
+        val contributorGroup = findGroupById(contributorGroupId) ?: return false
         return contributorGroup.contributors.any { contributor ->
             contributor.accountId == accountId && contributor.role == ContributorRole.MAIN
         }

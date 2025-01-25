@@ -32,9 +32,9 @@ class FindJoinedNovelRoomsUseCase(
 
         val novels = novelService.findNovels(contributorGroups.map { it.novelId }).associateBy { it.id }
 
-        val activeContributorIds = contributorGroups.mapNotNull { it.activeContributorAccountId }
+        val accountIds = contributorGroups.mapNotNull { it.activeContributorAccountId }
 
-        val contributorAccount = accountService.findByIds(activeContributorIds)
+        val accountMap = accountService.findByIds(accountIds)
             .associateBy { it.id }
 
         val result = contributorGroups.filter {
@@ -56,7 +56,7 @@ class FindJoinedNovelRoomsUseCase(
                 contributorCount = contributorGroup.contributorCount,
                 maxContributorCount = contributorGroup.maxContributorCount,
                 currentAuthor = contributorGroup.activeContributorAccountId?.let { contributorId ->
-                    contributorAccount[contributorId]?.run {
+                    accountMap[contributorId]?.run {
                         Response.ResponseItem.Author(
                             id = id,
                             name = name

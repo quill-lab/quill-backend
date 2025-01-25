@@ -5,10 +5,7 @@ import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import lab.ujumeonji.literaturebackend.api.novel.dto.*
 import lab.ujumeonji.literaturebackend.support.auth.RequiredAuth
-import lab.ujumeonji.literaturebackend.usecase.novel.CreateNovelRoomUseCase
-import lab.ujumeonji.literaturebackend.usecase.novel.FindJoinedNovelRoomsUseCase
-import lab.ujumeonji.literaturebackend.usecase.novel.UpdateNovelUseCase
-import lab.ujumeonji.literaturebackend.usecase.novel.ViewJoinedNovelRoomUseCase
+import lab.ujumeonji.literaturebackend.usecase.novel.*
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -22,6 +19,7 @@ class NovelRoomApiController(
     private val findJoinedNovelRoomsUseCase: FindJoinedNovelRoomsUseCase,
     private val viewJoinedNovelRoomUseCase: ViewJoinedNovelRoomUseCase,
     private val updateNovelUseCase: UpdateNovelUseCase,
+    private val findNovelCharactersUseCase: FindNovelCharactersUseCase,
 ) {
 
     @Operation(summary = "소설 공방 수정", description = "소설 공방을 수정합니다.")
@@ -156,6 +154,35 @@ class NovelRoomApiController(
 
         return ResponseEntity.status(HttpStatus.CREATED)
             .body(CreateNovelRoomResponse(result.novelRoomId))
+    }
+
+    @Operation(summary = "소설 등장인물 목록 조회", description = "소설의 등장인물 목록을 조회합니다.")
+    @GetMapping("/{novelRoomId}/characters")
+    fun getCharacters(
+        @PathVariable novelRoomId: Long,
+    ): ResponseEntity<List<NovelCharacterResponse>> {
+        val result = findNovelCharactersUseCase.execute(
+            request = FindNovelCharactersUseCase.Request(
+                novelRoomId = novelRoomId,
+            ),
+            executedAt = LocalDateTime.now()
+        )
+
+        return ResponseEntity.ok(
+            result.map {
+                NovelCharacterResponse(
+                    id = it.id,
+                    name = it.name,
+                    description = it.description,
+                    profileImage = it.profileImage,
+                    updatedAt = it.updatedAt,
+                    updatedBy = it.updatedBy?.let { updatedBy ->
+                        NovelCharacterResponse.LastCharacterUpdatedBy(
+                            id = updatedBy.id,
+                            name = updatedBy.name
+                        )
+                    })
+            })
     }
 
     @Operation(summary = "소설 공방 모집글 생성", description = "소설 공방의 모집글을 생성합니다.")
