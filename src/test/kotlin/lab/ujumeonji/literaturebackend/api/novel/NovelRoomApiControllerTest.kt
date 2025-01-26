@@ -204,20 +204,15 @@ class NovelRoomApiControllerTest @Autowired constructor(
 
         given("소설 공방 참여자 순서 변경시") {
             val mainAccount = fixtureAccount()
-            val novelRoomId = fixtureNovelRoom(mainAccount)
-
             val subAccount = fixtureAccount()
-            performAuthPost(
-                "/api/v1/novel-rooms/$novelRoomId/participants",
-                mapOf("accountId" to subAccount.id), mainAccount
-            )
+            val novelRoomId = fixtureNovelRoom(mainAccount)
 
             `when`("소설 공방 대표 작가가 참여자 순서를 변경하면") {
                 val request = mapOf(
                     "writingOrder" to 1
                 )
                 val response = performAuthPatch(
-                    "/api/v1/novel-rooms/$novelRoomId/participants/${subAccount.id}/order",
+                    "/api/v1/novel-rooms/$novelRoomId/participants/${mainAccount.id}/order",
                     request,
                     mainAccount
                 )
