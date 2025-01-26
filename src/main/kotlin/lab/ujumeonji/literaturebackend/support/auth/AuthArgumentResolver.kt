@@ -24,7 +24,7 @@ class AuthArgumentResolver(
         binderFactory: WebDataBinderFactory?
     ): String? = when {
         parameter.hasParameterAnnotation(RequiredAuth::class.java) &&
-                parameter.parameterType == Long::class.java ->
+                parameter.parameterType == String::class.java ->
             authContext.accountId ?: throw BusinessException(ErrorCode.UNAUTHORIZED)
 
         else -> authContext.accountId

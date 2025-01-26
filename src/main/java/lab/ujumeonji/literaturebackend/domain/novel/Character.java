@@ -39,14 +39,14 @@ public class Character extends BaseEntity {
     protected Character() {
     }
 
-    Character(String name, String description, String profileImage, AccountId lastUpdatedBy, Novel novel,
+    Character(String name, String description, String profileImage, @Nullable AccountId lastUpdatedBy, Novel novel,
               Integer priority, LocalDateTime createdAt, LocalDateTime updatedAt,
               LocalDateTime deletedAt) {
         this.id = UuidCreator.getTimeOrderedEpoch();
         this.name = name;
         this.description = description;
         this.profileImage = profileImage;
-        this.lastUpdatedBy = lastUpdatedBy.getId();
+        this.lastUpdatedBy = lastUpdatedBy != null ? lastUpdatedBy.getId() : null;
         this.novel = novel;
         this.priority = priority;
         setCreatedAt(createdAt);
@@ -77,8 +77,9 @@ public class Character extends BaseEntity {
         return profileImage;
     }
 
+    @Nullable
     public AccountId getLastUpdatedBy() {
-        return AccountId.from(lastUpdatedBy);
+        return lastUpdatedBy != null ? AccountId.from(lastUpdatedBy) : null;
     }
 
     @Nullable

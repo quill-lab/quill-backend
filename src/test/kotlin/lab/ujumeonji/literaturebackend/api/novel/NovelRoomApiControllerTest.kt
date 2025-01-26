@@ -114,7 +114,7 @@ class NovelRoomApiControllerTest @Autowired constructor(
             }
 
             `when`("존재하지 않는 소설 공방을 조회하면") {
-                val response = performAuthGet("/api/v1/novel-rooms/999999", account)
+                val response = performAuthGet("/api/v1/novel-rooms/0194a1e8-6aad-7c73-9de0-b216346a242f", account)
 
                 then("Not Found 오류가 발생한다") {
                     response

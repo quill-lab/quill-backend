@@ -29,7 +29,7 @@ class UpdateParticipantOrderUseCase(
             throw BusinessException(ErrorCode.NO_PERMISSION_TO_UPDATE)
         }
 
-        if (!contributorGroup.isParticipating(accountId)) {
+        if (!contributorGroup.isParticipating(AccountId.from(request.contributorId))) {
             throw BusinessException(ErrorCode.CONTRIBUTOR_NOT_FOUND)
         }
 
