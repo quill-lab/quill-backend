@@ -34,6 +34,14 @@ spec:
             }
         }
 
+        stage('Test') {
+            steps {
+                container('gradle') {
+                    sh "./gradlew test"
+                }
+            }
+        }
+
         stage('Build & Push Docker Image') {
             steps {
                 container('gradle') {
