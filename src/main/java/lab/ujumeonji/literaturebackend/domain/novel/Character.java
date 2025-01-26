@@ -1,21 +1,21 @@
 package lab.ujumeonji.literaturebackend.domain.novel;
 
 import com.github.f4b6a3.uuid.UuidCreator;
+import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lab.ujumeonji.literaturebackend.domain.common.BaseEntity;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
 
 @Entity
 @Table(name = "characters")
 public class Character extends BaseEntity {
 
-    @Id
-    private UUID id;
+    @EmbeddedId
+    private CharacterId id;
 
-    @Column
+    @Column(nullable = false)
     private String name;
 
     @Column(columnDefinition = "text")
@@ -25,22 +25,22 @@ public class Character extends BaseEntity {
     private String profileImage;
 
     @Column
-    private Long lastUpdatedBy;
+    private String lastUpdatedBy;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "novel_id", nullable = false)
+    private Novel novel;
 
     @Column
     private Integer priority;
 
-    @ManyToOne
-    @JoinColumn(name = "novel_id", nullable = false)
-    private Novel novel;
-
     protected Character() {
     }
 
-    Character(String name, String description, String profileImage, Long lastUpdatedBy, Novel novel,
+    Character(String name, String description, String profileImage, String lastUpdatedBy, Novel novel,
               Integer priority, LocalDateTime createdAt, LocalDateTime updatedAt,
               LocalDateTime deletedAt) {
-        this.id = UuidCreator.getTimeOrderedEpoch();
+        this.id = new CharacterId(UuidCreator.getTimeOrderedEpoch());
         this.name = name;
         this.description = description;
         this.profileImage = profileImage;
@@ -55,37 +55,26 @@ public class Character extends BaseEntity {
     }
 
     private void validate() {
-        if (name == null || name.isEmpty()) {
-            throw new IllegalArgumentException("Name cannot be empty");
-        }
-
-        if (novel == null) {
-            throw new IllegalArgumentException("Novel cannot be null");
-        }
     }
 
-    static Character create(Novel novel, String name, String description, String profileImage,
-                            Integer priority, LocalDateTime now) {
+    static Character create(@Nonnull Novel novel, @Nonnull String name, @Nonnull String description, String profileImage,
+                            Integer priority, @Nonnull LocalDateTime now) {
         return new Character(name, description, profileImage, null, novel, priority, now, now, null);
     }
 
-    @Nullable
     public String getName() {
         return name;
     }
 
-    @Nullable
     public String getDescription() {
         return description;
     }
 
-    @Nullable
     public String getProfileImage() {
         return profileImage;
     }
 
-    @Nullable
-    public Long getLastUpdatedBy() {
+    public String getLastUpdatedBy() {
         return lastUpdatedBy;
     }
 
@@ -102,7 +91,7 @@ public class Character extends BaseEntity {
         return priority;
     }
 
-    public UUID getId() {
+    public CharacterId getId() {
         return id;
     }
 }

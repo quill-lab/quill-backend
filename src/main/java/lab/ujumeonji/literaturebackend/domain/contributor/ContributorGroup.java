@@ -1,39 +1,41 @@
 package lab.ujumeonji.literaturebackend.domain.contributor;
 
-import jakarta.persistence.*;
-import lab.ujumeonji.literaturebackend.domain.common.BaseEntity;
 import com.github.f4b6a3.uuid.UuidCreator;
+import jakarta.annotation.Nonnull;
+import jakarta.persistence.*;
+import lab.ujumeonji.literaturebackend.domain.account.AccountId;
+import lab.ujumeonji.literaturebackend.domain.common.BaseEntity;
+import lab.ujumeonji.literaturebackend.domain.novel.NovelId;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.UUID;
 
 @Entity
 @Table(name = "contributor_groups")
 public class ContributorGroup extends BaseEntity {
 
-    @Id
-    private UUID id;
+    @EmbeddedId
+    private ContributorGroupId id;
 
     @Column
-    private Integer maxContributorCount;
+    private int maxContributorCount;
 
     @Column
-    private Integer contributorCount;
+    private int contributorCount;
 
     @Column
     private ContributorGroupStatus status;
 
     @Column(nullable = false)
-    private Long novelId;
+    private NovelId novelId;
 
     @Column
     private LocalDateTime completedAt;
 
     @Column
-    private Long activeContributorId;
+    private ContributorId activeContributorId;
 
     @OneToMany(mappedBy = "contributorGroup", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Contributor> contributors = new ArrayList<>();
@@ -44,9 +46,9 @@ public class ContributorGroup extends BaseEntity {
     protected ContributorGroup() {
     }
 
-    ContributorGroup(int maxContributorCount, long novelId, LocalDateTime createdAt,
-            LocalDateTime updatedAt, LocalDateTime deletedAt) {
-        this.id = UuidCreator.getTimeOrderedEpoch();
+    ContributorGroup(int maxContributorCount, @Nonnull NovelId novelId, @Nonnull LocalDateTime createdAt,
+                     @Nonnull LocalDateTime updatedAt, LocalDateTime deletedAt) {
+        this.id = new ContributorGroupId(UuidCreator.getTimeOrderedEpoch());
         this.activeContributorId = null;
         this.contributorCount = 0;
         this.maxContributorCount = maxContributorCount;
@@ -60,20 +62,12 @@ public class ContributorGroup extends BaseEntity {
     }
 
     private void validate() {
-        if (maxContributorCount == null) {
-            throw new IllegalArgumentException("최대 기여자 수는 필수입니다");
-        }
-
         if (maxContributorCount <= 0) {
             throw new IllegalArgumentException("최대 기여자 수는 0보다 커야 합니다");
         }
 
         if (maxContributorCount > 100) {
             throw new IllegalArgumentException("최대 기여자 수는 100을 초과할 수 없습니다");
-        }
-
-        if (contributorCount == null) {
-            throw new IllegalArgumentException("현재 기여자 수는 필수입니다");
         }
 
         if (contributorCount < 0) {
@@ -93,8 +87,8 @@ public class ContributorGroup extends BaseEntity {
         }
     }
 
-    static ContributorGroup create(long accountId, int maxContributorCount, long novelId,
-            LocalDateTime now) {
+    static ContributorGroup create(@Nonnull AccountId accountId, int maxContributorCount, @Nonnull NovelId novelId,
+                                   LocalDateTime now) {
         ContributorGroup createdContributorGroup = new ContributorGroup(maxContributorCount, novelId, now, now, null);
 
         createdContributorGroup.addHostContributor(accountId, now);
@@ -102,7 +96,7 @@ public class ContributorGroup extends BaseEntity {
         return createdContributorGroup;
     }
 
-    private void addHostContributor(long accountId, LocalDateTime now) {
+    private void addHostContributor(AccountId accountId, LocalDateTime now) {
         if (contributorCount >= maxContributorCount) {
             throw new IllegalStateException("최대 기여자 수를 초과했습니다");
         }
@@ -116,7 +110,7 @@ public class ContributorGroup extends BaseEntity {
         return status;
     }
 
-    public Long getNovelId() {
+    public NovelId getNovelId() {
         return novelId;
     }
 
@@ -137,9 +131,9 @@ public class ContributorGroup extends BaseEntity {
     }
 
     @Nullable
-    public ContributorRole getCollaboratorRole(long accountId) {
+    public ContributorRole getCollaboratorRole(@Nonnull AccountId accountId) {
         return contributors.stream()
-                .filter(contributor -> contributor.getAccountId() == accountId)
+                .filter(contributor -> contributor.getAccountId().equals(accountId))
                 .map(Contributor::getRole)
                 .findFirst()
                 .orElse(null);
@@ -154,12 +148,12 @@ public class ContributorGroup extends BaseEntity {
     }
 
     @Nullable
-    public Long getActiveContributorAccountId() {
+    public AccountId getActiveContributorAccountId() {
         Contributor currentContributor = getCurrentContributor();
         return currentContributor != null ? currentContributor.getAccountId() : null;
     }
 
-    public void updateWritingOrder(long contributorId, int writingOrder) {
+    public void updateWritingOrder(@Nonnull ContributorId contributorId, int writingOrder) {
         contributors.stream()
                 .filter(c -> c.getId().equals(contributorId))
                 .findFirst()
@@ -185,7 +179,7 @@ public class ContributorGroup extends BaseEntity {
                 });
     }
 
-    private void shiftOrdersUp(long contributorId, int targetOrder, int currentOrder) {
+    private void shiftOrdersUp(@Nonnull ContributorId contributorId, int targetOrder, int currentOrder) {
         contributors.stream()
                 .filter(c -> !c.getId().equals(contributorId)
                         && c.getWritingOrder() >= targetOrder
@@ -193,7 +187,7 @@ public class ContributorGroup extends BaseEntity {
                 .forEach(c -> c.updateWritingOrder(c.getWritingOrder() + 1));
     }
 
-    private void shiftOrdersDown(long contributorId, int currentOrder, int targetOrder) {
+    private void shiftOrdersDown(@Nonnull ContributorId contributorId, int currentOrder, int targetOrder) {
         contributors.stream()
                 .filter(c -> !c.getId().equals(contributorId)
                         && c.getWritingOrder() <= targetOrder
@@ -201,17 +195,17 @@ public class ContributorGroup extends BaseEntity {
                 .forEach(c -> c.updateWritingOrder(c.getWritingOrder() - 1));
     }
 
-    public boolean isParticipating(long accountId) {
+    public boolean isParticipating(@Nonnull AccountId accountId) {
         return contributors.stream()
-                .anyMatch(contributor -> contributor.getAccountId() == accountId && contributor.isDeleted());
+                .anyMatch(contributor -> contributor.getAccountId().equals(accountId) && contributor.isDeleted());
     }
 
-    public boolean hasManagePermission(long accountId) {
-        return contributors.stream().anyMatch(contributor -> contributor.getAccountId() == accountId
+    public boolean hasManagePermission(@Nonnull AccountId accountId) {
+        return contributors.stream().anyMatch(contributor -> contributor.getAccountId().equals(accountId)
                 && contributor.getRole().equals(ContributorRole.MAIN));
     }
 
-    public UUID getId() {
+    public ContributorGroupId getId() {
         return id;
     }
 }

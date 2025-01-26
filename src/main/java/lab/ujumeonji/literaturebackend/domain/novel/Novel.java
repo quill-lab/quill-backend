@@ -1,30 +1,27 @@
 package lab.ujumeonji.literaturebackend.domain.novel;
 
+import com.github.f4b6a3.uuid.UuidCreator;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lab.ujumeonji.literaturebackend.domain.common.BaseEntity;
 import lab.ujumeonji.literaturebackend.domain.novel.command.AddCharacterCommand;
 import lab.ujumeonji.literaturebackend.domain.novel.command.UpdateNovelCommand;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
-import com.github.f4b6a3.uuid.UuidCreator;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "novels")
 public class Novel extends BaseEntity {
 
-    @Id
-    private UUID id;
+    @EmbeddedId
+    private NovelId id;
 
-    @Column
+    @Column(nullable = false)
     private String title;
 
     @Column(columnDefinition = "text")
@@ -33,12 +30,11 @@ public class Novel extends BaseEntity {
     @Column
     private String coverImage;
 
-    @Column
-    @Enumerated(EnumType.STRING)
-    private NovelCategory category;
-
     @Column(columnDefinition = "text")
     private String synopsis;
+
+    @OneToMany(mappedBy = "novel", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<NovelTag> tags = new ArrayList<>();
 
     @OneToMany(mappedBy = "novel", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Character> characters = new ArrayList<>();
@@ -46,8 +42,9 @@ public class Novel extends BaseEntity {
     @OneToMany(mappedBy = "novel", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Chapter> chapters = new ArrayList<>();
 
-    @OneToMany(mappedBy = "novel", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    private List<NovelTag> tags = new ArrayList<>();
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private NovelCategory category;
 
     protected Novel() {
     }
@@ -57,13 +54,10 @@ public class Novel extends BaseEntity {
             LocalDateTime createdAt,
             LocalDateTime updatedAt,
             LocalDateTime deletedAt) {
-        this.id = UuidCreator.getTimeOrderedEpoch();
+        this.id = new NovelId(UuidCreator.getTimeOrderedEpoch());
         this.title = title;
         this.description = description;
         this.coverImage = coverImage;
-        this.tags = tags.stream()
-                .map(tag -> NovelTag.create(tag, this, createdAt))
-                .collect(Collectors.toList());
         this.synopsis = synopsis;
         this.category = category;
         setCreatedAt(createdAt);
@@ -77,7 +71,7 @@ public class Novel extends BaseEntity {
         return new Novel(title, description, coverImage, tags, synopsis, category, now, now, null);
     }
 
-    public UUID addCharacter(@NotNull AddCharacterCommand command, @NotNull LocalDateTime now) {
+    public CharacterId addCharacter(@NotNull AddCharacterCommand command, @NotNull LocalDateTime now) {
         Character character = Character.create(this, command.getName(), command.getDescription(), null, null, now);
 
         this.characters.add(character);
@@ -97,12 +91,9 @@ public class Novel extends BaseEntity {
         return title;
     }
 
-    public List<String> getHashtaggedTags() {
+    public List<String> getTagNames() {
         return tags.stream()
-                .map(tag -> {
-                    String name = tag.getName();
-                    return name.startsWith("#") ? name : "#" + name;
-                })
+                .map(NovelTag::getName)
                 .collect(Collectors.toList());
     }
 
@@ -120,19 +111,25 @@ public class Novel extends BaseEntity {
         this.description = command.getDescription();
         this.synopsis = command.getSynopsis();
         this.category = command.getCategory();
+        this.addTags(command.getTags(), now);
+    }
 
-        this.tags.removeIf(existingTag -> !Objects.requireNonNull(command.getTags()).contains(existingTag.getName()));
+    private void addTags(@NotNull List<String> tagNames, @NotNull LocalDateTime now) {
         List<String> existingTagNames = this.tags.stream()
                 .map(NovelTag::getName)
                 .toList();
 
-        Objects.requireNonNull(command.getTags())
+        List<NovelTag> newTags = Objects.requireNonNull(tagNames)
                 .stream()
                 .filter(tag -> !existingTagNames.contains(tag))
-                .forEach(tag -> this.tags.add(NovelTag.create(tag, this, now)));
+                .map(tag -> NovelTag.create(tag, this, now))
+                .toList();
+
+        this.tags.addAll(newTags);
+        this.tags.removeIf(existingTag -> !tagNames.contains(existingTag.getName()));
     }
 
-    public UUID getId() {
+    public NovelId getId() {
         return id;
     }
 }

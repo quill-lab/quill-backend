@@ -1,15 +1,11 @@
 package lab.ujumeonji.literaturebackend.domain.account;
 
+import com.github.f4b6a3.uuid.UuidCreator;
 import jakarta.persistence.*;
 import lab.ujumeonji.literaturebackend.domain.common.BaseEntity;
 import lab.ujumeonji.literaturebackend.support.encrypt.PasswordEncoder;
-import com.github.f4b6a3.uuid.UuidCreator;
 
 import java.time.LocalDateTime;
-import java.util.UUID;
-
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 
 @Entity
 @Table(name = "accounts", indexes = {
@@ -17,8 +13,8 @@ import org.springframework.data.annotation.LastModifiedDate;
 })
 public class Account extends BaseEntity {
 
-    @Id
-    private UUID id;
+    @EmbeddedId
+    private AccountId id;
 
     @Column
     private String email;
@@ -34,7 +30,7 @@ public class Account extends BaseEntity {
 
     Account(String email, String password, String name, LocalDateTime createdAt, LocalDateTime updatedAt,
             LocalDateTime deletedAt) {
-        this.id = UuidCreator.getTimeOrderedEpoch();
+        this.id = new AccountId(UuidCreator.getTimeOrderedEpoch());
         this.email = email;
         this.password = password;
         this.name = name;
@@ -64,7 +60,7 @@ public class Account extends BaseEntity {
         return name;
     }
 
-    public UUID getId() {
+    public AccountId getId() {
         return id;
     }
 }

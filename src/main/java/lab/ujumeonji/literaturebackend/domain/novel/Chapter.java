@@ -1,24 +1,20 @@
 package lab.ujumeonji.literaturebackend.domain.novel;
 
+import com.github.f4b6a3.uuid.UuidCreator;
+import jakarta.annotation.Nonnull;
 import jakarta.persistence.*;
 import lab.ujumeonji.literaturebackend.domain.common.BaseEntity;
-import com.github.f4b6a3.uuid.UuidCreator;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
 
 @Entity
 @Table(name = "chapters")
 public class Chapter extends BaseEntity {
 
-    @Id
-    private UUID id;
+    @EmbeddedId
+    private ChapterId id;
 
-    @Column
+    @Column(nullable = false)
     private String title;
 
     @Column(columnDefinition = "text")
@@ -28,15 +24,11 @@ public class Chapter extends BaseEntity {
     @JoinColumn(name = "novel_id", nullable = false, foreignKey = @ForeignKey(name = "fk_chapter_novel"))
     private Novel novel;
 
-    @OneToMany(mappedBy = "chapter", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<ChapterText> chapterTexts = new ArrayList<>();
-
     protected Chapter() {
     }
 
-    Chapter(String title, String description, Novel novel, LocalDateTime createdAt, LocalDateTime updatedAt,
-            LocalDateTime deletedAt) {
-        this.id = UuidCreator.getTimeOrderedEpoch();
+    Chapter(String title, String description, Novel novel, LocalDateTime createdAt, LocalDateTime updatedAt, LocalDateTime deletedAt) {
+        this.id = new ChapterId(UuidCreator.getTimeOrderedEpoch());
         this.title = title;
         this.description = description;
         this.novel = novel;
@@ -45,11 +37,11 @@ public class Chapter extends BaseEntity {
         setDeletedAt(deletedAt);
     }
 
-    static Chapter create(String title, String description, Novel novel, LocalDateTime now) {
+    static Chapter create(@Nonnull String title, @Nonnull String description, @Nonnull Novel novel, @Nonnull LocalDateTime now) {
         return new Chapter(title, description, novel, now, now, null);
     }
 
-    public UUID getId() {
+    public ChapterId getId() {
         return id;
     }
 }

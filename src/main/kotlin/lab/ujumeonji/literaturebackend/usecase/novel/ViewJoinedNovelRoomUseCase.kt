@@ -55,7 +55,7 @@ class ViewJoinedNovelRoomUseCase(
                 )
             },
             status = contributorGroup.status,
-            tags = novel.hashtaggedTags
+            tags = novel.tagNames
         )
     }
 
