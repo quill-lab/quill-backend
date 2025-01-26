@@ -31,16 +31,17 @@ class UpdateNovelUseCase(
             throw BusinessException(ErrorCode.NO_PERMISSION_TO_UPDATE)
         }
 
-        novelService.update(
-            id = contributorGroup.novelId,
-            command = UpdateNovelCommand(
+        val novel = novelService.findById(contributorGroup.novelId)
+            ?: throw BusinessException(ErrorCode.NOVEL_NOT_FOUND)
+
+        novel.update(
+            UpdateNovelCommand(
                 title = request.title,
                 description = request.description,
                 category = request.category,
                 tags = request.tags,
                 synopsis = request.synopsis,
-            ),
-            now = executedAt,
+            )
         )
 
         return Response(contributorGroup.id)

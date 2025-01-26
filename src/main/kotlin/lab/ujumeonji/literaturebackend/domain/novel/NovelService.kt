@@ -34,26 +34,6 @@ class NovelService(
     fun findById(id: Long): Novel? = novelRepository.findById(id).orElse(null)
 
     @Transactional
-    fun update(id: Long, command: UpdateNovelCommand, now: LocalDateTime = LocalDateTime.now()): Novel {
-        val novel = findById(id) ?: throw IllegalArgumentException("Novel not found")
-
-        novel.updateBasicInfo(
-            command.title,
-            command.description,
-            command.synopsis,
-            command.category,
-            now,
-        )
-
-        novel.updateTags(
-            command.tags,
-            now,
-        )
-
-        return novelRepository.save(novel)
-    }
-
-    @Transactional
     fun addCharacter(novelId: Long, command: AddCharacterCommand, now: LocalDateTime = LocalDateTime.now()): Long =
         findById(novelId)
             ?.apply { addCharacter(command, now) }

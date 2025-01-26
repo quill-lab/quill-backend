@@ -3,6 +3,8 @@ package lab.ujumeonji.literaturebackend.domain.novel;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lab.ujumeonji.literaturebackend.domain.novel.command.AddCharacterCommand;
+import lab.ujumeonji.literaturebackend.domain.novel.command.UpdateNovelCommand;
+import org.jetbrains.annotations.NotNull;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
@@ -81,28 +83,6 @@ public class Novel {
         return new Novel(title, description, coverImage, tags, synopsis, category, now, now, null);
     }
 
-    void updateBasicInfo(String title, String description, String synopsis, NovelCategory category, LocalDateTime now) {
-        this.title = title;
-        this.description = description;
-        this.synopsis = synopsis;
-        this.category = category;
-        this.updatedAt = now;
-    }
-
-    void updateTags(List<String> tags, LocalDateTime now) {
-        this.tags.removeIf(existingTag -> !tags.contains(existingTag.getName()));
-
-        List<String> existingTagNames = this.tags.stream()
-                .map(NovelTag::getName)
-                .toList();
-
-        tags.stream()
-                .filter(tag -> !existingTagNames.contains(tag))
-                .forEach(tag -> this.tags.add(NovelTag.create(tag, this, now)));
-
-        this.updatedAt = now;
-    }
-
     Character addCharacter(AddCharacterCommand command, LocalDateTime now) {
         Character character = Character.create(this, command.getName(), command.getDescription(), null, null, now);
 
@@ -145,5 +125,19 @@ public class Novel {
     @Nullable
     public String getSynopsis() {
         return synopsis;
+    }
+
+    public void update(@NotNull UpdateNovelCommand updateNovelCommand) {
+        this.title = title;
+        this.description = description;
+        this.synopsis = synopsis;
+        this.category = category;
+        this.tags.removeIf(existingTag -> !tags.contains(existingTag.getName()));
+        List<String> existingTagNames = this.tags.stream()
+                .map(NovelTag::getName)
+                .toList();
+        tags.stream()
+                .filter(tag -> !existingTagNames.contains(tag))
+                .forEach(tag -> this.tags.add(NovelTag.create(tag, this, now)));
     }
 }
