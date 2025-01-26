@@ -7,7 +7,7 @@ import java.time.LocalDateTime
 @Schema(description = "소설 공방 참여자 조회 응답")
 data class NovelRoomParticipantsResponse(
     @Schema(description = "참여자 ID")
-    val id: Long,
+    val id: String,
 
     @Schema(description = "참여자 닉네임")
     val nickname: String,

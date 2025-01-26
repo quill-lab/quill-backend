@@ -25,9 +25,7 @@ class NovelService(
             )
         )
 
-    fun findNovel(id: Long): Novel? = novelRepository.findOneById(id)
+    fun findNovel(id: NovelId): Novel? = novelRepository.findOneById(id.id)
 
-    fun findNovels(ids: List<Long>): List<Novel> = novelRepository.findAllById(ids).toList()
-
-    fun findById(id: Long): Novel? = novelRepository.findById(id).orElse(null)
+    fun findNovels(ids: List<NovelId>): List<Novel> = novelRepository.findAllById(ids.map { it.id }).toList()
 }

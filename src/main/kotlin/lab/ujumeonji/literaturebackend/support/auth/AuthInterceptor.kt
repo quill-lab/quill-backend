@@ -30,7 +30,7 @@ class AuthInterceptor(
         }
 
         val userId = extractUserFromJwt(request)
-        authContext.userId = userId
+        authContext.accountId = userId
 
         return true
     }
@@ -41,14 +41,14 @@ class AuthInterceptor(
         return authNotRequiredConditions.any { it.match(requestURI, httpMethod) }
     }
 
-    private fun extractUserFromJwt(request: HttpServletRequest): Long? {
+    private fun extractUserFromJwt(request: HttpServletRequest): String? {
         val authHeader = request.getHeader("Authorization") ?: return null
         if (!authHeader.startsWith("Bearer ")) return null
 
         return runCatching {
             val token = authHeader.removePrefix("Bearer ")
             val claims = tokenManager.verifyToken(token)
-            claims["id"]?.toString()?.toLongOrNull()
+            claims["id"]?.toString()
         }.getOrNull()
     }
 

@@ -3,7 +3,7 @@ package lab.ujumeonji.literaturebackend.api.novel.dto
 import java.time.LocalDateTime
 
 data class NovelCharacterResponse(
-    val id: Long,
+    val id: String,
     val name: String,
     val description: String,
     val profileImage: String,
@@ -12,7 +12,7 @@ data class NovelCharacterResponse(
 ) {
 
     data class LastCharacterUpdatedBy(
-        val id: Long,
+        val id: String,
         val name: String,
     )
 }

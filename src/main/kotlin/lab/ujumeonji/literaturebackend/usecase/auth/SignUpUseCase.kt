@@ -11,7 +11,6 @@ import org.apache.logging.log4j.Logger
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
-import java.util.*
 import java.util.concurrent.CompletableFuture
 
 @Component
@@ -26,8 +25,6 @@ class SignUpUseCase(
             throw BusinessException(ErrorCode.DUPLICATE_EMAIL)
         }
 
-        val verificationToken = UUID.randomUUID().toString()
-
         val account = accountService.create(
             command = CreateAccountCommand(
                 email = request.email,
@@ -39,7 +36,7 @@ class SignUpUseCase(
 
         sendWelcomeEmail(request.email)
 
-        return Response(account.id)
+        return Response(id = account.id.id.toString())
     }
 
     private fun sendWelcomeEmail(email: String) {
@@ -73,7 +70,7 @@ class SignUpUseCase(
     )
 
     data class Response(
-        val id: Long,
+        val id: String,
     )
 
     companion object {

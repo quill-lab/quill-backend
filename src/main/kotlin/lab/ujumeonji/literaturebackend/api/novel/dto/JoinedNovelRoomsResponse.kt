@@ -11,7 +11,7 @@ data class JoinedNovelRoomsResponse(
     val page: Int,
 ) {
     data class ResponseItem(
-        val id: Long,
+        val id: String,
         val category: Category,
         val title: String,
         val createdAt: LocalDateTime,
@@ -28,7 +28,7 @@ data class JoinedNovelRoomsResponse(
         )
 
         data class Author(
-            val id: Long,
+            val id: String,
             val name: String,
         )
     }

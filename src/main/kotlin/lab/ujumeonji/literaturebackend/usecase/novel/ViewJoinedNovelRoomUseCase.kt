@@ -1,6 +1,8 @@
 package lab.ujumeonji.literaturebackend.usecase.novel
 
+import lab.ujumeonji.literaturebackend.domain.account.AccountId
 import lab.ujumeonji.literaturebackend.domain.account.AccountService
+import lab.ujumeonji.literaturebackend.domain.contributor.ContributorGroupId
 import lab.ujumeonji.literaturebackend.domain.contributor.ContributorGroupStatus
 import lab.ujumeonji.literaturebackend.domain.contributor.ContributorRole
 import lab.ujumeonji.literaturebackend.domain.contributor.ContributorService
@@ -21,13 +23,16 @@ class ViewJoinedNovelRoomUseCase(
 ) : UseCase<ViewJoinedNovelRoomUseCase.Request, ViewJoinedNovelRoomUseCase.Response> {
 
     override fun execute(request: Request, executedAt: LocalDateTime): Response {
-        val contributorGroup = contributorService.findGroupById(request.contributorGroupId)
+        val accountId = AccountId.from(request.accountId)
+        val contributorGroupId = ContributorGroupId.from(request.contributorGroupId)
+
+        val contributorGroup = contributorService.findGroupById(contributorGroupId)
             ?: throw BusinessException(ErrorCode.CONTRIBUTOR_GROUP_NOT_FOUND)
 
-        val me = accountService.findById(request.accountId)
+        val me = accountService.findById(accountId)
             ?: throw BusinessException(ErrorCode.ACCOUNT_NOT_FOUND)
 
-        val novel = novelService.findById(contributorGroup.novelId)
+        val novel = novelService.findNovel(contributorGroup.novelId)
             ?: throw BusinessException(ErrorCode.NOVEL_NOT_FOUND)
 
         val currentAuthorAccountId = contributorGroup.activeContributorAccountId
@@ -35,7 +40,7 @@ class ViewJoinedNovelRoomUseCase(
         val currentAuthor = currentAuthorAccountId?.let { accountService.findById(it) }
 
         return Response(
-            id = contributorGroup.id,
+            id = contributorGroup.id.toString(),
             category = Response.Category(
                 name = novel.category.name,
                 alias = novel.category.alias
@@ -50,7 +55,7 @@ class ViewJoinedNovelRoomUseCase(
             maxContributorCount = contributorGroup.maxContributorCount,
             author = currentAuthor?.let {
                 Response.Author(
-                    id = it.id,
+                    id = it.id.toString(),
                     name = it.name
                 )
             },
@@ -60,12 +65,12 @@ class ViewJoinedNovelRoomUseCase(
     }
 
     data class Request(
-        val accountId: Long,
-        val contributorGroupId: Long,
+        val accountId: String,
+        val contributorGroupId: String,
     )
 
     data class Response(
-        val id: Long,
+        val id: String,
         val category: Category,
         val title: String,
         val description: String,
@@ -86,7 +91,7 @@ class ViewJoinedNovelRoomUseCase(
         )
 
         data class Author(
-            val id: Long,
+            val id: String,
             val name: String,
         )
     }

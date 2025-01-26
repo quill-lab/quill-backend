@@ -5,8 +5,9 @@ import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.CrudRepository
 import org.springframework.data.repository.query.Param
+import java.util.*
 
-interface ContributorGroupRepository : CrudRepository<ContributorGroup, Long> {
+interface ContributorGroupRepository : CrudRepository<ContributorGroup, UUID> {
 
     @Query(
         """
@@ -19,7 +20,7 @@ interface ContributorGroupRepository : CrudRepository<ContributorGroup, Long> {
         """
     )
     fun findByAccountId(
-        @Param("accountId") accountId: Long,
+        @Param("accountId") accountId: UUID,
         pageable: Pageable
     ): Page<ContributorGroup>
 }

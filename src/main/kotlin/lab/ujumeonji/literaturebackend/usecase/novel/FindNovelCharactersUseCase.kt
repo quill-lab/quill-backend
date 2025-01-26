@@ -1,6 +1,7 @@
 package lab.ujumeonji.literaturebackend.usecase.novel
 
 import lab.ujumeonji.literaturebackend.domain.account.AccountService
+import lab.ujumeonji.literaturebackend.domain.contributor.ContributorGroupId
 import lab.ujumeonji.literaturebackend.domain.contributor.ContributorService
 import lab.ujumeonji.literaturebackend.domain.novel.NovelService
 import lab.ujumeonji.literaturebackend.support.exception.BusinessException
@@ -19,7 +20,7 @@ class FindNovelCharactersUseCase(
 ) : UseCase<FindNovelCharactersUseCase.Request, List<FindNovelCharactersUseCase.Response>> {
 
     override fun execute(request: Request, executedAt: LocalDateTime): List<Response> {
-        val contributor = contributorService.findGroupById(request.novelRoomId)
+        val contributor = contributorService.findGroupById(ContributorGroupId.from(request.novelRoomId))
             ?: throw BusinessException(ErrorCode.CONTRIBUTOR_GROUP_NOT_FOUND)
 
         val novel = novelService.findNovel(contributor.novelId)
@@ -30,7 +31,7 @@ class FindNovelCharactersUseCase(
 
         return novel.characters.map { character ->
             Response(
-                id = character.id,
+                id = character.id.toString(),
                 name = character.name,
                 description = character.description,
                 profileImage = character.profileImage,
@@ -38,7 +39,7 @@ class FindNovelCharactersUseCase(
                 updatedBy = character.lastUpdatedBy?.let { accountId ->
                     accountMap[accountId]?.let { account ->
                         Response.LastCharacterUpdatedBy(
-                            id = account.id,
+                            id = account.id.toString(),
                             name = account.name,
                         )
                     }
@@ -48,11 +49,11 @@ class FindNovelCharactersUseCase(
     }
 
     data class Request(
-        val novelRoomId: Long,
+        val novelRoomId: String,
     )
 
     data class Response(
-        val id: Long,
+        val id: String,
         val name: String,
         val description: String,
         val profileImage: String,
@@ -61,7 +62,7 @@ class FindNovelCharactersUseCase(
     ) {
 
         data class LastCharacterUpdatedBy(
-            val id: Long,
+            val id: String,
             val name: String,
         )
     }

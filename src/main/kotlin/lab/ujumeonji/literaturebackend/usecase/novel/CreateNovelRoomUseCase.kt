@@ -1,8 +1,10 @@
 package lab.ujumeonji.literaturebackend.usecase.novel
 
+import lab.ujumeonji.literaturebackend.domain.account.AccountId
 import lab.ujumeonji.literaturebackend.domain.contributor.ContributorService
 import lab.ujumeonji.literaturebackend.domain.contributor.command.CreateContributorGroupCommand
 import lab.ujumeonji.literaturebackend.domain.novel.NovelCategory
+import lab.ujumeonji.literaturebackend.domain.novel.NovelId
 import lab.ujumeonji.literaturebackend.domain.novel.NovelService
 import lab.ujumeonji.literaturebackend.domain.novel.command.CreateNovelCommand
 import lab.ujumeonji.literaturebackend.support.exception.BusinessException
@@ -20,7 +22,8 @@ class CreateNovelRoomUseCase(
 ) : UseCase<CreateNovelRoomUseCase.Request, CreateNovelRoomUseCase.Response> {
 
     override fun execute(request: Request, executedAt: LocalDateTime): Response {
-        if (contributorService.hasOwnContributorGroup(request.creatorId)) {
+        val accountId = AccountId.from(request.creatorId)
+        if (contributorService.hasOwnContributorGroup(accountId)) {
             throw BusinessException(ErrorCode.DUPLICATE_CONTRIBUTOR_GROUP)
         }
 
@@ -28,7 +31,7 @@ class CreateNovelRoomUseCase(
 
         val contributorGroup = createContributorGroup(request, novel.id, executedAt)
 
-        return Response(contributorGroup.id)
+        return Response("${contributorGroup.id}")
     }
 
     private fun createNovel(request: Request, executedAt: LocalDateTime) = novelService.createNovel(
@@ -43,11 +46,11 @@ class CreateNovelRoomUseCase(
         now = executedAt
     )
 
-    private fun createContributorGroup(request: Request, novelId: Long, executedAt: LocalDateTime) =
+    private fun createContributorGroup(request: Request, novelId: NovelId, executedAt: LocalDateTime) =
         contributorService.createContributorGroup(
             command = CreateContributorGroupCommand(
                 novelId = novelId,
-                ownerId = request.creatorId,
+                ownerId = AccountId.from(request.creatorId),
                 tags = request.tags,
                 maxContributorCount = request.maxContributorCount,
             ),
@@ -55,7 +58,7 @@ class CreateNovelRoomUseCase(
         )
 
     data class Request(
-        val creatorId: Long,
+        val creatorId: String,
         val title: String,
         val description: String,
         val category: NovelCategory,
@@ -66,6 +69,6 @@ class CreateNovelRoomUseCase(
     )
 
     data class Response(
-        val novelRoomId: Long
+        val novelRoomId: String
     )
 }

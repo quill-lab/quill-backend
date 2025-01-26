@@ -6,13 +6,14 @@ import jakarta.persistence.*;
 import lab.ujumeonji.literaturebackend.domain.common.BaseEntity;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(name = "chapters")
 public class Chapter extends BaseEntity {
 
-    @EmbeddedId
-    private ChapterId id;
+    @Id
+    private UUID id;
 
     @Column(nullable = false)
     private String title;
@@ -28,7 +29,7 @@ public class Chapter extends BaseEntity {
     }
 
     Chapter(String title, String description, Novel novel, LocalDateTime createdAt, LocalDateTime updatedAt, LocalDateTime deletedAt) {
-        this.id = new ChapterId(UuidCreator.getTimeOrderedEpoch());
+        this.id = UuidCreator.getTimeOrderedEpoch();
         this.title = title;
         this.description = description;
         this.novel = novel;
@@ -42,6 +43,6 @@ public class Chapter extends BaseEntity {
     }
 
     public ChapterId getId() {
-        return id;
+        return ChapterId.from(this.id);
     }
 }

@@ -3,8 +3,9 @@ package lab.ujumeonji.literaturebackend.domain.contributor
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.CrudRepository
 import org.springframework.data.repository.query.Param
+import java.util.*
 
-interface ContributorRepository : CrudRepository<Contributor, Long> {
+interface ContributorRepository : CrudRepository<Contributor, UUID> {
 
     @Query(
         """
@@ -16,7 +17,7 @@ interface ContributorRepository : CrudRepository<Contributor, Long> {
     """
     )
     fun findAllByAccountIdAndRole(
-        @Param("accountId") accountId: Long,
+        @Param("accountId") accountId: UUID,
         @Param("role") role: ContributorRole = ContributorRole.MAIN
     ): List<Contributor>
 }

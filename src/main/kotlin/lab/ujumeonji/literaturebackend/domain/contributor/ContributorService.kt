@@ -1,5 +1,6 @@
 package lab.ujumeonji.literaturebackend.domain.contributor
 
+import lab.ujumeonji.literaturebackend.domain.account.AccountId
 import lab.ujumeonji.literaturebackend.domain.contributor.command.CreateContributorGroupCommand
 import org.springframework.data.domain.PageRequest
 import org.springframework.stereotype.Service
@@ -27,15 +28,15 @@ class ContributorService(
             )
         )
 
-    fun findByAccountIdWithPaging(accountId: Long, page: Int, size: Int): Pair<List<ContributorGroup>, Long> {
+    fun findByAccountIdWithPaging(accountId: AccountId, page: Int, size: Int): Pair<List<ContributorGroup>, Long> {
         val pageable = PageRequest.of(page, size)
-        val result = contributorGroupRepository.findByAccountId(accountId, pageable)
+        val result = contributorGroupRepository.findByAccountId(accountId.id, pageable)
         return result.content to result.totalElements
     }
 
-    fun findGroupById(id: Long): ContributorGroup? =
-        contributorGroupRepository.findById(id).orElse(null)
+    fun findGroupById(id: ContributorGroupId): ContributorGroup? =
+        contributorGroupRepository.findById(id.id).orElse(null)
 
-    fun hasOwnContributorGroup(accountId: Long): Boolean =
-        contributorRepository.findAllByAccountIdAndRole(accountId).isNotEmpty()
+    fun hasOwnContributorGroup(accountId: AccountId): Boolean =
+        contributorRepository.findAllByAccountIdAndRole(accountId.id).isNotEmpty()
 }

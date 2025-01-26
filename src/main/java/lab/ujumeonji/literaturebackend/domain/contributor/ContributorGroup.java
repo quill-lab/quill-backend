@@ -11,13 +11,14 @@ import org.jetbrains.annotations.Nullable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Table(name = "contributor_groups")
 public class ContributorGroup extends BaseEntity {
 
-    @EmbeddedId
-    private ContributorGroupId id;
+    @Id
+    private UUID id;
 
     @Column
     private int maxContributorCount;
@@ -29,13 +30,13 @@ public class ContributorGroup extends BaseEntity {
     private ContributorGroupStatus status;
 
     @Column(nullable = false)
-    private NovelId novelId;
+    private UUID novelId;
 
     @Column
     private LocalDateTime completedAt;
 
     @Column
-    private ContributorId activeContributorId;
+    private UUID activeContributorId;
 
     @OneToMany(mappedBy = "contributorGroup", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Contributor> contributors = new ArrayList<>();
@@ -48,12 +49,12 @@ public class ContributorGroup extends BaseEntity {
 
     ContributorGroup(int maxContributorCount, @Nonnull NovelId novelId, @Nonnull LocalDateTime createdAt,
                      @Nonnull LocalDateTime updatedAt, LocalDateTime deletedAt) {
-        this.id = new ContributorGroupId(UuidCreator.getTimeOrderedEpoch());
+        this.id = UuidCreator.getTimeOrderedEpoch();
         this.activeContributorId = null;
         this.contributorCount = 0;
         this.maxContributorCount = maxContributorCount;
         this.status = ContributorGroupStatus.PREPARING;
-        this.novelId = novelId;
+        this.novelId = novelId.getId();
         setCreatedAt(createdAt);
         setUpdatedAt(updatedAt);
         setDeletedAt(deletedAt);
@@ -111,7 +112,7 @@ public class ContributorGroup extends BaseEntity {
     }
 
     public NovelId getNovelId() {
-        return novelId;
+        return NovelId.from(novelId);
     }
 
     public Integer getMaxContributorCount() {
@@ -130,6 +131,10 @@ public class ContributorGroup extends BaseEntity {
         return contributors;
     }
 
+    ContributorId getContributorId() {
+        return ContributorId.from(activeContributorId);
+    }
+
     @Nullable
     public ContributorRole getCollaboratorRole(@Nonnull AccountId accountId) {
         return contributors.stream()
@@ -142,7 +147,7 @@ public class ContributorGroup extends BaseEntity {
     @Nullable
     private Contributor getCurrentContributor() {
         return contributors.stream()
-                .filter(contributor -> contributor.getId() == activeContributorId)
+                .filter(contributor -> contributor.getId().equals(getContributorId()))
                 .findFirst()
                 .orElse(null);
     }
@@ -197,7 +202,7 @@ public class ContributorGroup extends BaseEntity {
 
     public boolean isParticipating(@Nonnull AccountId accountId) {
         return contributors.stream()
-                .anyMatch(contributor -> contributor.getAccountId().equals(accountId) && contributor.isDeleted());
+                .anyMatch(contributor -> contributor.getAccountId().equals(accountId) && !contributor.isDeleted());
     }
 
     public boolean hasManagePermission(@Nonnull AccountId accountId) {
@@ -206,6 +211,6 @@ public class ContributorGroup extends BaseEntity {
     }
 
     public ContributorGroupId getId() {
-        return id;
+        return ContributorGroupId.from(this.id);
     }
 }

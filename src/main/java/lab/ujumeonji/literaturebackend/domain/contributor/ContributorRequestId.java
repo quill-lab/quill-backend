@@ -1,26 +1,25 @@
 package lab.ujumeonji.literaturebackend.domain.contributor;
 
 import jakarta.annotation.Nonnull;
-import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
-public class ContributorGroupId {
+public class ContributorRequestId {
 
     private final UUID id;
 
-    ContributorGroupId(UUID id) {
+    public ContributorRequestId(UUID id) {
         this.id = id;
     }
 
     @Nonnull
-    public static ContributorGroupId from(@NotNull final UUID id) {
-        return new ContributorGroupId(id);
+    public static ContributorRequestId from(UUID id) {
+        return new ContributorRequestId(id);
     }
 
     @Nonnull
-    public static ContributorGroupId from(@Nonnull String id) {
-        return new ContributorGroupId(UUID.fromString(id));
+    public static ContributorRequestId from(String id) {
+        return new ContributorRequestId(UUID.fromString(id));
     }
 
     public UUID getId() {
@@ -31,9 +30,9 @@ public class ContributorGroupId {
     public boolean equals(Object o) {
         if (this == o)
             return true;
-        if (!(o instanceof ContributorGroupId contributorGroupId))
+        if (!(o instanceof ContributorRequestId that))
             return false;
-        return id.equals(contributorGroupId.id);
+        return id.equals(that.id);
     }
 
     @Override

@@ -1,20 +1,25 @@
 package lab.ujumeonji.literaturebackend.domain.contributor;
 
-import jakarta.persistence.Embeddable;
+import jakarta.annotation.Nonnull;
 
-import java.io.Serializable;
-import java.util.Objects;
 import java.util.UUID;
 
-@Embeddable
-public class ContributorId implements Serializable {
+public class ContributorId {
 
     private UUID id;
 
-    protected ContributorId() {}
-
     public ContributorId(UUID id) {
         this.id = id;
+    }
+
+    @Nonnull
+    public static ContributorId from(UUID id) {
+        return new ContributorId(id);
+    }
+
+    @Nonnull
+    public static ContributorId from(String id) {
+        return new ContributorId(UUID.fromString(id));
     }
 
     public UUID getId() {
@@ -27,12 +32,12 @@ public class ContributorId implements Serializable {
             return true;
         if (!(o instanceof ContributorId that))
             return false;
-        return Objects.equals(id, that.id);
+        return id.equals(that.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return id.hashCode();
     }
 
     @Override

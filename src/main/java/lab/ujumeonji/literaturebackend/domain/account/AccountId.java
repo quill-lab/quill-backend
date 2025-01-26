@@ -1,20 +1,25 @@
 package lab.ujumeonji.literaturebackend.domain.account;
 
-import jakarta.persistence.Embeddable;
+import jakarta.annotation.Nonnull;
 
-import java.io.Serializable;
 import java.util.UUID;
-import java.util.Objects;
 
-@Embeddable
-public class AccountId implements Serializable {
+public class AccountId {
 
-    private UUID id;
-
-    protected AccountId() {}
+    private final UUID id;
 
     public AccountId(UUID id) {
         this.id = id;
+    }
+
+    @Nonnull
+    public static AccountId from(UUID id) {
+        return new AccountId(id);
+    }
+
+    @Nonnull
+    public static AccountId from(String id) {
+        return new AccountId(UUID.fromString(id));
     }
 
     public UUID getId() {
@@ -27,12 +32,12 @@ public class AccountId implements Serializable {
             return true;
         if (!(o instanceof AccountId accountId))
             return false;
-        return Objects.equals(id, accountId.id);
+        return id.equals(accountId.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return id.hashCode();
     }
 
     @Override

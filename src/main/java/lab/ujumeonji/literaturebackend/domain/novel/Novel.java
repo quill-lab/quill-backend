@@ -12,14 +12,15 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "novels")
 public class Novel extends BaseEntity {
 
-    @EmbeddedId
-    private NovelId id;
+    @Id
+    private UUID id;
 
     @Column(nullable = false)
     private String title;
@@ -50,11 +51,11 @@ public class Novel extends BaseEntity {
     }
 
     Novel(String title, String description, String coverImage, List<String> tags, String synopsis,
-            NovelCategory category,
-            LocalDateTime createdAt,
-            LocalDateTime updatedAt,
-            LocalDateTime deletedAt) {
-        this.id = new NovelId(UuidCreator.getTimeOrderedEpoch());
+          NovelCategory category,
+          LocalDateTime createdAt,
+          LocalDateTime updatedAt,
+          LocalDateTime deletedAt) {
+        this.id = UuidCreator.getTimeOrderedEpoch();
         this.title = title;
         this.description = description;
         this.coverImage = coverImage;
@@ -66,8 +67,8 @@ public class Novel extends BaseEntity {
     }
 
     static Novel create(String title, String description, NovelCategory category, String coverImage, List<String> tags,
-            String synopsis,
-            LocalDateTime now) {
+                        String synopsis,
+                        LocalDateTime now) {
         return new Novel(title, description, coverImage, tags, synopsis, category, now, now, null);
     }
 
@@ -130,6 +131,6 @@ public class Novel extends BaseEntity {
     }
 
     public NovelId getId() {
-        return id;
+        return NovelId.from(this.id);
     }
 }

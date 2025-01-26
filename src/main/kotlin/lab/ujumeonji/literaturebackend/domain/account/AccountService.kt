@@ -15,9 +15,9 @@ class AccountService(
 
     fun findOneByEmail(email: String): Account? = accountRepository.findByEmail(email)
 
-    fun findById(id: Long): Account? = accountRepository.findById(id).orElse(null)
+    fun findById(id: AccountId): Account? = accountRepository.findById(id.id).orElse(null)
 
-    fun findByIds(ids: List<Long>): List<Account> = accountRepository.findAllById(ids).toList()
+    fun findByIds(ids: List<AccountId>): List<Account> = accountRepository.findAllById(ids.map { it.id }).toList()
 
     fun checkPassword(account: Account, password: String): Boolean = account.checkPassword(
         password,

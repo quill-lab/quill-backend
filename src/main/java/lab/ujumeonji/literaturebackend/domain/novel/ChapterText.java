@@ -5,7 +5,6 @@ import jakarta.annotation.Nonnull;
 import jakarta.persistence.*;
 import lab.ujumeonji.literaturebackend.domain.account.AccountId;
 import lab.ujumeonji.literaturebackend.domain.common.BaseEntity;
-import lab.ujumeonji.literaturebackend.domain.novel.ChapterTextId;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -14,8 +13,8 @@ import java.util.UUID;
 @Table(name = "chapter_texts")
 public class ChapterText extends BaseEntity {
 
-    @EmbeddedId
-    private ChapterTextId id;
+    @Id
+    private UUID id;
 
     @Column(columnDefinition = "text")
     private String content;
@@ -24,28 +23,30 @@ public class ChapterText extends BaseEntity {
     @JoinColumn(name = "chapter_id", nullable = false, foreignKey = @ForeignKey(name = "fk_chapter_text_chapter"))
     private Chapter chapter;
 
-    @Column(nullable = false)
-    private AccountId accountId;
+    @Column(name = "account_id", nullable = false)
+    private UUID accountId;
 
     protected ChapterText() {
     }
 
-    ChapterText(Chapter chapter, String content, LocalDateTime createdAt, LocalDateTime updatedAt, LocalDateTime deletedAt) {
-        this.id = new ChapterTextId(UuidCreator.getTimeOrderedEpoch());
+    ChapterText(@Nonnull Chapter chapter, @Nonnull AccountId accountId, @Nonnull String content, @Nonnull LocalDateTime createdAt, @Nonnull LocalDateTime updatedAt,
+                LocalDateTime deletedAt) {
+        this.id = UuidCreator.getTimeOrderedEpoch();
         this.chapter = chapter;
         this.content = content;
+        this.accountId = accountId.getId();
         setCreatedAt(createdAt);
         setUpdatedAt(updatedAt);
         setDeletedAt(deletedAt);
     }
 
-    static ChapterText create(@Nonnull Chapter chapter, @Nonnull String content, @Nonnull LocalDateTime now) {
-        return new ChapterText(chapter, content, now, now, null);
+    static ChapterText create(@Nonnull Chapter chapter, @Nonnull AccountId accountId, @Nonnull String content, @Nonnull LocalDateTime now) {
+        return new ChapterText(chapter, accountId, content, now, now, null);
     }
 
     @Nonnull
     public ChapterTextId getId() {
-        return id;
+        return ChapterTextId.from(this.id);
     }
 
     @Nonnull

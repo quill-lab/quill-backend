@@ -300,7 +300,11 @@ class NovelRoomApiControllerTest @Autowired constructor(
                     "writingOrder" to 1
                 )
                 val response =
-                    performAuthPatch("/api/v1/novel-rooms/$novelRoomId/participants/999999/order", request, mainAccount)
+                    performAuthPatch(
+                        "/api/v1/novel-rooms/$novelRoomId/participants/0194a1e8-6aad-7c73-9de0-b216346a242f/order",
+                        request,
+                        mainAccount
+                    )
 
                 then("참여자를 찾을 수 없다는 오류가 발생한다") {
                     response

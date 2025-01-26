@@ -3,7 +3,6 @@ package lab.ujumeonji.literaturebackend.domain.novel;
 import com.github.f4b6a3.uuid.UuidCreator;
 import jakarta.persistence.*;
 import lab.ujumeonji.literaturebackend.domain.common.BaseEntity;
-import lab.ujumeonji.literaturebackend.domain.novel.NovelTagId;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -12,8 +11,8 @@ import java.util.UUID;
 @Table(name = "novel_tags")
 public class NovelTag extends BaseEntity {
 
-    @EmbeddedId
-    private NovelTagId id;
+    @Id
+    private UUID id;
 
     @Column(nullable = false)
     private String name;
@@ -26,7 +25,7 @@ public class NovelTag extends BaseEntity {
     }
 
     NovelTag(String name, Novel novel, LocalDateTime createdAt, LocalDateTime updatedAt, LocalDateTime deletedAt) {
-        this.id = new NovelTagId(UuidCreator.getTimeOrderedEpoch());
+        this.id = UuidCreator.getTimeOrderedEpoch();
         this.name = name;
         this.novel = novel;
         setCreatedAt(createdAt);
@@ -43,7 +42,7 @@ public class NovelTag extends BaseEntity {
     }
 
     public NovelTagId getId() {
-        return id;
+        return NovelTagId.from(this.id);
     }
 
     public Novel getNovel() {

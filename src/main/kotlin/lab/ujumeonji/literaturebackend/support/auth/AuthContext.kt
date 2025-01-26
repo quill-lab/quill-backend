@@ -6,5 +6,5 @@ import org.springframework.web.context.annotation.RequestScope
 @Component
 @RequestScope
 class AuthContext {
-    var userId: Long? = null
+    var accountId: String? = null
 }

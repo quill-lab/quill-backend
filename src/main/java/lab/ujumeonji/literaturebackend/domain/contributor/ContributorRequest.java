@@ -1,8 +1,11 @@
 package lab.ujumeonji.literaturebackend.domain.contributor;
 
-import jakarta.persistence.*;
-import lab.ujumeonji.literaturebackend.domain.common.BaseEntity;
 import com.github.f4b6a3.uuid.UuidCreator;
+import jakarta.annotation.Nonnull;
+import jakarta.persistence.*;
+import lab.ujumeonji.literaturebackend.domain.account.AccountId;
+import lab.ujumeonji.literaturebackend.domain.common.BaseEntity;
+import lab.ujumeonji.literaturebackend.domain.novel.NovelId;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -19,10 +22,10 @@ public class ContributorRequest extends BaseEntity {
     private ContributorGroup contributorGroup;
 
     @Column(nullable = false)
-    private Long novelId;
+    private UUID novelId;
 
     @Column(nullable = false)
-    private Long accountId;
+    private UUID accountId;
 
     @Column
     @Enumerated(EnumType.STRING)
@@ -31,12 +34,12 @@ public class ContributorRequest extends BaseEntity {
     protected ContributorRequest() {
     }
 
-    ContributorRequest(ContributorGroup contributorGroup, Long novelId, Long accountId, ContributorRequestStatus status,
-            LocalDateTime createdAt, LocalDateTime updatedAt, LocalDateTime deletedAt) {
+    ContributorRequest(@Nonnull ContributorGroup contributorGroup, @Nonnull NovelId novelId, @Nonnull AccountId accountId, ContributorRequestStatus status,
+                       LocalDateTime createdAt, LocalDateTime updatedAt, LocalDateTime deletedAt) {
         this.id = UuidCreator.getTimeOrderedEpoch();
         this.contributorGroup = contributorGroup;
-        this.novelId = novelId;
-        this.accountId = accountId;
+        this.novelId = novelId.getId();
+        this.accountId = accountId.getId();
         this.status = status;
 
         setCreatedAt(createdAt);
@@ -56,7 +59,7 @@ public class ContributorRequest extends BaseEntity {
         }
     }
 
-    public UUID getId() {
-        return id;
+    public ContributorRequestId getId() {
+        return ContributorRequestId.from(this.id);
     }
 }

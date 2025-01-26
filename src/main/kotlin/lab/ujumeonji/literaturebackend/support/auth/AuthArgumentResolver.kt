@@ -15,18 +15,18 @@ class AuthArgumentResolver(
 ) : HandlerMethodArgumentResolver {
 
     override fun supportsParameter(parameter: MethodParameter): Boolean =
-        parameter.hasParameterAnnotation(RequiredAuth::class.java) && parameter.parameterType == Long::class.java
+        parameter.hasParameterAnnotation(RequiredAuth::class.java) && parameter.parameterType == String::class.java
 
     override fun resolveArgument(
         parameter: MethodParameter,
         mavContainer: ModelAndViewContainer?,
         webRequest: NativeWebRequest,
         binderFactory: WebDataBinderFactory?
-    ): Long? = when {
+    ): String? = when {
         parameter.hasParameterAnnotation(RequiredAuth::class.java) &&
                 parameter.parameterType == Long::class.java ->
-            authContext.userId ?: throw BusinessException(ErrorCode.UNAUTHORIZED)
+            authContext.accountId ?: throw BusinessException(ErrorCode.UNAUTHORIZED)
 
-        else -> authContext.userId
+        else -> authContext.accountId
     }
 }

@@ -37,7 +37,7 @@ class SignInUseCase(
     private fun createAuthToken(account: Account, now: LocalDateTime): String =
         tokenManager.createToken(
             payload = mapOf(
-                "id" to account.id,
+                "id" to account.id.toString(),
                 "email" to account.email,
             ),
             issuedAt = now

@@ -7,16 +7,17 @@ import lab.ujumeonji.literaturebackend.domain.account.AccountId;
 import lab.ujumeonji.literaturebackend.domain.common.BaseEntity;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(name = "contributors")
 public class Contributor extends BaseEntity {
 
-    @EmbeddedId
-    private ContributorId id;
+    @Id
+    private UUID id;
 
     @Column(nullable = false)
-    private AccountId accountId;
+    private UUID accountId;
 
     @Column
     @Enumerated(EnumType.STRING)
@@ -32,12 +33,13 @@ public class Contributor extends BaseEntity {
     protected Contributor() {
     }
 
-    Contributor(@Nonnull AccountId accountId, @Nonnull ContributorGroup contributorGroup, @Nonnull ContributorRole role, int writingOrder,
+    Contributor(@Nonnull AccountId accountId, @Nonnull ContributorGroup contributorGroup, @Nonnull ContributorRole role,
+                int writingOrder,
                 @Nonnull LocalDateTime createdAt,
                 @Nonnull LocalDateTime updatedAt,
                 LocalDateTime deletedAt) {
-        this.id = new ContributorId(UuidCreator.getTimeOrderedEpoch());
-        this.accountId = accountId;
+        this.id = UuidCreator.getTimeOrderedEpoch();
+        this.accountId = accountId.getId();
         this.contributorGroup = contributorGroup;
         this.role = role;
         this.writingOrder = writingOrder;
@@ -46,14 +48,15 @@ public class Contributor extends BaseEntity {
         setDeletedAt(deletedAt);
     }
 
-    static Contributor create(@Nonnull AccountId accountId, @Nonnull ContributorGroup contributorGroup, @Nonnull ContributorRole role,
+    static Contributor create(@Nonnull AccountId accountId, @Nonnull ContributorGroup contributorGroup,
+                              @Nonnull ContributorRole role,
                               int writingOrder,
                               @Nonnull LocalDateTime now) {
         return new Contributor(accountId, contributorGroup, role, writingOrder, now, now, null);
     }
 
     public AccountId getAccountId() {
-        return accountId;
+        return AccountId.from(accountId);
     }
 
     public ContributorRole getRole() {
@@ -73,6 +76,6 @@ public class Contributor extends BaseEntity {
     }
 
     ContributorId getId() {
-        return id;
+        return ContributorId.from(this.id);
     }
 }

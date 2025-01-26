@@ -6,6 +6,7 @@ import lab.ujumeonji.literaturebackend.domain.common.BaseEntity;
 import lab.ujumeonji.literaturebackend.support.encrypt.PasswordEncoder;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(name = "accounts", indexes = {
@@ -13,8 +14,8 @@ import java.time.LocalDateTime;
 })
 public class Account extends BaseEntity {
 
-    @EmbeddedId
-    private AccountId id;
+    @Id
+    private UUID id;
 
     @Column
     private String email;
@@ -30,7 +31,7 @@ public class Account extends BaseEntity {
 
     Account(String email, String password, String name, LocalDateTime createdAt, LocalDateTime updatedAt,
             LocalDateTime deletedAt) {
-        this.id = new AccountId(UuidCreator.getTimeOrderedEpoch());
+        this.id = UuidCreator.getTimeOrderedEpoch();
         this.email = email;
         this.password = password;
         this.name = name;
@@ -61,6 +62,6 @@ public class Account extends BaseEntity {
     }
 
     public AccountId getId() {
-        return id;
+        return AccountId.from(this.id);
     }
 }

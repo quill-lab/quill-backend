@@ -4,16 +4,18 @@ import com.github.f4b6a3.uuid.UuidCreator;
 import jakarta.annotation.Nonnull;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
+import lab.ujumeonji.literaturebackend.domain.account.AccountId;
 import lab.ujumeonji.literaturebackend.domain.common.BaseEntity;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(name = "characters")
 public class Character extends BaseEntity {
 
-    @EmbeddedId
-    private CharacterId id;
+    @Id
+    private UUID id;
 
     @Column(nullable = false)
     private String name;
@@ -24,8 +26,8 @@ public class Character extends BaseEntity {
     @Column
     private String profileImage;
 
-    @Column
-    private String lastUpdatedBy;
+    @Column(name = "last_updated_by")
+    private UUID lastUpdatedBy;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "novel_id", nullable = false)
@@ -37,14 +39,14 @@ public class Character extends BaseEntity {
     protected Character() {
     }
 
-    Character(String name, String description, String profileImage, String lastUpdatedBy, Novel novel,
+    Character(String name, String description, String profileImage, AccountId lastUpdatedBy, Novel novel,
               Integer priority, LocalDateTime createdAt, LocalDateTime updatedAt,
               LocalDateTime deletedAt) {
-        this.id = new CharacterId(UuidCreator.getTimeOrderedEpoch());
+        this.id = UuidCreator.getTimeOrderedEpoch();
         this.name = name;
         this.description = description;
         this.profileImage = profileImage;
-        this.lastUpdatedBy = lastUpdatedBy;
+        this.lastUpdatedBy = lastUpdatedBy.getId();
         this.novel = novel;
         this.priority = priority;
         setCreatedAt(createdAt);
@@ -57,7 +59,8 @@ public class Character extends BaseEntity {
     private void validate() {
     }
 
-    static Character create(@Nonnull Novel novel, @Nonnull String name, @Nonnull String description, String profileImage,
+    static Character create(@Nonnull Novel novel, @Nonnull String name, @Nonnull String description,
+                            String profileImage,
                             Integer priority, @Nonnull LocalDateTime now) {
         return new Character(name, description, profileImage, null, novel, priority, now, now, null);
     }
@@ -74,8 +77,8 @@ public class Character extends BaseEntity {
         return profileImage;
     }
 
-    public String getLastUpdatedBy() {
-        return lastUpdatedBy;
+    public AccountId getLastUpdatedBy() {
+        return AccountId.from(lastUpdatedBy);
     }
 
     @Nullable
@@ -92,6 +95,6 @@ public class Character extends BaseEntity {
     }
 
     public CharacterId getId() {
-        return id;
+        return CharacterId.from(this.id);
     }
 }

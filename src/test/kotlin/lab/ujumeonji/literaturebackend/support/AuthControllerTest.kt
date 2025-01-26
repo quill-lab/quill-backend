@@ -12,7 +12,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers
 import java.util.*
 
 data class TestAccount(
-    val id: Long,
+    val id: String,
     val email: String,
     val password: String,
     val nickname: String,
@@ -86,7 +86,8 @@ abstract class AuthControllerTest(
             .andReturn()
 
         val accountId = objectMapper.readTree(response.response.contentAsString)
-            .get("id").asLong()
+            .get("id")
+            .asText()
 
         val token = signIn(email, password)
         return TestAccount(
@@ -118,7 +119,7 @@ abstract class AuthControllerTest(
         return response.accessToken
     }
 
-    protected fun fixtureNovelRoom(account: TestAccount?): Long {
+    protected fun fixtureNovelRoom(account: TestAccount?): String {
         val request = mapOf(
             "maxContributors" to 5,
             "title" to "테스트 소설",
@@ -131,6 +132,6 @@ abstract class AuthControllerTest(
 
         val response = performAuthPost("/api/v1/novel-rooms", request, account)
         val responseMap = objectMapper.readValue(response.andReturn().response.contentAsString, Map::class.java)
-        return (responseMap["id"] as Number).toLong()
+        return responseMap["id"] as String
     }
 }

@@ -1,20 +1,25 @@
 package lab.ujumeonji.literaturebackend.domain.novel;
 
-import jakarta.persistence.Embeddable;
+import jakarta.annotation.Nonnull;
 
-import java.io.Serializable;
 import java.util.UUID;
-import java.util.Objects;
 
-@Embeddable
-public class ChapterId implements Serializable {
+public class ChapterId {
 
-    private UUID id;
-
-    protected ChapterId() {}
+    private final UUID id;
 
     public ChapterId(UUID id) {
         this.id = id;
+    }
+
+    @Nonnull
+    public static ChapterId from(UUID id) {
+        return new ChapterId(id);
+    }
+
+    @Nonnull
+    public static ChapterId from(String id) {
+        return new ChapterId(UUID.fromString(id));
     }
 
     public UUID getId() {
@@ -27,12 +32,12 @@ public class ChapterId implements Serializable {
             return true;
         if (!(o instanceof ChapterId chapterId))
             return false;
-        return Objects.equals(id, chapterId.id);
+        return id.equals(chapterId.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id);
+        return id.hashCode();
     }
 
     @Override

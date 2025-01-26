@@ -1,5 +1,6 @@
 package lab.ujumeonji.literaturebackend.usecase.novel
 
+import lab.ujumeonji.literaturebackend.domain.account.AccountId
 import lab.ujumeonji.literaturebackend.domain.account.AccountService
 import lab.ujumeonji.literaturebackend.domain.contributor.ContributorGroupStatus
 import lab.ujumeonji.literaturebackend.domain.contributor.ContributorRole
@@ -21,13 +22,14 @@ class FindJoinedNovelRoomsUseCase(
 ) : UseCase<FindJoinedNovelRoomsUseCase.Request, FindJoinedNovelRoomsUseCase.Response> {
 
     override fun execute(request: Request, executedAt: LocalDateTime): Response {
+        val accountId = AccountId.from(request.accountId)
         val (contributorGroups, totalElements) = contributorService.findByAccountIdWithPaging(
-            accountId = request.accountId,
+            accountId = accountId,
             page = request.page,
             size = request.size,
         )
 
-        val me = accountService.findById(request.accountId)
+        val me = accountService.findById(accountId)
             ?: throw BusinessException(ErrorCode.ACCOUNT_NOT_FOUND)
 
         val novels = novelService.findNovels(contributorGroups.map { it.novelId })
@@ -40,7 +42,7 @@ class FindJoinedNovelRoomsUseCase(
             novels[contributorGroup.novelId]?.let { novel ->
                 with(contributorGroup) {
                     Response.ResponseItem(
-                        id = id,
+                        id = id.toString(),
                         category = Response.ResponseItem.Category(
                             name = novel.category.name,
                             alias = novel.category.alias
@@ -54,7 +56,7 @@ class FindJoinedNovelRoomsUseCase(
                         currentAuthor = activeContributorAccountId?.let { contributorId ->
                             accounts[contributorId]?.let { account ->
                                 Response.ResponseItem.Author(
-                                    id = account.id,
+                                    id = account.id.toString(),
                                     name = account.name
                                 )
                             }
@@ -74,7 +76,7 @@ class FindJoinedNovelRoomsUseCase(
     }
 
     data class Request(
-        val accountId: Long,
+        val accountId: String,
         val page: Int = 0,
         val size: Int = 20,
     )
@@ -86,7 +88,7 @@ class FindJoinedNovelRoomsUseCase(
         val page: Int,
     ) {
         data class ResponseItem(
-            val id: Long,
+            val id: String,
             val category: Category,
             val title: String,
             val createdAt: LocalDateTime,
@@ -103,7 +105,7 @@ class FindJoinedNovelRoomsUseCase(
             )
 
             data class Author(
-                val id: Long,
+                val id: String,
                 val name: String,
             )
         }

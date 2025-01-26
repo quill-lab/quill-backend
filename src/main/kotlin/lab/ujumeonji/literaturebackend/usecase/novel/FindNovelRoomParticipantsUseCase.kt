@@ -1,6 +1,8 @@
 package lab.ujumeonji.literaturebackend.usecase.novel
 
+import lab.ujumeonji.literaturebackend.domain.account.AccountId
 import lab.ujumeonji.literaturebackend.domain.account.AccountService
+import lab.ujumeonji.literaturebackend.domain.contributor.ContributorGroupId
 import lab.ujumeonji.literaturebackend.domain.contributor.ContributorRole
 import lab.ujumeonji.literaturebackend.domain.contributor.ContributorService
 import lab.ujumeonji.literaturebackend.support.exception.BusinessException
@@ -18,10 +20,10 @@ class FindNovelRoomParticipantsUseCase(
 ) : UseCase<FindNovelRoomParticipantsUseCase.Request, List<FindNovelRoomParticipantsUseCase.Response>> {
 
     override fun execute(request: Request, executedAt: LocalDateTime): List<Response> {
-        val contributorGroup = contributorService.findGroupById(request.novelRoomId)
+        val contributorGroup = contributorService.findGroupById(ContributorGroupId.from(request.novelRoomId))
             ?: throw BusinessException(ErrorCode.CONTRIBUTOR_GROUP_NOT_FOUND)
 
-        if (!contributorGroup.isParticipating(request.accountId)) {
+        if (!contributorGroup.isParticipating(AccountId.from(request.accountId))) {
             throw BusinessException(ErrorCode.NO_PERMISSION_TO_VIEW)
         }
 
@@ -33,7 +35,7 @@ class FindNovelRoomParticipantsUseCase(
         return contributors.mapNotNull { contributor ->
             accounts[contributor.accountId]?.let { account ->
                 Response(
-                    id = account.id,
+                    id = account.id.toString(),
                     nickname = account.name,
                     role = contributor.role,
                     writingOrder = contributor.writingOrder,
@@ -44,12 +46,12 @@ class FindNovelRoomParticipantsUseCase(
     }
 
     data class Request(
-        val accountId: Long,
-        val novelRoomId: Long,
+        val accountId: String,
+        val novelRoomId: String,
     )
 
     data class Response(
-        val id: Long,
+        val id: String,
         val nickname: String,
         val role: ContributorRole,
         val writingOrder: Int?,

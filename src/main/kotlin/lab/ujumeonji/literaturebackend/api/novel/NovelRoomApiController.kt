@@ -28,8 +28,8 @@ class NovelRoomApiController(
     @Operation(summary = "소설 공방 수정", description = "소설 공방을 수정합니다.")
     @PatchMapping("/{novelRoomId}")
     fun updateNovelRoom(
-        @RequiredAuth accountId: Long,
-        @PathVariable novelRoomId: Long,
+        @RequiredAuth accountId: String,
+        @PathVariable novelRoomId: String,
         @Valid @RequestBody request: UpdateNovelRequest
     ): ResponseEntity<UpdateNovelResponse> {
         val result = updateNovelUseCase.execute(
@@ -55,8 +55,8 @@ class NovelRoomApiController(
     @Operation(summary = "소설 공방 조회", description = "소설 공방을 조회합니다.")
     @GetMapping("/{novelRoomId}")
     fun getNovelRoom(
-        @RequiredAuth accountId: Long,
-        @PathVariable novelRoomId: Long,
+        @RequiredAuth accountId: String,
+        @PathVariable novelRoomId: String,
     ): ResponseEntity<ViewNovelRoomResponse> {
         val result = viewJoinedNovelRoomUseCase.execute(
             request = ViewJoinedNovelRoomUseCase.Request(
@@ -74,6 +74,8 @@ class NovelRoomApiController(
                     alias = result.category.alias
                 ),
                 title = result.title,
+                description = result.description,
+                synopsis = result.synopsis,
                 createdAt = result.createdAt,
                 completedAt = result.completedAt,
                 role = result.role,
@@ -81,11 +83,12 @@ class NovelRoomApiController(
                 maxContributorCount = result.maxContributorCount,
                 author = result.author?.let {
                     ViewNovelRoomResponse.Author(
-                        id = result.author.id,
-                        name = result.author.name
+                        id = it.id,
+                        name = it.name
                     )
                 },
-                status = result.status
+                status = result.status,
+                tags = result.tags
             )
         )
     }
@@ -93,7 +96,7 @@ class NovelRoomApiController(
     @Operation(summary = "소설 공방 목록 조회", description = "소설 공방 목록을 조회합니다.")
     @GetMapping
     fun getNovelRooms(
-        @RequiredAuth accountId: Long,
+        @RequiredAuth accountId: String,
         @Valid request: JoinedNovelRoomsQueryRequest
     ): ResponseEntity<JoinedNovelRoomsResponse> {
         val result = findJoinedNovelRoomsUseCase.execute(
@@ -139,7 +142,7 @@ class NovelRoomApiController(
     @Operation(summary = "소설 공방 생성", description = "소설 공방을 생성합니다.")
     @PostMapping
     fun createNovelRoom(
-        @RequiredAuth accountId: Long,
+        @RequiredAuth accountId: String,
         @Valid @RequestBody request: CreateNovelRoomBodyRequest
     ): ResponseEntity<CreateNovelRoomResponse> {
         val result = createNovelRoomUseCase.execute(
@@ -163,7 +166,7 @@ class NovelRoomApiController(
     @Operation(summary = "소설 등장인물 목록 조회", description = "소설의 등장인물 목록을 조회합니다.")
     @GetMapping("/{novelRoomId}/characters")
     fun getCharacters(
-        @PathVariable novelRoomId: Long,
+        @PathVariable novelRoomId: String,
     ): ResponseEntity<List<NovelCharacterResponse>> {
         val result = findNovelCharactersUseCase.execute(
             request = FindNovelCharactersUseCase.Request(
@@ -194,8 +197,8 @@ class NovelRoomApiController(
     @Operation(summary = "캐릭터 추가", description = "소설 공방에 캐릭터를 추가합니다.")
     @PostMapping("/{novelRoomId}/characters")
     fun addCharacter(
-        @RequiredAuth accountId: Long,
-        @PathVariable novelRoomId: Long,
+        @RequiredAuth accountId: String,
+        @PathVariable novelRoomId: String,
         @Valid @RequestBody request: AddCharacterRequest
     ): ResponseEntity<AddCharacterResponse> {
         val result = addNovelCharacterUseCase.execute(
@@ -218,8 +221,8 @@ class NovelRoomApiController(
     @Operation(summary = "소설 공방 참여자 목록 조회", description = "소설 공방의 참여자 목록을 조회합니다.")
     @GetMapping("/{novelRoomId}/participants")
     fun getParticipants(
-        @PathVariable novelRoomId: Long,
-        @RequiredAuth accountId: Long,
+        @PathVariable novelRoomId: String,
+        @RequiredAuth accountId: String,
     ): ResponseEntity<List<NovelRoomParticipantsResponse>> {
         val result = findNovelRoomParticipantsUseCase.execute(
             request = FindNovelRoomParticipantsUseCase.Request(
@@ -245,10 +248,10 @@ class NovelRoomApiController(
     @Operation(summary = "소설 공방 참여자 작성 순서 변경", description = "소설 공방의 참여자 작성 순서를 변경합니다.")
     @PatchMapping("/{novelRoomId}/participants/{participantId}/order")
     fun updateParticipantOrder(
-        @PathVariable novelRoomId: Long,
-        @PathVariable participantId: Long,
+        @PathVariable novelRoomId: String,
+        @PathVariable participantId: String,
         @Valid @RequestBody request: UpdateParticipantOrderRequest,
-        @RequiredAuth accountId: Long,
+        @RequiredAuth accountId: String,
     ): ResponseEntity<UpdateParticipantOrderResponse> {
         val result = updateParticipantOrderUseCase.execute(
             request = UpdateParticipantOrderUseCase.Request(
@@ -270,7 +273,7 @@ class NovelRoomApiController(
     @Operation(summary = "소설 공방 모집글 생성", description = "소설 공방의 모집글을 생성합니다.")
     @PostMapping("/{novelRoomId}/recruitments")
     fun createRecruitment(
-        @PathVariable novelRoomId: Long,
+        @PathVariable novelRoomId: String,
         @Valid @RequestBody request: CreateNovelRoomRecruitmentRequest
     ) {
         // TODO: Implement recruitment creation logic
