@@ -1,26 +1,28 @@
 package lab.ujumeonji.literaturebackend.domain.novel;
 
 import jakarta.persistence.*;
+import lab.ujumeonji.literaturebackend.domain.common.BaseEntity;
 import lab.ujumeonji.literaturebackend.domain.novel.command.AddCharacterCommand;
 import lab.ujumeonji.literaturebackend.domain.novel.command.UpdateNovelCommand;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import com.github.f4b6a3.uuid.UuidCreator;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.UUID;
 import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "novels")
-public class Novel {
+public class Novel extends BaseEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private UUID id;
 
     @Column
     private String title;
@@ -37,16 +39,6 @@ public class Novel {
 
     @Column(columnDefinition = "text")
     private String synopsis;
-
-    @CreatedDate
-    private LocalDateTime createdAt;
-
-    @Column
-    @LastModifiedDate
-    private LocalDateTime updatedAt;
-
-    @Column
-    private LocalDateTime deletedAt;
 
     @OneToMany(mappedBy = "novel", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Character> characters = new ArrayList<>();
@@ -65,6 +57,7 @@ public class Novel {
             LocalDateTime createdAt,
             LocalDateTime updatedAt,
             LocalDateTime deletedAt) {
+        this.id = UuidCreator.getTimeOrderedEpoch();
         this.title = title;
         this.description = description;
         this.coverImage = coverImage;
@@ -73,9 +66,9 @@ public class Novel {
                 .collect(Collectors.toList());
         this.synopsis = synopsis;
         this.category = category;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-        this.deletedAt = deletedAt;
+        setCreatedAt(createdAt);
+        setUpdatedAt(updatedAt);
+        setDeletedAt(deletedAt);
     }
 
     static Novel create(String title, String description, NovelCategory category, String coverImage, List<String> tags,
@@ -84,18 +77,12 @@ public class Novel {
         return new Novel(title, description, coverImage, tags, synopsis, category, now, now, null);
     }
 
-    public long addCharacter(@NotNull AddCharacterCommand command, @NotNull LocalDateTime now) {
+    public UUID addCharacter(@NotNull AddCharacterCommand command, @NotNull LocalDateTime now) {
         Character character = Character.create(this, command.getName(), command.getDescription(), null, null, now);
 
         this.characters.add(character);
 
-        this.updatedAt = now;
-
         return character.getId();
-    }
-
-    public long getId() {
-        return id;
     }
 
     public List<Character> getCharacters() {
@@ -143,5 +130,9 @@ public class Novel {
                 .stream()
                 .filter(tag -> !existingTagNames.contains(tag))
                 .forEach(tag -> this.tags.add(NovelTag.create(tag, this, now)));
+    }
+
+    public UUID getId() {
+        return id;
     }
 }

@@ -1,18 +1,18 @@
 package lab.ujumeonji.literaturebackend.domain.contributor;
 
+import com.github.f4b6a3.uuid.UuidCreator;
 import jakarta.persistence.*;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
+import lab.ujumeonji.literaturebackend.domain.common.BaseEntity;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(name = "contributors")
-public class Contributor {
+public class Contributor extends BaseEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private UUID id;
 
     @Column(nullable = false)
     private Long accountId;
@@ -28,17 +28,6 @@ public class Contributor {
     @JoinColumn(name = "contributor_group_id", nullable = false, foreignKey = @ForeignKey(name = "fk_contributor_contributor_group"))
     private ContributorGroup contributorGroup;
 
-    @Column
-    @CreatedDate
-    private LocalDateTime createdAt;
-
-    @Column
-    @LastModifiedDate
-    private LocalDateTime updatedAt;
-
-    @Column
-    private LocalDateTime deletedAt;
-
     protected Contributor() {
     }
 
@@ -46,13 +35,14 @@ public class Contributor {
                 LocalDateTime createdAt,
                 LocalDateTime updatedAt,
                 LocalDateTime deletedAt) {
+        this.id = UuidCreator.getTimeOrderedEpoch();
         this.accountId = accountId;
         this.contributorGroup = contributorGroup;
         this.role = role;
         this.writingOrder = writingOrder;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-        this.deletedAt = deletedAt;
+        setCreatedAt(createdAt);
+        setUpdatedAt(updatedAt);
+        setDeletedAt(deletedAt);
     }
 
     static Contributor create(Long accountId, ContributorGroup contributorGroup, ContributorRole role,
@@ -69,23 +59,19 @@ public class Contributor {
         return role;
     }
 
-    Long getId() {
-        return id;
-    }
-
     public Integer getWritingOrder() {
         return writingOrder;
     }
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
     boolean isDeleted() {
-        return deletedAt != null;
+        return getDeletedAt() != null;
     }
 
     void updateWritingOrder(Integer writingOrder) {
         this.writingOrder = writingOrder;
+    }
+
+    UUID getId() {
+        return id;
     }
 }

@@ -1,18 +1,18 @@
 package lab.ujumeonji.literaturebackend.domain.novel;
 
 import jakarta.persistence.*;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
+import lab.ujumeonji.literaturebackend.domain.common.BaseEntity;
+import com.github.f4b6a3.uuid.UuidCreator;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(name = "novel_tags")
-public class NovelTag {
+public class NovelTag extends BaseEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private UUID id;
 
     @Column
     private String name;
@@ -21,26 +21,16 @@ public class NovelTag {
     @JoinColumn(name = "novel_id", nullable = false, foreignKey = @ForeignKey(name = "fk_novel_tag_novel"))
     private Novel novel;
 
-    @Column
-    @CreatedDate
-    private LocalDateTime createdAt;
-
-    @Column
-    @LastModifiedDate
-    private LocalDateTime updatedAt;
-
-    @Column
-    private LocalDateTime deletedAt;
-
     protected NovelTag() {
     }
 
     NovelTag(String name, Novel novel, LocalDateTime createdAt, LocalDateTime updatedAt, LocalDateTime deletedAt) {
+        this.id = UuidCreator.getTimeOrderedEpoch();
         this.name = name;
         this.novel = novel;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-        this.deletedAt = deletedAt;
+        setCreatedAt(createdAt);
+        setUpdatedAt(updatedAt);
+        setDeletedAt(deletedAt);
     }
 
     static NovelTag create(String name, Novel novel, LocalDateTime now) {
@@ -49,5 +39,9 @@ public class NovelTag {
 
     public String getName() {
         return name;
+    }
+
+    public UUID getId() {
+        return id;
     }
 }

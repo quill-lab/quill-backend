@@ -1,20 +1,19 @@
 package lab.ujumeonji.literaturebackend.domain.novel;
 
-import jakarta.annotation.Nonnull;
+import com.github.f4b6a3.uuid.UuidCreator;
 import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
+import lab.ujumeonji.literaturebackend.domain.common.BaseEntity;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(name = "characters")
-public class Character {
+public class Character extends BaseEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private UUID id;
 
     @Column
     private String name;
@@ -35,32 +34,22 @@ public class Character {
     @JoinColumn(name = "novel_id", nullable = false)
     private Novel novel;
 
-    @Column
-    @CreatedDate
-    private LocalDateTime createdAt;
-
-    @Column
-    @LastModifiedDate
-    private LocalDateTime updatedAt;
-
-    @Column
-    private LocalDateTime deletedAt;
-
     protected Character() {
     }
 
     Character(String name, String description, String profileImage, Long lastUpdatedBy, Novel novel,
               Integer priority, LocalDateTime createdAt, LocalDateTime updatedAt,
               LocalDateTime deletedAt) {
+        this.id = UuidCreator.getTimeOrderedEpoch();
         this.name = name;
         this.description = description;
         this.profileImage = profileImage;
         this.lastUpdatedBy = lastUpdatedBy;
         this.novel = novel;
         this.priority = priority;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-        this.deletedAt = deletedAt;
+        setCreatedAt(createdAt);
+        setUpdatedAt(updatedAt);
+        setDeletedAt(deletedAt);
 
         validate();
     }
@@ -81,11 +70,6 @@ public class Character {
     }
 
     @Nullable
-    public Long getId() {
-        return id;
-    }
-
-    @Nonnull
     public String getName() {
         return name;
     }
@@ -107,22 +91,18 @@ public class Character {
 
     @Nullable
     public LocalDateTime getUpdatedAt() {
-        if (updatedAt.equals(createdAt)) {
+        if (super.getUpdatedAt().equals(getCreatedAt())) {
             return null;
         }
 
-        return updatedAt;
+        return super.getUpdatedAt();
     }
 
     public Integer getPriority() {
         return priority;
     }
 
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public LocalDateTime getDeletedAt() {
-        return deletedAt;
+    public UUID getId() {
+        return id;
     }
 }

@@ -1,18 +1,18 @@
 package lab.ujumeonji.literaturebackend.domain.contributor;
 
 import jakarta.persistence.*;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
+import lab.ujumeonji.literaturebackend.domain.common.BaseEntity;
+import com.github.f4b6a3.uuid.UuidCreator;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(name = "contributor_requests")
-public class ContributorRequest {
+public class ContributorRequest extends BaseEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "contributor_group_id", nullable = false, foreignKey = @ForeignKey(name = "fk_contributor_request_contributor_group"))
@@ -28,29 +28,20 @@ public class ContributorRequest {
     @Enumerated(EnumType.STRING)
     private ContributorRequestStatus status;
 
-    @Column
-    @CreatedDate
-    private LocalDateTime createdAt;
-
-    @Column
-    @LastModifiedDate
-    private LocalDateTime updatedAt;
-
-    @Column
-    private LocalDateTime deletedAt;
-
     protected ContributorRequest() {
     }
 
-    public ContributorRequest(Long id, ContributorGroup contributorGroup, Long novelId, Long accountId, ContributorRequestStatus status, LocalDateTime createdAt, LocalDateTime updatedAt, LocalDateTime deletedAt) {
-        this.id = id;
+    ContributorRequest(ContributorGroup contributorGroup, Long novelId, Long accountId, ContributorRequestStatus status,
+            LocalDateTime createdAt, LocalDateTime updatedAt, LocalDateTime deletedAt) {
+        this.id = UuidCreator.getTimeOrderedEpoch();
         this.contributorGroup = contributorGroup;
         this.novelId = novelId;
         this.accountId = accountId;
         this.status = status;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-        this.deletedAt = deletedAt;
+
+        setCreatedAt(createdAt);
+        setUpdatedAt(updatedAt);
+        setDeletedAt(deletedAt);
 
         validate();
     }
@@ -63,5 +54,9 @@ public class ContributorRequest {
         if (novelId == null) {
             throw new IllegalArgumentException("소설 ID는 필수입니다");
         }
+    }
+
+    public UUID getId() {
+        return id;
     }
 }

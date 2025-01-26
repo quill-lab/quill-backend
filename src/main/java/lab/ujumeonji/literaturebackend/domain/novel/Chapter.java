@@ -1,20 +1,22 @@
 package lab.ujumeonji.literaturebackend.domain.novel;
 
 import jakarta.persistence.*;
+import lab.ujumeonji.literaturebackend.domain.common.BaseEntity;
+import com.github.f4b6a3.uuid.UuidCreator;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Table(name = "chapters")
-public class Chapter {
+public class Chapter extends BaseEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private UUID id;
 
     @Column
     private String title;
@@ -29,31 +31,25 @@ public class Chapter {
     @OneToMany(mappedBy = "chapter", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ChapterText> chapterTexts = new ArrayList<>();
 
-    @Column
-    @CreatedDate
-    private LocalDateTime createdAt;
-
-    @Column
-    @LastModifiedDate
-    private LocalDateTime updatedAt;
-
-    @Column
-    private LocalDateTime deletedAt;
-
     protected Chapter() {
     }
 
     Chapter(String title, String description, Novel novel, LocalDateTime createdAt, LocalDateTime updatedAt,
             LocalDateTime deletedAt) {
+        this.id = UuidCreator.getTimeOrderedEpoch();
         this.title = title;
         this.description = description;
         this.novel = novel;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-        this.deletedAt = deletedAt;
+        setCreatedAt(createdAt);
+        setUpdatedAt(updatedAt);
+        setDeletedAt(deletedAt);
     }
 
     static Chapter create(String title, String description, Novel novel, LocalDateTime now) {
         return new Chapter(title, description, novel, now, now, null);
+    }
+
+    public UUID getId() {
+        return id;
     }
 }

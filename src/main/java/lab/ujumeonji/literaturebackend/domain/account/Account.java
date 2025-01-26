@@ -1,21 +1,24 @@
 package lab.ujumeonji.literaturebackend.domain.account;
 
 import jakarta.persistence.*;
+import lab.ujumeonji.literaturebackend.domain.common.BaseEntity;
 import lab.ujumeonji.literaturebackend.support.encrypt.PasswordEncoder;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
+import com.github.f4b6a3.uuid.UuidCreator;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
+
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
 @Entity
 @Table(name = "accounts", indexes = {
         @Index(name = "idx_account_email", columnList = "email")
 })
-public class Account {
+public class Account extends BaseEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private UUID id;
 
     @Column
     private String email;
@@ -26,28 +29,18 @@ public class Account {
     @Column
     private String name;
 
-    @Column
-    @CreatedDate
-    private LocalDateTime createdAt;
-
-    @Column
-    @LastModifiedDate
-    private LocalDateTime updatedAt;
-
-    @Column
-    private LocalDateTime deletedAt;
-
     protected Account() {
     }
 
     Account(String email, String password, String name, LocalDateTime createdAt, LocalDateTime updatedAt,
             LocalDateTime deletedAt) {
+        this.id = UuidCreator.getTimeOrderedEpoch();
         this.email = email;
         this.password = password;
         this.name = name;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-        this.deletedAt = deletedAt;
+        setCreatedAt(createdAt);
+        setUpdatedAt(updatedAt);
+        setDeletedAt(deletedAt);
 
         validate();
     }
@@ -63,15 +56,15 @@ public class Account {
         return passwordEncoder.matches(password, this.password);
     }
 
-    public Long getId() {
-        return id;
-    }
-
     public String getEmail() {
         return email;
     }
 
     public String getName() {
         return name;
+    }
+
+    public UUID getId() {
+        return id;
     }
 }

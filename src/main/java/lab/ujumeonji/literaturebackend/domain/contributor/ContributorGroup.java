@@ -1,21 +1,21 @@
 package lab.ujumeonji.literaturebackend.domain.contributor;
 
 import jakarta.persistence.*;
+import lab.ujumeonji.literaturebackend.domain.common.BaseEntity;
+import com.github.f4b6a3.uuid.UuidCreator;
 import org.jetbrains.annotations.Nullable;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 @Entity
 @Table(name = "contributor_groups")
-public class ContributorGroup {
+public class ContributorGroup extends BaseEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    private UUID id;
 
     @Column
     private Integer maxContributorCount;
@@ -41,30 +41,20 @@ public class ContributorGroup {
     @OneToMany(mappedBy = "contributorGroup", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ContributorRequest> contributorRequests = new ArrayList<>();
 
-    @Column
-    @CreatedDate
-    private LocalDateTime createdAt;
-
-    @Column
-    @LastModifiedDate
-    private LocalDateTime updatedAt;
-
-    @Column
-    private LocalDateTime deletedAt;
-
     protected ContributorGroup() {
     }
 
     ContributorGroup(int maxContributorCount, long novelId, LocalDateTime createdAt,
-                     LocalDateTime updatedAt, LocalDateTime deletedAt) {
+            LocalDateTime updatedAt, LocalDateTime deletedAt) {
+        this.id = UuidCreator.getTimeOrderedEpoch();
         this.activeContributorId = null;
         this.contributorCount = 0;
         this.maxContributorCount = maxContributorCount;
         this.status = ContributorGroupStatus.PREPARING;
         this.novelId = novelId;
-        this.createdAt = createdAt;
-        this.updatedAt = updatedAt;
-        this.deletedAt = deletedAt;
+        setCreatedAt(createdAt);
+        setUpdatedAt(updatedAt);
+        setDeletedAt(deletedAt);
 
         validate();
     }
@@ -104,7 +94,7 @@ public class ContributorGroup {
     }
 
     static ContributorGroup create(long accountId, int maxContributorCount, long novelId,
-                                   LocalDateTime now) {
+            LocalDateTime now) {
         ContributorGroup createdContributorGroup = new ContributorGroup(maxContributorCount, novelId, now, now, null);
 
         createdContributorGroup.addHostContributor(accountId, now);
@@ -122,10 +112,6 @@ public class ContributorGroup {
         contributorCount++;
     }
 
-    public Long getId() {
-        return id;
-    }
-
     public ContributorGroupStatus getStatus() {
         return status;
     }
@@ -140,14 +126,6 @@ public class ContributorGroup {
 
     public Integer getContributorCount() {
         return contributorCount;
-    }
-
-    public LocalDateTime getCreatedAt() {
-        return createdAt;
-    }
-
-    public LocalDateTime getUpdatedAt() {
-        return updatedAt;
     }
 
     public LocalDateTime getCompletedAt() {
@@ -224,10 +202,16 @@ public class ContributorGroup {
     }
 
     public boolean isParticipating(long accountId) {
-        return contributors.stream().anyMatch(contributor -> contributor.getAccountId() == accountId && contributor.isDeleted());
+        return contributors.stream()
+                .anyMatch(contributor -> contributor.getAccountId() == accountId && contributor.isDeleted());
     }
 
     public boolean hasManagePermission(long accountId) {
-        return contributors.stream().anyMatch(contributor -> contributor.getAccountId() == accountId && contributor.getRole().equals(ContributorRole.MAIN));
+        return contributors.stream().anyMatch(contributor -> contributor.getAccountId() == accountId
+                && contributor.getRole().equals(ContributorRole.MAIN));
+    }
+
+    public UUID getId() {
+        return id;
     }
 }
