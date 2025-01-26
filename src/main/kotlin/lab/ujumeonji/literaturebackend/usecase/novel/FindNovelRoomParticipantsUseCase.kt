@@ -21,7 +21,7 @@ class FindNovelRoomParticipantsUseCase(
         val contributorGroup = contributorService.findGroupById(request.novelRoomId)
             ?: throw BusinessException(ErrorCode.CONTRIBUTOR_GROUP_NOT_FOUND)
 
-        if (!contributorService.isParticipating(contributorGroup.id, request.accountId)) {
+        if (!contributorGroup.isParticipating(request.accountId)) {
             throw BusinessException(ErrorCode.NO_PERMISSION_TO_VIEW)
         }
 

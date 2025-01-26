@@ -48,7 +48,7 @@ class FindJoinedNovelRoomsUseCase(
                         title = novel.title,
                         createdAt = createdAt,
                         completedAt = completedAt,
-                        role = getCollaboratorRole(me.id),
+                        role = getCollaboratorRole(me.id) ?: ContributorRole.COLLABORATOR,
                         contributorCount = contributorCount,
                         maxContributorCount = maxContributorCount,
                         currentAuthor = activeContributorAccountId?.let { contributorId ->

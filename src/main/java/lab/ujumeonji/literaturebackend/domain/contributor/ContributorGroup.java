@@ -1,7 +1,7 @@
 package lab.ujumeonji.literaturebackend.domain.contributor;
 
-import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
@@ -103,12 +103,16 @@ public class ContributorGroup {
         }
     }
 
-    static ContributorGroup create(int maxContributorCount, long novelId,
+    static ContributorGroup create(long accountId, int maxContributorCount, long novelId,
                                    LocalDateTime now) {
-        return new ContributorGroup(maxContributorCount, novelId, now, now, null);
+        ContributorGroup createdContributorGroup = new ContributorGroup(maxContributorCount, novelId, now, now, null);
+
+        createdContributorGroup.addHostContributor(accountId, now);
+
+        return createdContributorGroup;
     }
 
-    void addHostContributor(long accountId, LocalDateTime now) {
+    private void addHostContributor(long accountId, LocalDateTime now) {
         if (contributorCount >= maxContributorCount) {
             throw new IllegalStateException("최대 기여자 수를 초과했습니다");
         }
@@ -177,7 +181,7 @@ public class ContributorGroup {
         return currentContributor != null ? currentContributor.getAccountId() : null;
     }
 
-    void updateWritingOrder(Long contributorId, Integer writingOrder) {
+    public void updateWritingOrder(long contributorId, int writingOrder) {
         contributors.stream()
                 .filter(c -> c.getId().equals(contributorId))
                 .findFirst()
@@ -203,7 +207,7 @@ public class ContributorGroup {
                 });
     }
 
-    private void shiftOrdersUp(Long contributorId, int targetOrder, int currentOrder) {
+    private void shiftOrdersUp(long contributorId, int targetOrder, int currentOrder) {
         contributors.stream()
                 .filter(c -> !c.getId().equals(contributorId)
                         && c.getWritingOrder() >= targetOrder
@@ -211,11 +215,19 @@ public class ContributorGroup {
                 .forEach(c -> c.updateWritingOrder(c.getWritingOrder() + 1));
     }
 
-    private void shiftOrdersDown(Long contributorId, int currentOrder, int targetOrder) {
+    private void shiftOrdersDown(long contributorId, int currentOrder, int targetOrder) {
         contributors.stream()
                 .filter(c -> !c.getId().equals(contributorId)
                         && c.getWritingOrder() <= targetOrder
                         && c.getWritingOrder() > currentOrder)
                 .forEach(c -> c.updateWritingOrder(c.getWritingOrder() - 1));
+    }
+
+    public boolean isParticipating(long accountId) {
+        return contributors.stream().anyMatch(contributor -> contributor.getAccountId() == accountId && contributor.isDeleted());
+    }
+
+    public boolean hasManagePermission(long accountId) {
+        return contributors.stream().anyMatch(contributor -> contributor.getAccountId() == accountId && contributor.getRole().equals(ContributorRole.MAIN));
     }
 }

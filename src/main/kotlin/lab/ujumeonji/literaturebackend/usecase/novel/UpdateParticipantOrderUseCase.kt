@@ -15,37 +15,28 @@ class UpdateParticipantOrderUseCase(
 ) : UseCase<UpdateParticipantOrderUseCase.Request, UpdateParticipantOrderUseCase.Response> {
 
     override fun execute(request: Request, executedAt: LocalDateTime): Response {
-        contributorService.findGroupById(request.novelRoomId)
+        val contributorGroup = contributorService.findGroupById(request.novelRoomId)
             ?: throw BusinessException(ErrorCode.CONTRIBUTOR_GROUP_NOT_FOUND)
 
-        if (!contributorService.hasManagePermission(request.novelRoomId, request.accountId)) {
+        if (!contributorGroup.hasManagePermission(request.accountId)) {
             throw BusinessException(ErrorCode.NO_PERMISSION_TO_UPDATE)
         }
 
-        if (!contributorService.isParticipating(request.novelRoomId, request.participantId)) {
+        if (!contributorGroup.isParticipating(request.contributorId)) {
             throw BusinessException(ErrorCode.CONTRIBUTOR_NOT_FOUND)
         }
 
-        if (!contributorService.hasManagePermission(request.novelRoomId, request.accountId)) {
-            throw BusinessException(ErrorCode.NO_PERMISSION_TO_UPDATE)
-        }
-
-        contributorService.updateParticipantOrder(
-            contributorGroupId = request.novelRoomId,
-            contributorId = request.participantId,
-            writingOrder = request.writingOrder,
-            now = executedAt,
-        )
+        contributorGroup.updateWritingOrder(request.contributorId, request.writingOrder)
 
         return Response(
-            id = request.participantId,
+            id = request.contributorId,
         )
     }
 
     data class Request(
         val accountId: Long,
         val novelRoomId: Long,
-        val participantId: Long,
+        val contributorId: Long,
         val writingOrder: Int,
     )
 

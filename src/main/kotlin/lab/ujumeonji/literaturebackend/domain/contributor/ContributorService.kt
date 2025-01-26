@@ -17,19 +17,15 @@ class ContributorService(
     fun createContributorGroup(
         command: CreateContributorGroupCommand,
         now: LocalDateTime = LocalDateTime.now()
-    ): ContributorGroup {
-        val contributorGroup = this.contributorGroupRepository.save(
+    ): ContributorGroup =
+        this.contributorGroupRepository.save(
             ContributorGroup.create(
+                command.ownerId,
                 command.maxContributorCount,
                 command.novelId,
                 now,
             )
         )
-
-        contributorGroup.addHostContributor(command.ownerId, now)
-
-        return contributorGroup;
-    }
 
     fun findByAccountIdWithPaging(accountId: Long, page: Int, size: Int): Pair<List<ContributorGroup>, Long> {
         val pageable = PageRequest.of(page, size)
@@ -40,31 +36,6 @@ class ContributorService(
     fun findGroupById(id: Long): ContributorGroup? =
         contributorGroupRepository.findById(id).orElse(null)
 
-    fun hasManagePermission(contributorGroupId: Long, accountId: Long): Boolean {
-        val contributorGroup = findGroupById(contributorGroupId) ?: return false
-        return contributorGroup.contributors.any { contributor ->
-            contributor.accountId == accountId && contributor.role == ContributorRole.MAIN && !contributor.isDeleted
-        }
-    }
-
     fun hasOwnContributorGroup(accountId: Long): Boolean =
         contributorRepository.findAllByAccountIdAndRole(accountId).isNotEmpty()
-
-    fun isParticipating(contributorGroupId: Long, accountId: Long): Boolean {
-        val contributorGroup = findGroupById(contributorGroupId) ?: return false
-        return contributorGroup.contributors.any { contributor ->
-            contributor.accountId == accountId && !contributor.isDeleted
-        }
-    }
-
-    fun updateParticipantOrder(
-        contributorGroupId: Long,
-        contributorId: Long,
-        writingOrder: Int,
-        now: LocalDateTime,
-    ) {
-        val contributorGroup = findGroupById(contributorGroupId)
-
-        contributorGroup?.updateWritingOrder(contributorId, writingOrder)
-    }
 }

@@ -27,7 +27,7 @@ class UpdateNovelUseCase(
         val contributorGroup = contributorService.findGroupById(request.contributorGroupId)
             ?: throw BusinessException(ErrorCode.CONTRIBUTOR_GROUP_NOT_FOUND)
 
-        if (!contributorService.hasManagePermission(request.contributorGroupId, request.accountId)) {
+        if (!contributorGroup.hasManagePermission(request.accountId)) {
             throw BusinessException(ErrorCode.NO_PERMISSION_TO_UPDATE)
         }
 
@@ -41,7 +41,8 @@ class UpdateNovelUseCase(
                 category = request.category,
                 tags = request.tags,
                 synopsis = request.synopsis,
-            )
+            ),
+            executedAt
         )
 
         return Response(contributorGroup.id)

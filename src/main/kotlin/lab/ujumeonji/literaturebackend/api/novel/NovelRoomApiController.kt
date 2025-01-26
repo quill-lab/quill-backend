@@ -254,7 +254,7 @@ class NovelRoomApiController(
             request = UpdateParticipantOrderUseCase.Request(
                 accountId = accountId,
                 novelRoomId = novelRoomId,
-                participantId = participantId,
+                contributorId = participantId,
                 writingOrder = request.writingOrder,
             ),
             executedAt = LocalDateTime.now()

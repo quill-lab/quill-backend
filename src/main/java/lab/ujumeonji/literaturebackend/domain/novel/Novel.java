@@ -1,16 +1,17 @@
 package lab.ujumeonji.literaturebackend.domain.novel;
 
-import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lab.ujumeonji.literaturebackend.domain.novel.command.AddCharacterCommand;
 import lab.ujumeonji.literaturebackend.domain.novel.command.UpdateNovelCommand;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Entity
@@ -60,10 +61,10 @@ public class Novel {
     }
 
     Novel(String title, String description, String coverImage, List<String> tags, String synopsis,
-          NovelCategory category,
-          LocalDateTime createdAt,
-          LocalDateTime updatedAt,
-          LocalDateTime deletedAt) {
+            NovelCategory category,
+            LocalDateTime createdAt,
+            LocalDateTime updatedAt,
+            LocalDateTime deletedAt) {
         this.title = title;
         this.description = description;
         this.coverImage = coverImage;
@@ -78,19 +79,19 @@ public class Novel {
     }
 
     static Novel create(String title, String description, NovelCategory category, String coverImage, List<String> tags,
-                        String synopsis,
-                        LocalDateTime now) {
+            String synopsis,
+            LocalDateTime now) {
         return new Novel(title, description, coverImage, tags, synopsis, category, now, now, null);
     }
 
-    Character addCharacter(AddCharacterCommand command, LocalDateTime now) {
+    public long addCharacter(@NotNull AddCharacterCommand command, @NotNull LocalDateTime now) {
         Character character = Character.create(this, command.getName(), command.getDescription(), null, null, now);
 
         this.characters.add(character);
 
         this.updatedAt = now;
 
-        return character;
+        return character.getId();
     }
 
     public long getId() {
@@ -127,16 +128,19 @@ public class Novel {
         return synopsis;
     }
 
-    public void update(@NotNull UpdateNovelCommand updateNovelCommand) {
-        this.title = title;
-        this.description = description;
-        this.synopsis = synopsis;
-        this.category = category;
-        this.tags.removeIf(existingTag -> !tags.contains(existingTag.getName()));
+    public void update(@NotNull UpdateNovelCommand command, @NotNull LocalDateTime now) {
+        this.title = command.getTitle();
+        this.description = command.getDescription();
+        this.synopsis = command.getSynopsis();
+        this.category = command.getCategory();
+
+        this.tags.removeIf(existingTag -> !Objects.requireNonNull(command.getTags()).contains(existingTag.getName()));
         List<String> existingTagNames = this.tags.stream()
                 .map(NovelTag::getName)
                 .toList();
-        tags.stream()
+
+        Objects.requireNonNull(command.getTags())
+                .stream()
                 .filter(tag -> !existingTagNames.contains(tag))
                 .forEach(tag -> this.tags.add(NovelTag.create(tag, this, now)));
     }
