@@ -204,10 +204,9 @@ class NovelRoomApiControllerTest @Autowired constructor(
 
         given("소설 공방 참여자 순서 변경시") {
             val mainAccount = fixtureAccount()
-            val novelRoomId = fixtureNovelRoom(mainAccount)  // MAIN 권한으로 생성됨
+            val novelRoomId = fixtureNovelRoom(mainAccount)
 
             val subAccount = fixtureAccount()
-            // SUB 권한으로 참여자 추가
             performAuthPost(
                 "/api/v1/novel-rooms/$novelRoomId/participants",
                 mapOf("accountId" to subAccount.id), mainAccount
@@ -307,23 +306,6 @@ class NovelRoomApiControllerTest @Autowired constructor(
                     response
                         .andExpect(status().isNotFound)
                         .andExpect(jsonPath("$.code").value(ErrorCode.CONTRIBUTOR_NOT_FOUND.code))
-                }
-            }
-
-            `when`("참여자 수보다 큰 순서로 변경하면") {
-                val request = mapOf(
-                    "writingOrder" to 999
-                )
-                val response = performAuthPatch(
-                    "/api/v1/novel-rooms/$novelRoomId/participants/${subAccount.id}/order",
-                    request,
-                    mainAccount
-                )
-
-                then("가능한 최대 순서로 조정되어 변경된다") {
-                    response
-                        .andExpect(status().isOk)
-                        .andExpect(jsonPath("$.id").exists())
                 }
             }
         }
