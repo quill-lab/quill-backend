@@ -1,5 +1,5 @@
 package lab.ujumeonji.literaturebackend.api.novel.dto
 
-import lab.ujumeonji.literaturebackend.usecase.novel.UpdateParticipantOrderUseCase
-
-typealias UpdateParticipantResponse = UpdateParticipantOrderUseCase.Response
+data class UpdateParticipantOrderResponse(
+    val id: Long
+)

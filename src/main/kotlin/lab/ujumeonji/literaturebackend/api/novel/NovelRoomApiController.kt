@@ -249,7 +249,7 @@ class NovelRoomApiController(
         @PathVariable participantId: Long,
         @Valid @RequestBody request: UpdateParticipantOrderRequest,
         @RequiredAuth accountId: Long,
-    ): ResponseEntity<UpdateParticipantResponse> {
+    ): ResponseEntity<UpdateParticipantOrderResponse> {
         val result = updateParticipantOrderUseCase.execute(
             request = UpdateParticipantOrderUseCase.Request(
                 accountId = accountId,
@@ -261,7 +261,7 @@ class NovelRoomApiController(
         )
 
         return ResponseEntity.ok(
-            UpdateParticipantResponse(
+            UpdateParticipantOrderResponse(
                 id = result.id,
             )
         )
