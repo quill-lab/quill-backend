@@ -3,10 +3,13 @@ package lab.ujumeonji.literaturebackend.api.account
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
+import lab.ujumeonji.literaturebackend.api.account.dto.ContributorRequestsQueryRequest
+import lab.ujumeonji.literaturebackend.api.account.dto.ContributorRequestsResponse
 import lab.ujumeonji.literaturebackend.api.account.dto.JoinedNovelRoomsQueryRequest
 import lab.ujumeonji.literaturebackend.api.novel.dto.JoinedNovelRoomsResponse
 import lab.ujumeonji.literaturebackend.api.novel.dto.NovelRoomSortType
 import lab.ujumeonji.literaturebackend.support.auth.RequiredAuth
+import lab.ujumeonji.literaturebackend.usecase.contributor.FindContributorRequestsUseCase
 import lab.ujumeonji.literaturebackend.usecase.novel.FindJoinedNovelRoomsUseCase
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
@@ -19,6 +22,7 @@ import java.time.LocalDateTime
 @RequestMapping("/api/v1/users")
 class UserApiController(
     private val findJoinedNovelRoomsUseCase: FindJoinedNovelRoomsUseCase,
+    private val findContributorRequestsUseCase: FindContributorRequestsUseCase,
 ) {
     @Operation(summary = "참여한 소설 공방 목록 조회", description = "사용자가 참여한 소설 공방 목록을 조회합니다.")
     @GetMapping("/me/novel-rooms")
@@ -58,6 +62,39 @@ class UserApiController(
                             )
                         },
                         status = item.status
+                    )
+                },
+                totalCount = result.totalCount,
+                size = result.size,
+                page = result.page
+            )
+        )
+    }
+
+    @Operation(summary = "소설 공방 참여 신청 목록 조회", description = "사용자가 신청한 소설 공방 참여 신청 목록을 조회합니다.")
+    @GetMapping("/me/novel-rooms/requests")
+    fun getContributorRequestHistories(
+        @RequiredAuth accountId: String,
+        @Valid request: ContributorRequestsQueryRequest
+    ): ResponseEntity<ContributorRequestsResponse> {
+        val result = findContributorRequestsUseCase.execute(
+            request = FindContributorRequestsUseCase.Request(
+                accountId = accountId,
+                page = request.page,
+                size = request.size,
+            ),
+            executedAt = LocalDateTime.now()
+        )
+
+        return ResponseEntity.ok(
+            ContributorRequestsResponse(
+                items = result.result.map { item ->
+                    ContributorRequestsResponse.ResponseItem(
+                        title = item.title,
+                        requestedAt = item.requestedAt,
+                        joinedAt = item.joinedAt,
+                        leftAt = item.leftAt,
+                        status = item.status.name,
                     )
                 },
                 totalCount = result.totalCount,

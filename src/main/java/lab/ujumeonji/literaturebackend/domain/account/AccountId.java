@@ -8,7 +8,7 @@ public class AccountId {
 
     private final UUID id;
 
-    public AccountId(UUID id) {
+    AccountId(UUID id) {
         this.id = id;
     }
 

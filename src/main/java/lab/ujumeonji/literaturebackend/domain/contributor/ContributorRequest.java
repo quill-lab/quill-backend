@@ -31,32 +31,25 @@ public class ContributorRequest extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private ContributorRequestStatus status;
 
+    @Column
+    private LocalDateTime approvedAt;
+
     protected ContributorRequest() {
     }
 
-    ContributorRequest(@Nonnull ContributorGroup contributorGroup, @Nonnull NovelId novelId, @Nonnull AccountId accountId, ContributorRequestStatus status,
+    ContributorRequest(@Nonnull ContributorGroup contributorGroup, @Nonnull NovelId novelId,
+                       @Nonnull AccountId accountId, LocalDateTime approvedAt, ContributorRequestStatus status,
                        LocalDateTime createdAt, LocalDateTime updatedAt, LocalDateTime deletedAt) {
         this.id = UuidCreator.getTimeOrderedEpoch();
         this.contributorGroup = contributorGroup;
         this.novelId = novelId.getId();
         this.accountId = accountId.getId();
         this.status = status;
+        this.approvedAt = approvedAt;
 
         setCreatedAt(createdAt);
         setUpdatedAt(updatedAt);
         setDeletedAt(deletedAt);
-
-        validate();
-    }
-
-    private void validate() {
-        if (contributorGroup == null) {
-            throw new IllegalArgumentException("기여자 그룹은 필수입니다");
-        }
-
-        if (novelId == null) {
-            throw new IllegalArgumentException("소설 ID는 필수입니다");
-        }
     }
 
     public ContributorRequestId getId() {
