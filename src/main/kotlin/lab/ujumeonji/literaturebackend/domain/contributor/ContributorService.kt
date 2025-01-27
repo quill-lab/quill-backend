@@ -3,6 +3,7 @@ package lab.ujumeonji.literaturebackend.domain.contributor
 import lab.ujumeonji.literaturebackend.api.novel.dto.NovelRoomSortType
 import lab.ujumeonji.literaturebackend.domain.account.AccountId
 import lab.ujumeonji.literaturebackend.domain.contributor.command.CreateContributorGroupCommand
+import lab.ujumeonji.literaturebackend.domain.contributor.command.FindContributorGroupsCommand
 import lab.ujumeonji.literaturebackend.domain.contributor.command.FindContributorRequestHistoriesCommand
 import lab.ujumeonji.literaturebackend.domain.contributor.dto.ContributorRequestHistory
 import org.springframework.data.domain.Page
@@ -32,6 +33,22 @@ class ContributorService(
         return contributorViewRepository.findContributorRequestsByAccountId(accountId.id, pageable)
     }
 
+    fun findContributorGroups(
+        accountId: AccountId,
+        command: FindContributorGroupsCommand
+    ): Page<ContributorGroup> {
+        val sortDirection = when (command.sort) {
+            NovelRoomSortType.LATEST -> Sort.Direction.DESC
+            NovelRoomSortType.OLDEST -> Sort.Direction.ASC
+        }
+        val pageable = PageRequest.of(
+            command.page,
+            command.size,
+            Sort.by(sortDirection, "createdAt")
+        )
+        return contributorGroupRepository.findByAccountId(accountId.id, pageable)
+    }
+
     @Transactional
     fun createContributorGroup(
         command: CreateContributorGroupCommand,
@@ -45,21 +62,6 @@ class ContributorService(
                 now,
             )
         )
-
-    fun findByAccountIdWithPaging(
-        accountId: AccountId,
-        page: Int,
-        size: Int,
-        sort: NovelRoomSortType = NovelRoomSortType.LATEST
-    ): Pair<List<ContributorGroup>, Long> {
-        val sortDirection = when (sort) {
-            NovelRoomSortType.LATEST -> Sort.Direction.DESC
-            NovelRoomSortType.OLDEST -> Sort.Direction.ASC
-        }
-        val pageable = PageRequest.of(page, size, Sort.by(sortDirection, "createdAt"))
-        val result = contributorGroupRepository.findByAccountId(accountId.id, pageable)
-        return result.content to result.totalElements
-    }
 
     fun findGroupById(id: ContributorGroupId): ContributorGroup? =
         contributorGroupRepository.findById(id.id).orElse(null)

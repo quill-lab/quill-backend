@@ -90,6 +90,7 @@ class UserApiController(
             ContributorRequestsResponse(
                 items = result.result.map { item ->
                     ContributorRequestsResponse.ResponseItem(
+                        id = item.id,
                         title = item.title,
                         requestedAt = item.requestedAt,
                         joinedAt = item.joinedAt,

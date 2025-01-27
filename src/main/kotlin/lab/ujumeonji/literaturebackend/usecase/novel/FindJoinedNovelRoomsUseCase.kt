@@ -3,12 +3,15 @@ package lab.ujumeonji.literaturebackend.usecase.novel
 import lab.ujumeonji.literaturebackend.api.novel.dto.NovelRoomSortType
 import lab.ujumeonji.literaturebackend.domain.account.AccountId
 import lab.ujumeonji.literaturebackend.domain.account.AccountService
+import lab.ujumeonji.literaturebackend.domain.contributor.ContributorGroup
 import lab.ujumeonji.literaturebackend.domain.contributor.ContributorRole
 import lab.ujumeonji.literaturebackend.domain.contributor.ContributorService
+import lab.ujumeonji.literaturebackend.domain.contributor.command.FindContributorGroupsCommand
 import lab.ujumeonji.literaturebackend.domain.novel.NovelService
 import lab.ujumeonji.literaturebackend.support.exception.BusinessException
 import lab.ujumeonji.literaturebackend.support.exception.ErrorCode
 import lab.ujumeonji.literaturebackend.usecase.UseCase
+import org.springframework.data.domain.Page
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
@@ -23,12 +26,14 @@ class FindJoinedNovelRoomsUseCase(
 
     override fun execute(request: Request, executedAt: LocalDateTime): Response {
         val accountId = AccountId.from(request.accountId)
-        val (contributorGroups, totalElements) = contributorService.findByAccountIdWithPaging(
-            accountId = accountId,
+        val command = FindContributorGroupsCommand(
             page = request.page,
             size = request.size,
-            sort = request.sort,
+            sort = request.sort
         )
+
+        val page: Page<ContributorGroup> = contributorService.findContributorGroups(accountId, command)
+        val contributorGroups = page.content
 
         val me = accountService.findById(accountId)
             ?: throw BusinessException(ErrorCode.ACCOUNT_NOT_FOUND)
@@ -70,7 +75,7 @@ class FindJoinedNovelRoomsUseCase(
 
         return Response(
             result = result,
-            totalCount = totalElements,
+            totalCount = page.totalElements,
             size = request.size,
             page = request.page
         )
