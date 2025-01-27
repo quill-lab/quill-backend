@@ -1,12 +1,10 @@
 package lab.ujumeonji.literaturebackend.api.novel.dto
 
-import lab.ujumeonji.literaturebackend.domain.contributor.ContributorGroupStatus
-import lab.ujumeonji.literaturebackend.domain.contributor.ContributorRole
 import java.time.LocalDateTime
 
 data class JoinedNovelRoomsResponse(
     val items: List<ResponseItem>,
-    val totalCount: Int,
+    val totalCount: Long,
     val size: Int,
     val page: Int,
 ) {
@@ -16,11 +14,11 @@ data class JoinedNovelRoomsResponse(
         val title: String,
         val createdAt: LocalDateTime,
         val completedAt: LocalDateTime?,
-        val role: ContributorRole,
+        val role: String,
         val contributorCount: Int,
         val maxContributorCount: Int,
         val author: Author?,
-        val status: ContributorGroupStatus,
+        val status: String,
     ) {
         data class Category(
             val name: String,

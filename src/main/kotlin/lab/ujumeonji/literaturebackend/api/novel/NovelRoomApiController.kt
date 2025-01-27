@@ -93,52 +93,6 @@ class NovelRoomApiController(
         )
     }
 
-    @Operation(summary = "소설 공방 목록 조회", description = "소설 공방 목록을 조회합니다.")
-    @GetMapping
-    fun getNovelRooms(
-        @RequiredAuth accountId: String,
-        @Valid request: JoinedNovelRoomsQueryRequest
-    ): ResponseEntity<JoinedNovelRoomsResponse> {
-        val result = findJoinedNovelRoomsUseCase.execute(
-            request = FindJoinedNovelRoomsUseCase.Request(
-                accountId = accountId,
-                page = request.page,
-                size = request.size
-            ),
-            executedAt = LocalDateTime.now()
-        )
-
-        return ResponseEntity.ok(
-            JoinedNovelRoomsResponse(
-                items = result.result.map { item ->
-                    JoinedNovelRoomsResponse.ResponseItem(
-                        id = item.id,
-                        category = JoinedNovelRoomsResponse.ResponseItem.Category(
-                            name = item.category.name,
-                            alias = item.category.alias
-                        ),
-                        title = item.title,
-                        createdAt = item.createdAt,
-                        completedAt = item.completedAt,
-                        role = item.role,
-                        contributorCount = item.contributorCount,
-                        maxContributorCount = item.maxContributorCount,
-                        author = item.currentAuthor?.let {
-                            JoinedNovelRoomsResponse.ResponseItem.Author(
-                                id = it.id,
-                                name = it.name
-                            )
-                        },
-                        status = item.status
-                    )
-                },
-                totalCount = result.totalCount,
-                size = result.size,
-                page = result.page
-            )
-        )
-    }
-
     @Operation(summary = "소설 공방 생성", description = "소설 공방을 생성합니다.")
     @PostMapping
     fun createNovelRoom(

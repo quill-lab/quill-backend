@@ -16,11 +16,7 @@ interface ContributorGroupRepository : CrudRepository<ContributorGroup, UUID> {
         WHERE c.accountId = :accountId
         AND c.deletedAt IS NULL
         AND cg.deletedAt IS NULL
-        ORDER BY cg.createdAt DESC
         """
     )
-    fun findByAccountId(
-        @Param("accountId") accountId: UUID,
-        pageable: Pageable
-    ): Page<ContributorGroup>
+    fun findByAccountId(@Param("accountId") accountId: UUID, pageable: Pageable): Page<ContributorGroup>
 }

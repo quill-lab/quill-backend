@@ -1,8 +1,8 @@
 package lab.ujumeonji.literaturebackend.usecase.novel
 
+import lab.ujumeonji.literaturebackend.api.novel.dto.NovelRoomSortType
 import lab.ujumeonji.literaturebackend.domain.account.AccountId
 import lab.ujumeonji.literaturebackend.domain.account.AccountService
-import lab.ujumeonji.literaturebackend.domain.contributor.ContributorGroupStatus
 import lab.ujumeonji.literaturebackend.domain.contributor.ContributorRole
 import lab.ujumeonji.literaturebackend.domain.contributor.ContributorService
 import lab.ujumeonji.literaturebackend.domain.novel.NovelService
@@ -27,6 +27,7 @@ class FindJoinedNovelRoomsUseCase(
             accountId = accountId,
             page = request.page,
             size = request.size,
+            sort = request.sort,
         )
 
         val me = accountService.findById(accountId)
@@ -50,18 +51,18 @@ class FindJoinedNovelRoomsUseCase(
                         title = novel.title,
                         createdAt = createdAt,
                         completedAt = completedAt,
-                        role = getCollaboratorRole(me.id) ?: ContributorRole.COLLABORATOR,
+                        role = (getCollaboratorRole(me.id) ?: ContributorRole.COLLABORATOR).name,
                         contributorCount = contributorCount,
                         maxContributorCount = maxContributorCount,
-                        currentAuthor = activeContributorAccountId?.let { contributorId ->
-                            accounts[contributorId]?.let { account ->
+                        currentAuthor = activeContributorAccountId?.let { authorId ->
+                            accounts[authorId]?.let { author ->
                                 Response.ResponseItem.Author(
-                                    id = account.id.toString(),
-                                    name = account.name
+                                    id = author.id.toString(),
+                                    name = author.name
                                 )
                             }
                         },
-                        status = status
+                        status = status.name
                     )
                 }
             }
@@ -69,21 +70,22 @@ class FindJoinedNovelRoomsUseCase(
 
         return Response(
             result = result,
-            totalCount = totalElements.toInt(),
+            totalCount = totalElements,
             size = request.size,
-            page = request.page,
+            page = request.page
         )
     }
 
     data class Request(
         val accountId: String,
-        val page: Int = 0,
-        val size: Int = 20,
+        val page: Int,
+        val size: Int,
+        val sort: NovelRoomSortType = NovelRoomSortType.LATEST,
     )
 
     data class Response(
         val result: List<ResponseItem>,
-        val totalCount: Int,
+        val totalCount: Long,
         val size: Int,
         val page: Int,
     ) {
@@ -93,11 +95,11 @@ class FindJoinedNovelRoomsUseCase(
             val title: String,
             val createdAt: LocalDateTime,
             val completedAt: LocalDateTime?,
-            val role: ContributorRole,
+            val role: String,
             val contributorCount: Int,
             val maxContributorCount: Int,
             val currentAuthor: Author?,
-            val status: ContributorGroupStatus,
+            val status: String,
         ) {
             data class Category(
                 val name: String,

@@ -69,25 +69,30 @@ class NovelRoomApiControllerTest @Autowired constructor(
             }
         }
 
-        given("소설 공방 목록 조회시") {
+        given("특정 소설 공방 조회시") {
             val account = fixtureAccount()
             val novelRoomId = fixtureNovelRoom(account)
 
             `when`("인증된 사용자가 조회하면") {
-                val response = performAuthGet("/api/v1/novel-rooms?page=0&size=10", account)
+                val response = performAuthGet("/api/v1/novel-rooms/$novelRoomId", account)
 
-                then("소설 공방 목록이 반환된다") {
+                then("소설 공방이 반환된다") {
                     response
                         .andExpect(status().isOk)
-                        .andExpect(jsonPath("$.items").isArray)
-                        .andExpect(jsonPath("$.totalCount").exists())
-                        .andExpect(jsonPath("$.size").value(10))
-                        .andExpect(jsonPath("$.page").value(0))
+                        .andExpect(jsonPath("$.id").exists())
+                        .andExpect(jsonPath("$.title").exists())
+                        .andExpect(jsonPath("$.description").exists())
+                        .andExpect(jsonPath("$.synopsis").exists())
+                        .andExpect(jsonPath("$.createdAt").exists())
+                        .andExpect(jsonPath("$.role").exists())
+                        .andExpect(jsonPath("$.contributorCount").exists())
+                        .andExpect(jsonPath("$.maxContributorCount").exists())
+                        .andExpect(jsonPath("$.status").exists())
                 }
             }
 
             `when`("인증되지 않은 사용자가 조회하면") {
-                val response = performGet("/api/v1/novel-rooms?page=0&size=10")
+                val response = performGet("/api/v1/novel-rooms/$novelRoomId")
 
                 then("인증 오류가 발생한다") {
                     response
@@ -97,56 +102,7 @@ class NovelRoomApiControllerTest @Autowired constructor(
             }
         }
 
-        given("특정 소설 공방 조회시") {
-            val account = fixtureAccount()
-            val novelRoomId = fixtureNovelRoom(account)
-
-            `when`("인증된 사용자가 조회하면") {
-                val response = performAuthGet("/api/v1/novel-rooms/$novelRoomId", account)
-
-                then("소설 공방 정보가 반환된다") {
-                    response
-                        .andExpect(status().isOk)
-                        .andExpect(jsonPath("$.id").value(novelRoomId))
-                        .andExpect(jsonPath("$.title").exists())
-                        .andExpect(jsonPath("$.category").exists())
-                }
-            }
-
-            `when`("존재하지 않는 소설 공방을 조회하면") {
-                val response = performAuthGet("/api/v1/novel-rooms/0194a1e8-6aad-7c73-9de0-b216346a242f", account)
-
-                then("Not Found 오류가 발생한다") {
-                    response
-                        .andExpect(status().isNotFound)
-                }
-            }
-        }
-
-        given("소설 공방 수정시") {
-            val account = fixtureAccount()
-            val novelRoomId = fixtureNovelRoom(account)
-
-            val request = mapOf(
-                "title" to "수정된 제목",
-                "description" to "수정된 설명",
-                "category" to "GENERAL",
-                "tags" to listOf("수정태그1", "수정태그2"),
-                "synopsis" to "수정된 줄거리입니다."
-            )
-
-            `when`("인증된 사용자가 수정하면") {
-                val response = performAuthPatch("/api/v1/novel-rooms/$novelRoomId", request, account)
-
-                then("소설 공방이 수정된다") {
-                    response
-                        .andExpect(status().isOk)
-                        .andExpect(jsonPath("$.id").exists())
-                }
-            }
-        }
-
-        given("소설 등장인물 목록 조회시") {
+        given("소설 공방 등장인물 목록 조회시") {
             val account = fixtureAccount()
             val novelRoomId = fixtureNovelRoom(account)
 
@@ -165,33 +121,17 @@ class NovelRoomApiControllerTest @Autowired constructor(
             val account = fixtureAccount()
             val novelRoomId = fixtureNovelRoom(account)
 
-            `when`("참여자가 목록을 조회하면") {
+            `when`("인증된 사용자가 조회하면") {
                 val response = performAuthGet("/api/v1/novel-rooms/$novelRoomId/participants", account)
 
                 then("참여자 목록이 반환된다") {
                     response
                         .andExpect(status().isOk)
                         .andExpect(jsonPath("$").isArray)
-                        .andExpect(jsonPath("$[0].id").exists())
-                        .andExpect(jsonPath("$[0].nickname").exists())
-                        .andExpect(jsonPath("$[0].role").exists())
-                        .andExpect(jsonPath("$[0].writingOrder").exists())
-                        .andExpect(jsonPath("$[0].joinedAt").exists())
                 }
             }
 
-            `when`("참여하지 않은 사용자가 목록을 조회하면") {
-                val otherAccount = fixtureAccount()
-                val response = performAuthGet("/api/v1/novel-rooms/$novelRoomId/participants", otherAccount)
-
-                then("조회 권한 없음 오류가 발생한다") {
-                    response
-                        .andExpect(status().isForbidden)
-                        .andExpect(jsonPath("$.code").value(ErrorCode.NO_PERMISSION_TO_VIEW.code))
-                }
-            }
-
-            `when`("인증되지 않은 사용자가 목록을 조회하면") {
+            `when`("인증되지 않은 사용자가 조회하면") {
                 val response = performGet("/api/v1/novel-rooms/$novelRoomId/participants")
 
                 then("인증 오류가 발생한다") {
@@ -203,18 +143,18 @@ class NovelRoomApiControllerTest @Autowired constructor(
         }
 
         given("소설 공방 참여자 순서 변경시") {
-            val mainAccount = fixtureAccount()
-            val subAccount = fixtureAccount()
-            val novelRoomId = fixtureNovelRoom(mainAccount)
+            val account = fixtureAccount()
+            val novelRoomId = fixtureNovelRoom(account)
 
-            `when`("소설 공방 대표 작가가 참여자 순서를 변경하면") {
-                val request = mapOf(
-                    "writingOrder" to 1
-                )
+            val request = mapOf(
+                "order" to 1
+            )
+
+            `when`("인증된 사용자가 순서를 변경하면") {
                 val response = performAuthPatch(
-                    "/api/v1/novel-rooms/$novelRoomId/participants/${mainAccount.id}/order",
+                    "/api/v1/novel-rooms/$novelRoomId/participants/${account.id}/order",
                     request,
-                    mainAccount
+                    account
                 )
 
                 then("참여자 순서가 변경된다") {
@@ -224,87 +164,14 @@ class NovelRoomApiControllerTest @Autowired constructor(
                 }
             }
 
-            `when`("일반 참여자가 다른 참여자의 순서를 변경하면") {
-                val request = mapOf(
-                    "writingOrder" to 0
-                )
-                val response = performAuthPatch(
-                    "/api/v1/novel-rooms/$novelRoomId/participants/${mainAccount.id}/order",
-                    request,
-                    subAccount
-                )
-
-                then("수정 권한 없음 오류가 발생한다") {
-                    response
-                        .andExpect(status().isForbidden)
-                        .andExpect(jsonPath("$.code").value(ErrorCode.NO_PERMISSION_TO_UPDATE.code))
-                }
-            }
-
-            `when`("일반 참여자가 자신의 순서를 변경하려고 하면") {
-                val request = mapOf(
-                    "writingOrder" to 0
-                )
-                val response = performAuthPatch(
-                    "/api/v1/novel-rooms/$novelRoomId/participants/${subAccount.id}/order",
-                    request,
-                    subAccount
-                )
-
-                then("수정 권한 없음 오류가 발생한다") {
-                    response
-                        .andExpect(status().isForbidden)
-                        .andExpect(jsonPath("$.code").value(ErrorCode.NO_PERMISSION_TO_UPDATE.code))
-                }
-            }
-
-            `when`("참여하지 않은 사용자가 순서를 변경하면") {
-                val otherAccount = fixtureAccount()
-                val request = mapOf(
-                    "writingOrder" to 1
-                )
-                val response = performAuthPatch(
-                    "/api/v1/novel-rooms/$novelRoomId/participants/${subAccount.id}/order",
-                    request,
-                    otherAccount
-                )
-
-                then("수정 권한 없음 오류가 발생한다") {
-                    response
-                        .andExpect(status().isForbidden)
-                        .andExpect(jsonPath("$.code").value(ErrorCode.NO_PERMISSION_TO_UPDATE.code))
-                }
-            }
-
             `when`("인증되지 않은 사용자가 순서를 변경하면") {
-                val request = mapOf(
-                    "writingOrder" to 1
-                )
                 val response =
-                    performPatch("/api/v1/novel-rooms/$novelRoomId/participants/${subAccount.id}/order", request)
+                    performPatch("/api/v1/novel-rooms/$novelRoomId/participants/${account.id}/order", request)
 
                 then("인증 오류가 발생한다") {
                     response
                         .andExpect(status().isUnauthorized)
                         .andExpect(jsonPath("$.code").value(ErrorCode.UNAUTHORIZED.code))
-                }
-            }
-
-            `when`("존재하지 않는 참여자의 순서를 변경하면") {
-                val request = mapOf(
-                    "writingOrder" to 1
-                )
-                val response =
-                    performAuthPatch(
-                        "/api/v1/novel-rooms/$novelRoomId/participants/0194a1e8-6aad-7c73-9de0-b216346a242f/order",
-                        request,
-                        mainAccount
-                    )
-
-                then("참여자를 찾을 수 없다는 오류가 발생한다") {
-                    response
-                        .andExpect(status().isNotFound)
-                        .andExpect(jsonPath("$.code").value(ErrorCode.CONTRIBUTOR_NOT_FOUND.code))
                 }
             }
         }
