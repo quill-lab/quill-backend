@@ -3,9 +3,8 @@ package lab.ujumeonji.literaturebackend.usecase.contributor
 import lab.ujumeonji.literaturebackend.domain.account.AccountId
 import lab.ujumeonji.literaturebackend.domain.contributor.ContributorRequestStatus
 import lab.ujumeonji.literaturebackend.domain.contributor.ContributorService
+import lab.ujumeonji.literaturebackend.domain.contributor.command.FindContributorRequestHistoriesCommand
 import lab.ujumeonji.literaturebackend.usecase.UseCase
-import org.springframework.data.domain.PageRequest
-import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
@@ -17,16 +16,12 @@ class FindContributorRequestsUseCase(
 ) : UseCase<FindContributorRequestsUseCase.Request, FindContributorRequestsUseCase.Response> {
 
     override fun execute(request: Request, executedAt: LocalDateTime): Response {
-        val pageable = PageRequest.of(
-            request.page,
-            request.size,
-            Sort.by(Sort.Direction.DESC, "createdAt")
+        val command = FindContributorRequestHistoriesCommand(
+            page = request.page,
+            size = request.size
         )
 
-        val page = contributorService.findContributorRequestHistories(
-            AccountId.from(request.accountId),
-            pageable
-        )
+        val page = contributorService.findContributorRequestHistories(AccountId.from(request.accountId), command)
 
         return Response(
             result = page.content.map { history ->

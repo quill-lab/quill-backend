@@ -3,10 +3,10 @@ package lab.ujumeonji.literaturebackend.domain.contributor
 import lab.ujumeonji.literaturebackend.api.novel.dto.NovelRoomSortType
 import lab.ujumeonji.literaturebackend.domain.account.AccountId
 import lab.ujumeonji.literaturebackend.domain.contributor.command.CreateContributorGroupCommand
+import lab.ujumeonji.literaturebackend.domain.contributor.command.FindContributorRequestHistoriesCommand
 import lab.ujumeonji.literaturebackend.domain.contributor.dto.ContributorRequestHistory
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
-import org.springframework.data.domain.Pageable
 import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -22,8 +22,13 @@ class ContributorService(
 
     fun findContributorRequestHistories(
         accountId: AccountId,
-        pageable: Pageable
+        command: FindContributorRequestHistoriesCommand
     ): Page<ContributorRequestHistory> {
+        val pageable = PageRequest.of(
+            command.page,
+            command.size,
+            Sort.by(Sort.Direction.DESC, "createdAt")
+        )
         return contributorViewRepository.findContributorRequestsByAccountId(accountId.id, pageable)
     }
 
