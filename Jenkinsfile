@@ -52,7 +52,7 @@ spec:
                             passwordVariable: 'DOCKER_HUB_PASSWORD'
                         )]) {
                             sh """
-                                ./gradlew jib \
+                                ./gradlew clean jib \
                                     -Dorg.gradle.jvmargs="-Xmx2048m -XX:MaxMetaspaceSize=512m" \
                                     -Djib.from.image=eclipse-temurin:21-jdk-jammy \
                                     -Djib.to.tags=${VERSION} \
