@@ -21,7 +21,7 @@ class SignUpUseCase(
 ) : UseCase<SignUpUseCase.Request, SignUpUseCase.Response> {
 
     override fun execute(request: Request, executedAt: LocalDateTime): Response {
-        accountService.findOneByEmail(request.email)?.let {
+        accountService.findByEmail(request.email)?.let {
             throw BusinessException(ErrorCode.DUPLICATE_EMAIL)
         }
 

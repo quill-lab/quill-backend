@@ -4,6 +4,7 @@ import com.github.f4b6a3.uuid.UuidCreator;
 import jakarta.persistence.*;
 import lab.ujumeonji.literaturebackend.domain.common.BaseEntity;
 import lab.ujumeonji.literaturebackend.support.encrypt.PasswordEncoder;
+import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -63,5 +64,9 @@ public class Account extends BaseEntity {
 
     public AccountId getId() {
         return AccountId.from(this.id);
+    }
+
+    void updatePassword(@NotNull String password, @NotNull PasswordEncoder passwordEncoder) {
+        this.password = passwordEncoder.encode(password);
     }
 }

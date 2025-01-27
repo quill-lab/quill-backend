@@ -25,11 +25,11 @@ class SignInUseCase(
     }
 
     private fun findAccount(email: String) =
-        accountService.findOneByEmail(email)
+        accountService.findByEmail(email)
             ?: throw BusinessException(ErrorCode.INVALID_CREDENTIALS)
 
     private fun validatePassword(account: Account, password: String) {
-        if (!accountService.checkPassword(account, password)) {
+        if (!accountService.checkPassword(account.id, password)) {
             throw BusinessException(ErrorCode.INVALID_CREDENTIALS)
         }
     }

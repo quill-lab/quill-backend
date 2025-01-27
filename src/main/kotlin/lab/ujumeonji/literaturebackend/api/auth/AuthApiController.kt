@@ -3,10 +3,8 @@ package lab.ujumeonji.literaturebackend.api.auth
 import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
-import lab.ujumeonji.literaturebackend.api.auth.dto.SignInBodyRequest
-import lab.ujumeonji.literaturebackend.api.auth.dto.SignInResponse
-import lab.ujumeonji.literaturebackend.api.auth.dto.SignUpBodyRequest
-import lab.ujumeonji.literaturebackend.api.auth.dto.SignUpResponse
+import lab.ujumeonji.literaturebackend.api.auth.dto.*
+import lab.ujumeonji.literaturebackend.usecase.auth.RequestTemporaryPasswordUseCase
 import lab.ujumeonji.literaturebackend.usecase.auth.SignInUseCase
 import lab.ujumeonji.literaturebackend.usecase.auth.SignUpUseCase
 import org.springframework.http.ResponseEntity
@@ -18,14 +16,15 @@ import java.time.LocalDateTime
 
 @Tag(name = "Authentication", description = "인증 API")
 @RestController
-@RequestMapping("/api/v1")
-class AuthenticationApiController(
+@RequestMapping("/api/v1/auth")
+class AuthApiController(
     private val signInUseCase: SignInUseCase,
     private val signUpUseCase: SignUpUseCase,
+    private val requestTemporaryPasswordUseCase: RequestTemporaryPasswordUseCase,
 ) {
 
     @Operation(summary = "회원 가입", description = "회원 가입을 진행합니다.")
-    @PostMapping("/sign-up")
+    @PostMapping("/signup")
     fun signUp(@Valid @RequestBody request: SignUpBodyRequest): ResponseEntity<SignUpResponse> {
         val result = signUpUseCase.execute(
             request = SignUpUseCase.Request(
@@ -40,7 +39,7 @@ class AuthenticationApiController(
     }
 
     @Operation(summary = "로그인", description = "로그인을 진행합니다.")
-    @PostMapping("/sign-in")
+    @PostMapping("/signin")
     fun signIn(@Valid @RequestBody request: SignInBodyRequest): ResponseEntity<SignInResponse> {
         val result = signInUseCase.execute(
             request = SignInUseCase.Request(
@@ -50,6 +49,19 @@ class AuthenticationApiController(
             executedAt = LocalDateTime.now()
         )
 
-        return ResponseEntity.ok(SignInResponse(accessToken = result.token))
+        return ResponseEntity.ok(SignInResponse(token = result.token))
+    }
+
+    @Operation(summary = "임시 비밀번호 발급", description = "임시 비밀번호를 발급하고 이메일로 전송합니다.")
+    @PostMapping("/password/temporary")
+    fun requestTemporaryPassword(@Valid @RequestBody request: TemporaryPasswordRequest): ResponseEntity<Unit> {
+        requestTemporaryPasswordUseCase.execute(
+            request = RequestTemporaryPasswordUseCase.Request(
+                email = request.email,
+            ),
+            executedAt = LocalDateTime.now()
+        )
+
+        return ResponseEntity.ok().build()
     }
 }

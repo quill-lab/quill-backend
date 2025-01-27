@@ -14,6 +14,7 @@ enum class ErrorCode(
 
     // Account 관련 에러
     ACCOUNT_NOT_FOUND(404, "ACCOUNT-001", "계정을 찾을 수 없습니다."),
+    EMAIL_NOT_FOUND(404, "ACCOUNT-002", "존재하지 않는 이메일입니다."),
 
     // Novel 관련 에러
     NOVEL_NOT_FOUND(404, "NOVEL-001", "소설을 찾을 수 없습니다."),

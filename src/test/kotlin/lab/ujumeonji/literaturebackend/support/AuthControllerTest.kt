@@ -16,7 +16,7 @@ data class TestAccount(
     val email: String,
     val password: String,
     val nickname: String,
-    val accessToken: String,
+    val token: String,
 )
 
 abstract class AuthControllerTest(
@@ -60,7 +60,7 @@ abstract class AuthControllerTest(
         account: TestAccount?
     ): MockHttpServletRequestBuilder {
         val testAccount = account ?: this.fixtureAccount()
-        return builder.header(HttpHeaders.AUTHORIZATION, "Bearer ${testAccount.accessToken}")
+        return builder.header(HttpHeaders.AUTHORIZATION, "Bearer ${testAccount.token}")
     }
 
     protected fun fixtureAccount(): TestAccount {
@@ -70,7 +70,7 @@ abstract class AuthControllerTest(
         val nickname = "test123"
 
         val response = mockMvc.perform(
-            MockMvcRequestBuilders.post("/api/v1/sign-up")
+            MockMvcRequestBuilders.post("/api/v1/auth/signup")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(
                     toJson(
@@ -95,13 +95,13 @@ abstract class AuthControllerTest(
             email = email,
             password = password,
             nickname = nickname,
-            accessToken = token
+            token = token
         )
     }
 
     private fun signIn(email: String, password: String): String {
         val signInResult = mockMvc.perform(
-            MockMvcRequestBuilders.post("/api/v1/sign-in")
+            MockMvcRequestBuilders.post("/api/v1/auth/signin")
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(
                     toJson(
@@ -116,7 +116,7 @@ abstract class AuthControllerTest(
             .andReturn()
 
         val response = objectMapper.readValue(signInResult.response.contentAsString, SignInResponse::class.java)
-        return response.accessToken
+        return response.token
     }
 
     protected fun fixtureNovelRoom(account: TestAccount?): String {

@@ -13,17 +13,25 @@ class AccountService(
     private val passwordEncoder: PasswordEncoder,
 ) {
 
-    fun findOneByEmail(email: String): Account? = accountRepository.findByEmail(email)
+    fun findByEmail(email: String): Account? = accountRepository.findByEmail(email)
 
     fun findById(id: AccountId): Account? = accountRepository.findById(id.id).orElse(null)
 
     fun findByIds(ids: List<AccountId>): List<Account> = accountRepository.findAllById(ids.map { it.id }).toList()
 
-    fun checkPassword(account: Account, password: String): Boolean = account.checkPassword(
-        password,
-        passwordEncoder
-    )
+    fun checkPassword(id: AccountId, password: String): Boolean {
+        val account = findById(id) ?: return false
+        return account.checkPassword(password, passwordEncoder)
+    }
 
+    @Transactional
+    fun updatePassword(id: AccountId, password: String) {
+        val account = findById(id) ?: return
+        account.updatePassword(password, passwordEncoder)
+        accountRepository.save(account)
+    }
+
+    @Transactional
     fun create(command: CreateAccountCommand, now: LocalDateTime): Account {
         val account = Account.create(
             command.email,

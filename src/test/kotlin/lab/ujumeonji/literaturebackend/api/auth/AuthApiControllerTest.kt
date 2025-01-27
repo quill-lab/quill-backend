@@ -3,13 +3,14 @@ package lab.ujumeonji.literaturebackend.api.auth
 import com.fasterxml.jackson.databind.ObjectMapper
 import lab.ujumeonji.literaturebackend.api.auth.dto.SignInBodyRequest
 import lab.ujumeonji.literaturebackend.api.auth.dto.SignUpBodyRequest
+import lab.ujumeonji.literaturebackend.api.auth.dto.TemporaryPasswordRequest
 import lab.ujumeonji.literaturebackend.support.ControllerTest
 import lab.ujumeonji.literaturebackend.support.exception.ErrorCode
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-class AuthenticationApiControllerTest(
+class AuthApiControllerTest(
     mockMvc: MockMvc,
     objectMapper: ObjectMapper,
 ) : ControllerTest(
@@ -26,7 +27,7 @@ class AuthenticationApiControllerTest(
             )
 
             `when`("회원 가입을 요청하면") {
-                val response = performPost("/api/v1/sign-up", request)
+                val response = performPost("/api/v1/auth/signup", request)
 
                 then("신규 회원 정보가 등록된다.") {
                     response
@@ -42,7 +43,7 @@ class AuthenticationApiControllerTest(
                 password = "Password!@#\$1",
                 nickname = "testuser"
             )
-            performPost("/api/v1/sign-up", initialRequest)
+            performPost("/api/v1/auth/signup", initialRequest)
 
             val duplicateRequest = SignUpBodyRequest(
                 email = initialRequest.email,
@@ -51,7 +52,7 @@ class AuthenticationApiControllerTest(
             )
 
             `when`("중복된 이메일로 회원 가입을 요청하면") {
-                val duplicateResponse = performPost("/api/v1/sign-up", duplicateRequest)
+                val duplicateResponse = performPost("/api/v1/auth/signup", duplicateRequest)
 
                 then("신규 회원 정보가 등록되지 않는다.") {
                     duplicateResponse
@@ -67,7 +68,7 @@ class AuthenticationApiControllerTest(
                 password = "Password!@#\$1",
                 nickname = "testuser"
             )
-            performPost("/api/v1/sign-up", signUpRequest)
+            performPost("/api/v1/auth/signup", signUpRequest)
 
             val signInRequest = SignInBodyRequest(
                 email = "test@example.com",
@@ -75,12 +76,12 @@ class AuthenticationApiControllerTest(
             )
 
             `when`("로그인을 요청하면") {
-                val response = performPost("/api/v1/sign-in", signInRequest)
+                val response = performPost("/api/v1/auth/signin", signInRequest)
 
                 then("JWT 토큰이 발급된다") {
                     response
                         .andExpect(status().isOk)
-                        .andExpect(jsonPath("$.accessToken").exists())
+                        .andExpect(jsonPath("$.token").exists())
                 }
             }
         }
@@ -92,12 +93,46 @@ class AuthenticationApiControllerTest(
             )
 
             `when`("로그인을 요청하면") {
-                val response = performPost("/api/v1/sign-in", signInRequest)
+                val response = performPost("/api/v1/auth/signin", signInRequest)
 
                 then("인증 실패 응답이 반환된다") {
                     response
                         .andExpect(status().isUnauthorized)
                         .andExpect(jsonPath("$.code").value(ErrorCode.INVALID_CREDENTIALS.code))
+                }
+            }
+        }
+
+        given("사용자가 임시 비밀번호를 요청하고") {
+            val signUpRequest = SignUpBodyRequest(
+                email = "test@example.com",
+                password = "Password!@#\$1",
+                nickname = "testuser"
+            )
+            performPost("/api/v1/auth/signup", signUpRequest)
+
+            val temporaryPasswordRequest = TemporaryPasswordRequest(
+                email = "test@example.com"
+            )
+
+            `when`("등록된 이메일로 임시 비밀번호를 요청하면") {
+                val response = performPost("/api/v1/auth/password/temporary", temporaryPasswordRequest)
+
+                then("임시 비밀번호가 발급된다") {
+                    response.andExpect(status().isOk)
+                }
+            }
+
+            `when`("등록되지 않은 이메일로 임시 비밀번호를 요청하면") {
+                val invalidRequest = TemporaryPasswordRequest(
+                    email = "nonexistent@example.com"
+                )
+                val response = performPost("/api/v1/auth/password/temporary", invalidRequest)
+
+                then("계정을 찾을 수 없다는 응답이 반환된다") {
+                    response
+                        .andExpect(status().isNotFound)
+                        .andExpect(jsonPath("$.code").value(ErrorCode.EMAIL_NOT_FOUND.code))
                 }
             }
         }
