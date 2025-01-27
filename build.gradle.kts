@@ -1,13 +1,13 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
 
 plugins {
-    kotlin("jvm") version "1.9.25"
-    kotlin("plugin.spring") version "1.9.25"
     id("org.springframework.boot") version "3.4.1"
     id("io.spring.dependency-management") version "1.1.7"
-    kotlin("plugin.jpa") version "1.9.25"
     id("io.gitlab.arturbosch.detekt") version "1.23.7"
     id("com.google.cloud.tools.jib") version "3.4.4"
+    kotlin("jvm") version "1.9.25"
+    kotlin("plugin.spring") version "1.9.25"
+    kotlin("plugin.jpa") version "1.9.25"
 }
 
 group = "lab.ujumeonji"
@@ -17,6 +17,7 @@ java {
     toolchain {
         languageVersion = JavaLanguageVersion.of(21)
     }
+    sourceCompatibility = JavaVersion.VERSION_21
 }
 
 configurations {
@@ -43,10 +44,6 @@ dependencies {
     implementation("org.springframework.security:spring-security-crypto")
     implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.3")
     implementation("com.github.f4b6a3:uuid-creator:6.0.0")
-    implementation("com.querydsl:querydsl-jpa:5.1.0:jakarta")
-    annotationProcessor("com.querydsl:querydsl-apt:5.1.0:jakarta")
-    annotationProcessor("jakarta.persistence:jakarta.persistence-api")
-    annotationProcessor("jakarta.annotation:jakarta.annotation-api")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     implementation("io.jsonwebtoken:jjwt-api:0.12.6")
     runtimeOnly("io.jsonwebtoken:jjwt-impl:0.12.6")
