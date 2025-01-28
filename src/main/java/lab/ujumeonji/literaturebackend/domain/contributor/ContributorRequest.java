@@ -5,7 +5,6 @@ import jakarta.annotation.Nonnull;
 import jakarta.persistence.*;
 import lab.ujumeonji.literaturebackend.domain.account.AccountId;
 import lab.ujumeonji.literaturebackend.domain.common.BaseEntity;
-import lab.ujumeonji.literaturebackend.domain.novel.NovelId;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -22,9 +21,6 @@ public class ContributorRequest extends BaseEntity {
     private ContributorGroup contributorGroup;
 
     @Column(nullable = false)
-    private UUID novelId;
-
-    @Column(nullable = false)
     private UUID accountId;
 
     @Column
@@ -37,12 +33,11 @@ public class ContributorRequest extends BaseEntity {
     protected ContributorRequest() {
     }
 
-    ContributorRequest(@Nonnull ContributorGroup contributorGroup, @Nonnull NovelId novelId,
+    ContributorRequest(@Nonnull ContributorGroup contributorGroup,
                        @Nonnull AccountId accountId, LocalDateTime approvedAt, ContributorRequestStatus status,
                        LocalDateTime createdAt, LocalDateTime updatedAt, LocalDateTime deletedAt) {
         this.id = UuidCreator.getTimeOrderedEpoch();
         this.contributorGroup = contributorGroup;
-        this.novelId = novelId.getId();
         this.accountId = accountId.getId();
         this.status = status;
         this.approvedAt = approvedAt;

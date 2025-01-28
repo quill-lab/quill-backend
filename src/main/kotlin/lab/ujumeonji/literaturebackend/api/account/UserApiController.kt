@@ -72,7 +72,7 @@ class UserApiController(
     }
 
     @Operation(summary = "소설 공방 참여 신청 목록 조회", description = "사용자가 신청한 소설 공방 참여 신청 목록을 조회합니다.")
-    @GetMapping("/me/novel-rooms/requests")
+    @GetMapping("/me/contributor-requests")
     fun getContributorRequestHistories(
         @RequiredAuth accountId: String,
         @Valid request: ContributorRequestsQueryRequest

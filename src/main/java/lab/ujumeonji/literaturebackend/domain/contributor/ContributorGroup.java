@@ -55,6 +55,8 @@ public class ContributorGroup extends BaseEntity {
         this.maxContributorCount = maxContributorCount;
         this.status = ContributorGroupStatus.PREPARING;
         this.novelId = novelId.getId();
+        this.completedAt = null;
+
         setCreatedAt(createdAt);
         setUpdatedAt(updatedAt);
         setDeletedAt(deletedAt);
@@ -81,10 +83,6 @@ public class ContributorGroup extends BaseEntity {
 
         if (status == null) {
             throw new IllegalArgumentException("상태는 필수입니다");
-        }
-
-        if (novelId == null) {
-            throw new IllegalArgumentException("소설 ID는 필수입니다");
         }
     }
 
@@ -127,35 +125,19 @@ public class ContributorGroup extends BaseEntity {
         return completedAt;
     }
 
+    ContributorId getActiveContributorId() {
+        return ContributorId.from(activeContributorId);
+    }
+
     public List<Contributor> getContributors() {
         return contributors;
     }
 
-    ContributorId getContributorId() {
-        return ContributorId.from(activeContributorId);
-    }
-
-    @Nullable
-    public ContributorRole getCollaboratorRole(@Nonnull AccountId accountId) {
+    public boolean hasManagePermission(@Nonnull AccountId accountId) {
         return contributors.stream()
-                .filter(contributor -> contributor.getAccountId().equals(accountId))
-                .map(Contributor::getRole)
-                .findFirst()
-                .orElse(null);
-    }
-
-    @Nullable
-    private Contributor getCurrentContributor() {
-        return contributors.stream()
-                .filter(contributor -> contributor.getId().equals(getContributorId()))
-                .findFirst()
-                .orElse(null);
-    }
-
-    @Nullable
-    public AccountId getActiveContributorAccountId() {
-        Contributor currentContributor = getCurrentContributor();
-        return currentContributor != null ? currentContributor.getAccountId() : null;
+                .filter(contributor -> !contributor.isDeleted())
+                .anyMatch(contributor -> contributor.getAccountId().equals(accountId) &&
+                        contributor.getRole() == ContributorRole.MAIN);
     }
 
     public void updateWritingOrder(@Nonnull ContributorId contributorId, int writingOrder) {
@@ -205,12 +187,30 @@ public class ContributorGroup extends BaseEntity {
                 .anyMatch(contributor -> contributor.getAccountId().equals(accountId) && !contributor.isDeleted());
     }
 
-    public boolean hasManagePermission(@Nonnull AccountId accountId) {
-        return contributors.stream().anyMatch(contributor -> contributor.getAccountId().equals(accountId)
-                && contributor.getRole().equals(ContributorRole.MAIN));
-    }
-
     public ContributorGroupId getId() {
         return ContributorGroupId.from(this.id);
+    }
+
+    @Nullable
+    public ContributorRole getCollaboratorRole(@Nonnull AccountId accountId) {
+        return contributors.stream()
+                .filter(contributor -> contributor.getAccountId().equals(accountId))
+                .map(Contributor::getRole)
+                .findFirst()
+                .orElse(null);
+    }
+
+    @Nullable
+    private Contributor getCurrentContributor() {
+        return contributors.stream()
+                .filter(contributor -> contributor.getId().equals(getActiveContributorId()))
+                .findFirst()
+                .orElse(null);
+    }
+
+    @Nullable
+    public AccountId getActiveContributorAccountId() {
+        Contributor currentContributor = getCurrentContributor();
+        return currentContributor != null ? currentContributor.getAccountId() : null;
     }
 }

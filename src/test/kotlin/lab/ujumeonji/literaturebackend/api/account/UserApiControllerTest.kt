@@ -66,5 +66,32 @@ class UserApiControllerTest @Autowired constructor(
                 }
             }
         }
+
+        given("소설 공방 참여 신청 목록 조회시") {
+            val account = fixtureAccount()
+
+            `when`("인증된 사용자가 최신순으로 조회하면") {
+                val response = performAuthGet("/api/v1/users/me/contributor-requests?page=0&size=10", account)
+
+                then("참여 신청 목록이 최신순으로 반환된다") {
+                    response
+                        .andExpect(status().isOk)
+                        .andExpect(jsonPath("$.items").isArray)
+                        .andExpect(jsonPath("$.totalCount").exists())
+                        .andExpect(jsonPath("$.size").value(10))
+                        .andExpect(jsonPath("$.page").value(0))
+                }
+            }
+
+            `when`("인증되지 않은 사용자가 조회하면") {
+                val response = performGet("/api/v1/users/me/contributor-requests?page=0&size=10")
+
+                then("인증 오류가 발생한다") {
+                    response
+                        .andExpect(status().isUnauthorized)
+                        .andExpect(jsonPath("$.code").value(ErrorCode.UNAUTHORIZED.code))
+                }
+            }
+        }
     }
 }
