@@ -2,7 +2,6 @@ package lab.ujumeonji.literaturebackend.domain.contributor
 
 import jakarta.persistence.EntityManager
 import jakarta.persistence.criteria.CriteriaBuilder
-import jakarta.persistence.criteria.CriteriaQuery
 import jakarta.persistence.criteria.JoinType
 import jakarta.persistence.criteria.Root
 import lab.ujumeonji.literaturebackend.domain.contributor.dto.ContributorRequestHistory
@@ -20,24 +19,24 @@ class ContributorViewRepository(
 ) {
     fun findContributorRequestsByAccountId(accountId: UUID, pageable: Pageable): Page<ContributorRequestHistory> {
         val criteriaBuilder = entityManager.criteriaBuilder
-        val totalCount = getTotalCount(accountId, criteriaBuilder)
-        val results = getResults(accountId, pageable, criteriaBuilder)
+        val totalCount = countContributorRequests(accountId, criteriaBuilder)
+        val results = findPaginatedContributorRequests(accountId, pageable, criteriaBuilder)
         return PageImpl(results, pageable, totalCount)
     }
 
-    private fun getTotalCount(accountId: UUID, cb: CriteriaBuilder): Long {
+    private fun countContributorRequests(accountId: UUID, cb: CriteriaBuilder): Long {
         val countQuery = cb.createQuery(Long::class.java)
         val root = countQuery.from(ContributorRequest::class.java)
         val contributorGroup = root.join<ContributorRequest, ContributorGroup>("contributorGroup", JoinType.INNER)
         val novel = contributorGroup.join<ContributorGroup, Novel>("novel", JoinType.INNER)
 
         countQuery.select(cb.count(root))
-            .where(buildWhereClause(accountId, cb, root, contributorGroup, novel))
+            .where(buildContributorRequestWhereConditions(accountId, cb, root, contributorGroup, novel))
 
         return entityManager.createQuery(countQuery).singleResult
     }
 
-    private fun getResults(
+    private fun findPaginatedContributorRequests(
         accountId: UUID,
         pageable: Pageable,
         cb: CriteriaBuilder
@@ -47,8 +46,8 @@ class ContributorViewRepository(
         val contributorGroup = root.join<ContributorRequest, ContributorGroup>("contributorGroup", JoinType.INNER)
         val novel = contributorGroup.join<ContributorGroup, Novel>("novel", JoinType.INNER)
 
-        query.select(buildSelect(cb, root, novel, contributorGroup))
-            .where(buildWhereClause(accountId, cb, root, contributorGroup, novel))
+        query.select(buildContributorRequestHistoryProjection(cb, root, novel, contributorGroup))
+            .where(buildContributorRequestWhereConditions(accountId, cb, root, contributorGroup, novel))
             .orderBy(cb.desc(root.get<LocalDateTime>("createdAt")))
 
         return entityManager.createQuery(query)
@@ -57,7 +56,7 @@ class ContributorViewRepository(
             .resultList
     }
 
-    private fun buildSelect(
+    private fun buildContributorRequestHistoryProjection(
         cb: CriteriaBuilder,
         root: Root<ContributorRequest>,
         novel: jakarta.persistence.criteria.Join<*, *>,
@@ -72,7 +71,7 @@ class ContributorViewRepository(
         contributorGroup.get<LocalDateTime>("deletedAt")
     )
 
-    private fun buildWhereClause(
+    private fun buildContributorRequestWhereConditions(
         accountId: UUID,
         cb: CriteriaBuilder,
         root: Root<*>,
