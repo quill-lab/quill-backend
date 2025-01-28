@@ -46,6 +46,9 @@ dependencies {
     implementation("com.github.f4b6a3:uuid-creator:6.0.0")
     developmentOnly("org.springframework.boot:spring-boot-devtools")
     implementation("io.jsonwebtoken:jjwt-api:0.12.6")
+    implementation("io.micrometer:micrometer-tracing")
+    implementation("io.micrometer:micrometer-tracing-bridge-brave")
+    implementation("io.zipkin.reporter2:zipkin-reporter-brave")
     runtimeOnly("io.jsonwebtoken:jjwt-impl:0.12.6")
     runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.12.6")
     runtimeOnly("org.postgresql:postgresql")
@@ -146,5 +149,11 @@ jib {
             "SPRING_PROFILES_ACTIVE" to "prod"
         )
         creationTime.set("USE_CURRENT_TIMESTAMP")
+    }
+}
+
+dependencyManagement {
+    imports {
+        mavenBom("org.springframework.cloud:spring-cloud-dependencies:2022.0.3")
     }
 }
