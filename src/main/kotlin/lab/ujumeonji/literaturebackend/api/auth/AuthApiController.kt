@@ -30,7 +30,7 @@ class AuthApiController(
             request = SignUpUseCase.Request(
                 email = request.email,
                 password = request.password,
-                nickname = request.nickname,
+                name = request.name,
             ),
             executedAt = LocalDateTime.now()
         )

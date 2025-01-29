@@ -23,7 +23,7 @@ class AuthApiControllerTest(
             val request = SignUpBodyRequest(
                 email = "test@example.com",
                 password = "Password!@#\$1",
-                nickname = "testuser"
+                name = "testuser"
             )
 
             `when`("회원 가입을 요청하면") {
@@ -41,14 +41,14 @@ class AuthApiControllerTest(
             val initialRequest = SignUpBodyRequest(
                 email = "test@example.com",
                 password = "Password!@#\$1",
-                nickname = "testuser"
+                name = "testuser"
             )
             performPost("/api/v1/auth/signup", initialRequest)
 
             val duplicateRequest = SignUpBodyRequest(
                 email = initialRequest.email,
                 password = "anotherpa!@#\$1",
-                nickname = "another"
+                name = "another"
             )
 
             `when`("중복된 이메일로 회원 가입을 요청하면") {
@@ -66,7 +66,7 @@ class AuthApiControllerTest(
             val signUpRequest = SignUpBodyRequest(
                 email = "test@example.com",
                 password = "Password!@#\$1",
-                nickname = "testuser"
+                name = "testuser"
             )
             performPost("/api/v1/auth/signup", signUpRequest)
 
@@ -107,7 +107,7 @@ class AuthApiControllerTest(
             val signUpRequest = SignUpBodyRequest(
                 email = "test@example.com",
                 password = "Password!@#\$1",
-                nickname = "testuser"
+                name = "testuser"
             )
             performPost("/api/v1/auth/signup", signUpRequest)
 

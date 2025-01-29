@@ -29,7 +29,7 @@ class SignUpUseCase(
             command = CreateAccountCommand(
                 email = request.email,
                 password = request.password,
-                nickname = request.nickname
+                nickname = request.name
             ),
             now = executedAt
         )
@@ -66,7 +66,7 @@ class SignUpUseCase(
     data class Request(
         val email: String,
         val password: String,
-        val nickname: String
+        val name: String
     )
 
     data class Response(

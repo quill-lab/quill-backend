@@ -67,7 +67,7 @@ abstract class AuthControllerTest(
         val uuid = UUID.randomUUID().toString()
         val email = "test$uuid@test.com"
         val password = "Password1!"
-        val nickname = "test123"
+        val name = "test123"
 
         val response = mockMvc.perform(
             MockMvcRequestBuilders.post("/api/v1/auth/signup")
@@ -77,7 +77,7 @@ abstract class AuthControllerTest(
                         mapOf(
                             "email" to email,
                             "password" to password,
-                            "nickname" to nickname
+                            "name" to name
                         )
                     )
                 )
@@ -94,7 +94,7 @@ abstract class AuthControllerTest(
             id = accountId,
             email = email,
             password = password,
-            nickname = nickname,
+            nickname = name,
             token = token
         )
     }
