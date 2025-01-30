@@ -175,5 +175,63 @@ class NovelRoomApiControllerTest @Autowired constructor(
                 }
             }
         }
+
+        given("유효한 소설 공방 모집글 생성 요청이 주어지고") {
+            val account = fixtureAccount()
+            val novelRoomId = fixtureNovelRoom(account)
+            val request = mapOf(
+                "title" to "모집글 제목",
+                "content" to "모집글 내용",
+                "link" to "https://example.com/recruitment"
+            )
+
+            `when`("인증된 사용자가 소설 공방 모집글 생성을 요청하면") {
+                val response = performAuthPost("/api/v1/novel-rooms/$novelRoomId/recruitments", request)
+
+                then("모집글이 생성된다") {
+                    response
+                        .andExpect(status().isCreated)
+                        .andExpect(jsonPath("$.id").exists())
+                }
+            }
+
+            `when`("인증되지 않은 사용자가 소설 공방 모집글 생성을 요청하면") {
+                val response = performPost("/api/v1/novel-rooms/$novelRoomId/recruitments", request)
+
+                then("인증 오류가 발생한다") {
+                    response
+                        .andExpect(status().isUnauthorized)
+                        .andExpect(jsonPath("$.code").value(ErrorCode.UNAUTHORIZED.code))
+                }
+            }
+
+            `when`("소설 공방 소유자가 아닌 사용자가 모집글 생성을 요청하면") {
+                val response = performAuthPost("/api/v1/novel-rooms/$novelRoomId/recruitments", request)
+
+                then("권한 오류가 발생한다") {
+                    response
+                        .andExpect(status().isForbidden)
+                        .andExpect(jsonPath("$.code").value(ErrorCode.NO_PERMISSION_TO_UPDATE.code))
+                }
+            }
+        }
+
+        given("유효하지 않은 소설 공방 모집글 생성 요청이 주어지고") {
+            val novelRoomId = "test-novel-room-id"
+            val invalidRequest = mapOf(
+                "title" to "",
+                "content" to "모집글 내용",
+                "link" to ""
+            )
+
+            `when`("인증된 사용자가 소설 공방 모집글 생성을 요청하면") {
+                val response = performAuthPost("/api/v1/novel-rooms/$novelRoomId/recruitments", invalidRequest)
+
+                then("유효성 검사 오류가 발생한다") {
+                    response
+                        .andExpect(status().isBadRequest)
+                }
+            }
+        }
     }
 }
