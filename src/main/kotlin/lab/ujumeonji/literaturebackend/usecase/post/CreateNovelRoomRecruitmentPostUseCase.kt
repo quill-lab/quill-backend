@@ -23,8 +23,10 @@ class CreateNovelRoomRecruitmentPostUseCase @Autowired constructor(
     ): Response {
         val accountId = AccountId.from(request.accountId)
         val contributorGroupId = ContributorGroupId.from(request.novelRoomId)
+        val contributorGroup = contributorService.findGroupById(contributorGroupId)
+            ?: throw BusinessException(ErrorCode.CONTRIBUTOR_GROUP_NOT_FOUND)
 
-        if (contributorService.hasOwnContributorGroup(accountId)) {
+        if (!contributorGroup.hasManagePermission(accountId)) {
             throw BusinessException(ErrorCode.NO_PERMISSION_TO_UPDATE)
         }
 

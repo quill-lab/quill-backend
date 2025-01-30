@@ -186,7 +186,7 @@ class NovelRoomApiControllerTest @Autowired constructor(
             )
 
             `when`("인증된 사용자가 소설 공방 모집글 생성을 요청하면") {
-                val response = performAuthPost("/api/v1/novel-rooms/$novelRoomId/recruitments", request)
+                val response = performAuthPost("/api/v1/novel-rooms/$novelRoomId/recruitments", request, account)
 
                 then("모집글이 생성된다") {
                     response
