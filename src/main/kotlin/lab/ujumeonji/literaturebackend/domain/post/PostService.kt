@@ -8,7 +8,7 @@ import java.time.LocalDateTime
 @Service
 class PostService @Autowired constructor(
     private val contributorGroupRecruitmentRepository: ContributorGroupRecruitmentRepository,
-) : NovelRoomRecruitmentService {
+) : ContributorGroupRecruitmentService {
 
     override fun createNovelRecruitmentPost(
         command: CreateNovelRoomRecruitmentPostCommand,

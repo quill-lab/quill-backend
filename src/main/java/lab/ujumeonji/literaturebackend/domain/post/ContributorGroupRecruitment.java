@@ -75,4 +75,8 @@ public class ContributorGroupRecruitment extends BaseEntity {
                 null
         );
     }
+
+    public ContributorGroupRecruitmentId getId() {
+        return ContributorGroupRecruitmentId.from(this.id);
+    }
 }

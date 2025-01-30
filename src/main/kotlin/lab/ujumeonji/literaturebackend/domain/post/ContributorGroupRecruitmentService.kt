@@ -3,7 +3,7 @@ package lab.ujumeonji.literaturebackend.domain.post
 import lab.ujumeonji.literaturebackend.domain.post.command.CreateNovelRoomRecruitmentPostCommand
 import java.time.LocalDateTime
 
-interface NovelRoomRecruitmentService {
+interface ContributorGroupRecruitmentService {
 
     fun createNovelRecruitmentPost(
         command: CreateNovelRoomRecruitmentPostCommand,

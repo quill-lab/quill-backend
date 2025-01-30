@@ -6,6 +6,7 @@ import jakarta.validation.Valid
 import lab.ujumeonji.literaturebackend.api.novel.dto.*
 import lab.ujumeonji.literaturebackend.support.auth.RequiredAuth
 import lab.ujumeonji.literaturebackend.usecase.novel.*
+import lab.ujumeonji.literaturebackend.usecase.post.CreateNovelRoomRecruitmentPostUseCase
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
@@ -16,13 +17,13 @@ import java.time.LocalDateTime
 @RequestMapping("/api/v1/novel-rooms")
 class NovelRoomApiController(
     private val createNovelRoomUseCase: CreateNovelRoomUseCase,
-    private val findJoinedNovelRoomsUseCase: FindJoinedNovelRoomsUseCase,
     private val viewJoinedNovelRoomUseCase: ViewJoinedNovelRoomUseCase,
     private val updateNovelUseCase: UpdateNovelUseCase,
     private val findNovelCharactersUseCase: FindNovelCharactersUseCase,
     private val addNovelCharacterUseCase: AddNovelCharacterUseCase,
     private val findNovelRoomParticipantsUseCase: FindNovelRoomParticipantsUseCase,
     private val updateParticipantOrderUseCase: UpdateParticipantOrderUseCase,
+    private val createNovelRoomRecruitmentPostUseCase: CreateNovelRoomRecruitmentPostUseCase,
 ) {
 
     @Operation(summary = "소설 공방 수정", description = "소설 공방을 수정합니다.")
@@ -230,7 +231,22 @@ class NovelRoomApiController(
         @RequiredAuth accountId: String,
         @PathVariable novelRoomId: String,
         @Valid @RequestBody request: CreateNovelRoomRecruitmentRequest
-    ) {
-        // TODO: Implement recruitment creation logic
+    ): ResponseEntity<CreateNovelRoomRecruitmentResponse> {
+        val result = createNovelRoomRecruitmentPostUseCase.execute(
+            request = CreateNovelRoomRecruitmentPostUseCase.Request(
+                accountId = accountId,
+                novelRoomId = novelRoomId,
+                title = request.title,
+                content = request.content,
+                link = request.link,
+            ),
+            executedAt = LocalDateTime.now()
+        )
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(
+            CreateNovelRoomRecruitmentResponse(
+                id = result.id,
+            )
+        )
     }
 }
