@@ -25,6 +25,13 @@ public class Chapter extends BaseEntity {
     @JoinColumn(name = "novel_id", nullable = false, foreignKey = @ForeignKey(name = "fk_chapter_novel"))
     private Novel novel;
 
+    @Column
+    private LocalDateTime approvedAt;
+
+    @Column
+    @Enumerated(EnumType.STRING)
+    private ChapterStatus status;
+
     protected Chapter() {
     }
 
