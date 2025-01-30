@@ -1,0 +1,78 @@
+package lab.ujumeonji.literaturebackend.domain.post;
+
+import com.github.f4b6a3.uuid.UuidCreator;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lab.ujumeonji.literaturebackend.domain.account.AccountId;
+import lab.ujumeonji.literaturebackend.domain.common.BaseEntity;
+import lab.ujumeonji.literaturebackend.domain.contributor.ContributorGroupId;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+
+import java.time.LocalDateTime;
+import java.util.UUID;
+
+@Entity
+@Table(name = "contributor_group_recruitments")
+public class ContributorGroupRecruitment extends BaseEntity {
+
+    @Id
+    private UUID id;
+
+    private String title;
+
+    private String content;
+
+    private String link;
+
+    private UUID contributorGroupId;
+
+    private UUID authorId;
+
+    protected ContributorGroupRecruitment() {
+    }
+
+    ContributorGroupRecruitment(
+            @NotNull final UUID id,
+            @NotNull final ContributorGroupId contributorGroupId,
+            @NotNull final AccountId authorId,
+            @NotNull final String title,
+            @NotNull final String content,
+            @Nullable final String link,
+            @NotNull final LocalDateTime createdAt,
+            @NotNull final LocalDateTime updatedAt,
+            @Nullable final LocalDateTime deletedAt
+    ) {
+        this.id = id;
+        this.contributorGroupId = contributorGroupId.getId();
+        this.authorId = authorId.getId();
+        this.title = title;
+        this.content = content;
+        this.link = link;
+        setCreatedAt(createdAt);
+        setUpdatedAt(updatedAt);
+        setDeletedAt(deletedAt);
+    }
+
+    static ContributorGroupRecruitment create(
+            @NotNull final ContributorGroupId contributorGroupId,
+            @NotNull final AccountId authorId,
+            @NotNull final String title,
+            @NotNull final String content,
+            @Nullable final String link,
+            @NotNull final LocalDateTime now
+    ) {
+        return new ContributorGroupRecruitment(
+                UuidCreator.getTimeOrderedEpoch(),
+                contributorGroupId,
+                authorId,
+                title,
+                content,
+                link,
+                now,
+                now,
+                null
+        );
+    }
+}

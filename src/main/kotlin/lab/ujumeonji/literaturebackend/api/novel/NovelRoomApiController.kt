@@ -227,6 +227,7 @@ class NovelRoomApiController(
     @Operation(summary = "소설 공방 모집글 생성", description = "소설 공방의 모집글을 생성합니다.")
     @PostMapping("/{novelRoomId}/recruitments")
     fun createRecruitment(
+        @RequiredAuth accountId: String,
         @PathVariable novelRoomId: String,
         @Valid @RequestBody request: CreateNovelRoomRecruitmentRequest
     ) {
