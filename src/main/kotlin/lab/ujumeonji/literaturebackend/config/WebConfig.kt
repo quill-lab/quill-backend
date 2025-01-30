@@ -7,7 +7,7 @@ import org.springframework.web.method.support.HandlerMethodArgumentResolver
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 
-@Configuration
+@Configuration(proxyBeanMethods = false)
 class WebConfig(
     private val authArgumentResolver: AuthArgumentResolver,
     private val authInterceptor: AuthInterceptor
