@@ -285,7 +285,7 @@ class NovelRoomApiControllerTest @Autowired constructor(
                 then("소설 공방이 없다는 오류가 발생한다") {
                     response
                         .andExpect(status().isNotFound)
-                        .andExpect(jsonPath("$.code").value(ErrorCode.NO_PERMISSION_TO_VIEW.code))
+                        .andExpect(jsonPath("$.code").value(ErrorCode.CONTRIBUTOR_GROUP_NOT_FOUND.code))
                 }
             }
         }
