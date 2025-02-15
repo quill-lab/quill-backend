@@ -123,6 +123,10 @@ public class Novel extends BaseEntity {
         return NovelId.from(this.id);
     }
 
+    public List<StoryArc> getStoryArcs() {
+        return storyArcs;
+    }
+
     private void addTags(@NotNull List<String> tagNames, @NotNull LocalDateTime now) {
         List<String> existingTagNames = this.tags.stream()
                 .map(NovelTag::getName)

@@ -24,6 +24,7 @@ class NovelRoomApiController(
     private val findNovelRoomParticipantsUseCase: FindNovelRoomParticipantsUseCase,
     private val updateParticipantOrderUseCase: UpdateParticipantOrderUseCase,
     private val createNovelRoomRecruitmentPostUseCase: CreateNovelRoomRecruitmentPostUseCase,
+    private val findNovelStoryArcsUseCase: FindNovelStoryArcsUseCase,
 ) {
 
     @Operation(summary = "소설 공방 수정", description = "소설 공방을 수정합니다.")
@@ -247,6 +248,34 @@ class NovelRoomApiController(
             CreateNovelRoomRecruitmentResponse(
                 id = result.id,
             )
+        )
+    }
+
+    @Operation(summary = "소설 공방의 스토리 아크 목록 조회", description = "소설 공방의 스토리 아크 목록을 조회합니다.")
+    @GetMapping("/{novelRoomId}/story-arcs")
+    fun findStoryArcs(
+        @RequiredAuth accountId: String,
+        @PathVariable novelRoomId: String
+    ): ResponseEntity<List<StoryArcResponse>> {
+        val result = findNovelStoryArcsUseCase.execute(
+            request = FindNovelStoryArcsUseCase.Request(
+                accountId = accountId,
+                novelRoomId = novelRoomId
+            ),
+            executedAt = LocalDateTime.now()
+        )
+
+        return ResponseEntity.ok(
+            result.map {
+                StoryArcResponse(
+                    id = it.id,
+                    description = it.description,
+                    phase = it.phase,
+                    phaseAlias = it.phase.koreanName,
+                    firstChapterNumber = it.firstChapterNumber,
+                    lastChapterNumber = it.lastChapterNumber,
+                )
+            }
         )
     }
 }

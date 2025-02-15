@@ -4,7 +4,6 @@ import com.github.f4b6a3.uuid.UuidCreator;
 import jakarta.annotation.Nonnull;
 import jakarta.persistence.*;
 import lab.ujumeonji.literaturebackend.domain.common.BaseEntity;
-import lab.ujumeonji.literaturebackend.domain.novel.StoryArc;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -37,24 +36,28 @@ public class Chapter extends BaseEntity {
     @Enumerated(EnumType.STRING)
     private ChapterStatus status;
 
+    @Column
+    private Integer chapterNumber;
+
     protected Chapter() {
     }
 
-    Chapter(String title, String description, Novel novel, StoryArc storyArc, LocalDateTime createdAt,
-            LocalDateTime updatedAt, LocalDateTime deletedAt) {
+    Chapter(String title, String description, Novel novel, StoryArc storyArc, int chapterNumber,
+            LocalDateTime createdAt, LocalDateTime updatedAt, LocalDateTime deletedAt) {
         this.id = UuidCreator.getTimeOrderedEpoch();
         this.title = title;
         this.description = description;
         this.novel = novel;
         this.storyArc = storyArc;
+        this.chapterNumber = chapterNumber;
         setCreatedAt(createdAt);
         setUpdatedAt(updatedAt);
         setDeletedAt(deletedAt);
     }
 
-    static Chapter create(@Nonnull String title, @Nonnull String description, @Nonnull Novel novel, StoryArc storyArc,
-            @Nonnull LocalDateTime now) {
-        return new Chapter(title, description, novel, storyArc, now, now, null);
+    static Chapter create(@Nonnull String title, @Nonnull String description, @Nonnull Novel novel, @Nonnull StoryArc storyArc,
+                          int chapterNumber, @Nonnull LocalDateTime now) {
+        return new Chapter(title, description, novel, storyArc, chapterNumber, now, now, null);
     }
 
     void setStoryArc(StoryArc storyArc) {
@@ -63,5 +66,9 @@ public class Chapter extends BaseEntity {
 
     public ChapterId getId() {
         return ChapterId.from(this.id);
+    }
+
+    int getChapterNumber() {
+        return chapterNumber;
     }
 }
