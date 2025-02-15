@@ -233,5 +233,61 @@ class NovelRoomApiControllerTest @Autowired constructor(
                 }
             }
         }
+
+        given("소설 공방의 스토리 아크 목록을 조회할 수 있다") {
+            val account = fixtureAccount()
+            val novelRoomId = fixtureNovelRoom(account)
+
+            `when`("인증된 사용자가 스토리 아크 목록을 조회하면") {
+                val response = performAuthGet("/api/v1/novel-rooms/$novelRoomId/story-arcs", account)
+
+                then("스토리 아크 목록이 반환된다") {
+                    response
+                        .andExpect(status().isOk)
+                        .andExpect(jsonPath("$").isArray)
+                        .andExpect(jsonPath("$.length()").value(5))
+                        .andExpect(jsonPath("$[0].phase").value("INTRODUCTION"))
+                        .andExpect(jsonPath("$[1].phase").value("DEVELOPMENT"))
+                        .andExpect(jsonPath("$[2].phase").value("CRISIS"))
+                        .andExpect(jsonPath("$[3].phase").value("CLIMAX"))
+                        .andExpect(jsonPath("$[4].phase").value("RESOLUTION"))
+                }
+            }
+
+            `when`("인증되지 않은 사용자가 스토리 아크 목록을 조회하면") {
+                val response = performGet("/api/v1/novel-rooms/$novelRoomId/story-arcs")
+
+                then("인증 오류가 발생한다") {
+                    response
+                        .andExpect(status().isUnauthorized)
+                        .andExpect(jsonPath("$.code").value(ErrorCode.UNAUTHORIZED.code))
+                }
+            }
+
+            `when`("권한이 없는 사용자가 스토리 아크 목록을 조회하면") {
+                val response = performAuthGet("/api/v1/novel-rooms/$novelRoomId/story-arcs")
+
+                then("권한 오류가 발생한다") {
+                    response
+                        .andExpect(status().isForbidden)
+                        .andExpect(jsonPath("$.code").value(ErrorCode.NO_PERMISSION_TO_VIEW.code))
+                }
+            }
+        }
+
+        given("소설 공방의 스토리 아크 목록 조회 시 소설 공방이 없으면 실패한다") {
+            val account = fixtureAccount()
+            val nonExistentNovelRoomId = "f9c1a048-b0e4-464a-8a7f-59403ffa56e7"
+
+            `when`("인증된 사용자가 존재하지 않는 소설 공방의 스토리 아크 목록을 조회하면") {
+                val response = performAuthGet("/api/v1/novel-rooms/$nonExistentNovelRoomId/story-arcs", account)
+
+                then("소설 공방이 없다는 오류가 발생한다") {
+                    response
+                        .andExpect(status().isNotFound)
+                        .andExpect(jsonPath("$.code").value(ErrorCode.NO_PERMISSION_TO_VIEW.code))
+                }
+            }
+        }
     }
 }

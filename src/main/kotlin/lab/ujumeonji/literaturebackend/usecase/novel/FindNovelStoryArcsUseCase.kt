@@ -55,7 +55,7 @@ class FindNovelStoryArcsUseCase(
 
     data class Response(
         val id: String,
-        val description: String,
+        val description: String?,
         val phase: StoryPhase,
         val phaseAlias: String,
         val firstChapterNumber: Int?,
