@@ -43,6 +43,9 @@ public class Novel extends BaseEntity {
     @OneToMany(mappedBy = "novel", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Chapter> chapters = new ArrayList<>();
 
+    @OneToMany(mappedBy = "novel", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<StoryArc> storyArcs = new ArrayList<>();
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private NovelCategory category;
