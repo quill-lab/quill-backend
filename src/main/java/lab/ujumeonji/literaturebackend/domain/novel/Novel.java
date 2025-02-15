@@ -41,9 +41,6 @@ public class Novel extends BaseEntity {
     private List<Character> characters = new ArrayList<>();
 
     @OneToMany(mappedBy = "novel", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Chapter> chapters = new ArrayList<>();
-
-    @OneToMany(mappedBy = "novel", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<StoryArc> storyArcs = new ArrayList<>();
 
     @Enumerated(EnumType.STRING)
@@ -64,6 +61,10 @@ public class Novel extends BaseEntity {
         this.coverImage = coverImage;
         this.synopsis = synopsis;
         this.category = category;
+
+        setUpStoryArcs(createdAt);
+        addTags(tags, createdAt);
+
         setCreatedAt(createdAt);
         setUpdatedAt(updatedAt);
         setDeletedAt(deletedAt);
@@ -118,6 +119,10 @@ public class Novel extends BaseEntity {
         this.addTags(command.getTags(), now);
     }
 
+    public NovelId getId() {
+        return NovelId.from(this.id);
+    }
+
     private void addTags(@NotNull List<String> tagNames, @NotNull LocalDateTime now) {
         List<String> existingTagNames = this.tags.stream()
                 .map(NovelTag::getName)
@@ -133,7 +138,13 @@ public class Novel extends BaseEntity {
         this.tags.removeIf(existingTag -> !tagNames.contains(existingTag.getName()));
     }
 
-    public NovelId getId() {
-        return NovelId.from(this.id);
+    private void setUpStoryArcs(LocalDateTime createdAt) {
+        for (StoryPhase phase : StoryPhase.values()) {
+            StoryArc storyArc = StoryArc.create(
+                    this,
+                    phase,
+                    createdAt);
+            this.storyArcs.add(storyArc);
+        }
     }
 }

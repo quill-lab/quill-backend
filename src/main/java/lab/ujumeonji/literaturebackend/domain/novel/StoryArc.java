@@ -50,8 +50,8 @@ public class StoryArc extends BaseEntity {
         setDeletedAt(deletedAt);
     }
 
-    static StoryArc create(String title, String description, Novel novel, StoryPhase phase, LocalDateTime now) {
-        return new StoryArc(title, description, novel, phase, now, now, null);
+    static StoryArc create(Novel novel, StoryPhase phase, LocalDateTime now) {
+        return new StoryArc(null, null, novel, phase, now, now, null);
     }
 
     public UUID getId() {
