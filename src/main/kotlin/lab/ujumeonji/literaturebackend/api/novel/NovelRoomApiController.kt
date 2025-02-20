@@ -25,6 +25,7 @@ class NovelRoomApiController(
     private val updateParticipantOrderUseCase: UpdateParticipantOrderUseCase,
     private val createNovelRoomRecruitmentPostUseCase: CreateNovelRoomRecruitmentPostUseCase,
     private val findNovelStoryArcsUseCase: FindNovelStoryArcsUseCase,
+    private val updateStoryPhaseUseCase: UpdateStoryPhaseUseCase,
 ) {
 
     @Operation(summary = "소설 공방 수정", description = "소설 공방을 수정합니다.")
@@ -276,6 +277,31 @@ class NovelRoomApiController(
                     lastChapterNumber = it.lastChapterNumber,
                 )
             }
+        )
+    }
+
+    @Operation(summary = "스토리 아크의 페이즈 수정", description = "스토리 아크의 페이즈를 수정합니다.")
+    @PatchMapping("/{novelRoomId}/story-arcs/{storyArcId}/phase")
+    fun updateStoryPhase(
+        @RequiredAuth accountId: String,
+        @PathVariable novelRoomId: String,
+        @PathVariable storyArcId: String,
+        @Valid @RequestBody request: UpdateStoryPhaseRequest
+    ): ResponseEntity<UpdateStoryPhaseResponse> {
+        val result = updateStoryPhaseUseCase.execute(
+            request = UpdateStoryPhaseUseCase.Request(
+                accountId = accountId,
+                contributorGroupId = novelRoomId,
+                phase = request.phase,
+                description = request.description,
+            ),
+            executedAt = LocalDateTime.now()
+        )
+
+        return ResponseEntity.ok(
+            UpdateStoryPhaseResponse(
+                id = result.id,
+            )
         )
     }
 }

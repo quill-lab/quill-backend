@@ -289,5 +289,45 @@ class NovelRoomApiControllerTest @Autowired constructor(
                 }
             }
         }
+
+        given("스토리 아크의 스토리 페이즈를 수정할 때") {
+            val account = fixtureAccount()
+            val novelRoomId = fixtureNovelRoom(account)
+            val storyArcId = fixtureStoryArc(novelRoomId)
+
+            val request = mapOf(
+                "phase" to "DEVELOPMENT"
+            )
+
+            `when`("대표 작가가 스토리 페이즈를 수정하면") {
+                val response = performAuthPatch("/api/v1/novel-rooms/$novelRoomId/story-arcs/$storyArcId/phase", request, account)
+
+                then("스토리 페이즈가 수정된다") {
+                    response
+                        .andExpect(status().isOk)
+                        .andExpect(jsonPath("$.phase").value("DEVELOPMENT"))
+                }
+            }
+
+            `when`("인증되지 않은 사용자가 스토리 페이즈를 수정하면") {
+                val response = performPatch("/api/v1/novel-rooms/$novelRoomId/story-arcs/$storyArcId/phase", request)
+
+                then("인증 오류가 발생한다") {
+                    response
+                        .andExpect(status().isUnauthorized)
+                        .andExpect(jsonPath("$.code").value(ErrorCode.UNAUTHORIZED.code))
+                }
+            }
+
+            `when`("존재하지 않는 스토리 아크의 페이즈를 수정하면") {
+                val response = performAuthPatch("/api/v1/novel-rooms/$novelRoomId/story-arcs/non-existent-id/phase", request, account)
+
+                then("NOT_FOUND 오류가 발생한다") {
+                    response
+                        .andExpect(status().isNotFound)
+                        .andExpect(jsonPath("$.code").value(ErrorCode.RESOURCE_NOT_FOUND.code))
+                }
+            }
+        }
     }
 }

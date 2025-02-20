@@ -103,6 +103,11 @@ public class StoryArc extends BaseEntity {
         updateChapterRange();
     }
 
+    void updatePhase(String description, LocalDateTime now) {
+        this.description = description;
+        setUpdatedAt(now);
+    }
+
     private void updateChapterRange() {
         if (chapters.isEmpty()) {
             this.startChapter = null;
