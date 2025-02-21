@@ -123,4 +123,13 @@ public class StoryArc extends BaseEntity {
                 .max(Comparator.comparing(Chapter::getChapterNumber))
                 .orElse(null);
     }
+
+    @Nullable
+    public LocalDateTime getLastModifiedAt() {
+        if (getCreatedAt().isEqual(getUpdatedAt())) {
+            return null;
+        }
+
+        return getUpdatedAt();
+    }
 }

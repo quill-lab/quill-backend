@@ -276,6 +276,7 @@ class NovelRoomApiController(
                     phaseAlias = it.phase.koreanName,
                     firstChapterNumber = it.firstChapterNumber,
                     lastChapterNumber = it.lastChapterNumber,
+                    lastModifiedAt = it.lastModifiedAt,
                 )
             }
         )

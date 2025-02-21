@@ -35,6 +35,7 @@ class FindNovelStoryArcsUseCase(
                 phaseAlias = storyArc.phase.koreanName,
                 firstChapterNumber = storyArc.firstChapterNumber,
                 lastChapterNumber = storyArc.lastChapterNumber,
+                lastModifiedAt = storyArc.lastModifiedAt,
             )
         }
     }
@@ -60,6 +61,7 @@ class FindNovelStoryArcsUseCase(
         val phaseAlias: String,
         val firstChapterNumber: Int?,
         val lastChapterNumber: Int?,
+        val lastModifiedAt: LocalDateTime?,
     )
 
     data class Request(
