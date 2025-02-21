@@ -281,11 +281,10 @@ class NovelRoomApiController(
     }
 
     @Operation(summary = "스토리 아크의 페이즈 수정", description = "스토리 아크의 페이즈를 수정합니다.")
-    @PatchMapping("/{novelRoomId}/story-arcs/{storyArcId}/phase")
+    @PatchMapping("/{novelRoomId}/story-arcs")
     fun updateStoryPhase(
         @RequiredAuth accountId: String,
         @PathVariable novelRoomId: String,
-        @PathVariable storyArcId: String,
         @Valid @RequestBody request: UpdateStoryPhaseRequest
     ): ResponseEntity<UpdateStoryPhaseResponse> {
         val result = updateStoryPhaseUseCase.execute(
