@@ -4,6 +4,7 @@ import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import lab.ujumeonji.literaturebackend.api.novel.dto.*
+import lab.ujumeonji.literaturebackend.domain.novel.StoryPhase
 import lab.ujumeonji.literaturebackend.support.auth.RequiredAuth
 import lab.ujumeonji.literaturebackend.usecase.novel.*
 import lab.ujumeonji.literaturebackend.usecase.post.CreateNovelRoomRecruitmentPostUseCase
@@ -281,17 +282,18 @@ class NovelRoomApiController(
     }
 
     @Operation(summary = "스토리 아크의 페이즈 수정", description = "스토리 아크의 페이즈를 수정합니다.")
-    @PatchMapping("/{novelRoomId}/story-arcs")
+    @PatchMapping("/{novelRoomId}/story-arcs/{phase}")
     fun updateStoryPhase(
         @RequiredAuth accountId: String,
         @PathVariable novelRoomId: String,
+        @PathVariable phase: StoryPhase,
         @Valid @RequestBody request: UpdateStoryPhaseRequest
     ): ResponseEntity<UpdateStoryPhaseResponse> {
         val result = updateStoryPhaseUseCase.execute(
             request = UpdateStoryPhaseUseCase.Request(
                 accountId = accountId,
                 contributorGroupId = novelRoomId,
-                phase = request.phase,
+                phase = phase,
                 description = request.description,
             ),
             executedAt = LocalDateTime.now()

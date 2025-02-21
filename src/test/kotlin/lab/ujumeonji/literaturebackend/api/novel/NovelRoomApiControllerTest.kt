@@ -1,6 +1,7 @@
 package lab.ujumeonji.literaturebackend.api.novel
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import lab.ujumeonji.literaturebackend.domain.novel.StoryPhase
 import lab.ujumeonji.literaturebackend.support.AuthControllerTest
 import lab.ujumeonji.literaturebackend.support.exception.ErrorCode
 import org.springframework.beans.factory.annotation.Autowired
@@ -293,14 +294,14 @@ class NovelRoomApiControllerTest @Autowired constructor(
         given("스토리 아크의 스토리 페이즈를 수정할 때") {
             val account = fixtureAccount()
             val novelRoomId = fixtureNovelRoom(account)
+            val phase = StoryPhase.DEVELOPMENT
 
             val request = mapOf(
-                "phase" to "DEVELOPMENT",
                 "description" to "Test description",
             )
 
             `when`("대표 작가가 스토리 페이즈를 수정하면") {
-                val response = performAuthPatch("/api/v1/novel-rooms/$novelRoomId/story-arcs", request, account)
+                val response = performAuthPatch("/api/v1/novel-rooms/$novelRoomId/story-arcs/$phase", request, account)
 
                 then("스토리 페이즈가 수정된다") {
                     response
@@ -310,7 +311,7 @@ class NovelRoomApiControllerTest @Autowired constructor(
             }
 
             `when`("인증되지 않은 사용자가 스토리 페이즈를 수정하면") {
-                val response = performPatch("/api/v1/novel-rooms/$novelRoomId/story-arcs", request)
+                val response = performPatch("/api/v1/novel-rooms/$novelRoomId/story-arcs/$phase", request)
 
                 then("인증 오류가 발생한다") {
                     response
