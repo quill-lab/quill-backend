@@ -11,10 +11,7 @@ import lab.ujumeonji.literaturebackend.domain.novel.command.UpdateNovelCommand;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Entity
@@ -56,10 +53,10 @@ public class Novel extends BaseEntity {
     }
 
     Novel(String title, String description, String coverImage, List<String> tags, String synopsis,
-          NovelCategory category,
-          LocalDateTime createdAt,
-          LocalDateTime updatedAt,
-          LocalDateTime deletedAt) {
+            NovelCategory category,
+            LocalDateTime createdAt,
+            LocalDateTime updatedAt,
+            LocalDateTime deletedAt) {
         this.id = UuidCreator.getTimeOrderedEpoch();
         this.title = title;
         this.description = description;
@@ -76,8 +73,8 @@ public class Novel extends BaseEntity {
     }
 
     static Novel create(String title, String description, NovelCategory category, String coverImage, List<String> tags,
-                        String synopsis,
-                        LocalDateTime now) {
+            String synopsis,
+            LocalDateTime now) {
         return new Novel(title, description, coverImage, tags, synopsis, category, now, now, null);
     }
 
@@ -167,8 +164,8 @@ public class Novel extends BaseEntity {
 
     @Nonnull
     public ChapterText addChapterText(@Nonnull AccountId accountId, @Nonnull ChapterId chapterId,
-                                      @Nonnull String content,
-                                      @Nonnull LocalDateTime now) {
+            @Nonnull String content,
+            @Nonnull LocalDateTime now) {
         return this.chapters.stream()
                 .filter(c -> c.getId().equals(chapterId))
                 .findFirst()
@@ -177,5 +174,14 @@ public class Novel extends BaseEntity {
                         content,
                         now))
                 .orElseThrow();
+    }
+
+    @Nonnull
+    public List<ChapterText> findChapterTexts(@Nonnull ChapterId chapterId) {
+        return this.chapters.stream()
+                .filter(c -> c.getId().equals(chapterId))
+                .findFirst()
+                .map(Chapter::getChapterTexts)
+                .orElse(Collections.emptyList());
     }
 }

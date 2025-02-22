@@ -15,6 +15,8 @@ import java.util.UUID;
 })
 public class Account extends BaseEntity {
 
+    public static final String UNKNOWN = "알 수 없음";
+
     @Id
     private UUID id;
 

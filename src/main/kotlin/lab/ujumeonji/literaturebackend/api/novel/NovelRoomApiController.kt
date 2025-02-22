@@ -27,7 +27,8 @@ class NovelRoomApiController(
     private val createNovelRoomRecruitmentPostUseCase: CreateNovelRoomRecruitmentPostUseCase,
     private val findNovelStoryArcsUseCase: FindNovelStoryArcsUseCase,
     private val updateStoryPhaseUseCase: UpdateStoryPhaseUseCase,
-    private val writeChapterTextUseCase: WriteChapterTextUseCase
+    private val writeChapterTextUseCase: WriteChapterTextUseCase,
+    private val findChapterTextsUseCase: FindChapterTextsUseCase
 ) {
 
     @Operation(summary = "소설 공방 수정", description = "소설 공방을 수정합니다.")
@@ -329,6 +330,36 @@ class NovelRoomApiController(
         return ResponseEntity.ok(
             WriteChapterTextResponse(
                 id = result.id
+            )
+        )
+    }
+
+    @Operation(summary = "챕터 텍스트 목록 조회", description = "특정 챕터의 텍스트 목록을 조회합니다.")
+    @GetMapping("/{novelRoomId}/chapters/{chapterId}/texts")
+    fun findChapterTexts(
+        @RequiredAuth accountId: String,
+        @PathVariable novelRoomId: String,
+        @PathVariable chapterId: String
+    ): ResponseEntity<ChapterTextsResponse> {
+        val result = findChapterTextsUseCase.execute(
+            request = FindChapterTextsUseCase.Request(
+                accountId = accountId,
+                contributorGroupId = novelRoomId,
+                chapterId = chapterId,
+            ),
+            executedAt = LocalDateTime.now()
+        )
+
+        return ResponseEntity.ok(
+            ChapterTextsResponse(
+                items = result.items.map { chapterText ->
+                    ChapterTextsResponse.ChapterText(
+                        id = chapterText.id,
+                        content = chapterText.content,
+                        authorName = chapterText.authorName,
+                        createdAt = chapterText.createdAt
+                    )
+                }
             )
         )
     }

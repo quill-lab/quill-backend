@@ -62,8 +62,8 @@ public class Chapter extends BaseEntity {
     }
 
     static Chapter create(@Nonnull String title, @Nonnull String description, @Nonnull Novel novel,
-                          @Nonnull StoryArc storyArc,
-                          int chapterNumber, @Nonnull LocalDateTime now) {
+            @Nonnull StoryArc storyArc,
+            int chapterNumber, @Nonnull LocalDateTime now) {
         return new Chapter(title, description, novel, storyArc, chapterNumber, now, now, null);
     }
 
@@ -73,18 +73,21 @@ public class Chapter extends BaseEntity {
 
     @Nonnull
     public ChapterText addChapterText(@Nonnull AccountId accountId,
-                                      @Nonnull String content,
-                                      @Nonnull LocalDateTime now) {
+            @Nonnull String content,
+            @Nonnull LocalDateTime now) {
         ChapterText createdChapterText = ChapterText.create(
                 this,
                 accountId,
-                content, now
-        );
+                content, now);
 
         this.chapterTexts.add(
-                createdChapterText
-        );
+                createdChapterText);
 
         return createdChapterText;
+    }
+
+    @Nonnull
+    public List<ChapterText> getChapterTexts() {
+        return this.chapterTexts;
     }
 }

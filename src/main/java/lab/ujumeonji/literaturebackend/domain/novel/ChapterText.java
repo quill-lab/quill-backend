@@ -1,10 +1,12 @@
 package lab.ujumeonji.literaturebackend.domain.novel;
 
 import com.github.f4b6a3.uuid.UuidCreator;
-import jakarta.annotation.Nonnull;
 import jakarta.persistence.*;
+import lab.ujumeonji.literaturebackend.domain.account.Account;
 import lab.ujumeonji.literaturebackend.domain.account.AccountId;
 import lab.ujumeonji.literaturebackend.domain.common.BaseEntity;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -29,7 +31,7 @@ public class ChapterText extends BaseEntity {
     protected ChapterText() {
     }
 
-    ChapterText(@Nonnull Chapter chapter, @Nonnull AccountId accountId, @Nonnull String content, @Nonnull LocalDateTime createdAt, @Nonnull LocalDateTime updatedAt,
+    ChapterText(Chapter chapter, AccountId accountId, String content, LocalDateTime createdAt, LocalDateTime updatedAt,
                 LocalDateTime deletedAt) {
         this.id = UuidCreator.getTimeOrderedEpoch();
         this.chapter = chapter;
@@ -40,12 +42,23 @@ public class ChapterText extends BaseEntity {
         setDeletedAt(deletedAt);
     }
 
-    static ChapterText create(@Nonnull Chapter chapter, @Nonnull AccountId accountId, @Nonnull String content, @Nonnull LocalDateTime now) {
+    static ChapterText create(@NotNull Chapter chapter, @NotNull AccountId accountId, @NotNull String content,
+                              @NotNull LocalDateTime now) {
         return new ChapterText(chapter, accountId, content, now, now, null);
     }
 
-    @Nonnull
+    @NotNull
     public ChapterTextId getId() {
         return ChapterTextId.from(this.id);
+    }
+
+    @NotNull
+    public String getContent() {
+        return content;
+    }
+
+    @NotNull
+    public AccountId getAccountId() {
+        return AccountId.from(this.accountId);
     }
 }
