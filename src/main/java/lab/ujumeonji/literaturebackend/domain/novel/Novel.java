@@ -1,8 +1,10 @@
 package lab.ujumeonji.literaturebackend.domain.novel;
 
 import com.github.f4b6a3.uuid.UuidCreator;
+import jakarta.annotation.Nonnull;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import lab.ujumeonji.literaturebackend.domain.account.AccountId;
 import lab.ujumeonji.literaturebackend.domain.common.BaseEntity;
 import lab.ujumeonji.literaturebackend.domain.novel.command.AddCharacterCommand;
 import lab.ujumeonji.literaturebackend.domain.novel.command.UpdateNovelCommand;
@@ -43,6 +45,9 @@ public class Novel extends BaseEntity {
     @OneToMany(mappedBy = "novel", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<StoryArc> storyArcs = new ArrayList<>();
 
+    @OneToMany(mappedBy = "novel", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Chapter> chapters = new ArrayList<>();
+
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private NovelCategory category;
@@ -51,10 +56,10 @@ public class Novel extends BaseEntity {
     }
 
     Novel(String title, String description, String coverImage, List<String> tags, String synopsis,
-            NovelCategory category,
-            LocalDateTime createdAt,
-            LocalDateTime updatedAt,
-            LocalDateTime deletedAt) {
+          NovelCategory category,
+          LocalDateTime createdAt,
+          LocalDateTime updatedAt,
+          LocalDateTime deletedAt) {
         this.id = UuidCreator.getTimeOrderedEpoch();
         this.title = title;
         this.description = description;
@@ -71,8 +76,8 @@ public class Novel extends BaseEntity {
     }
 
     static Novel create(String title, String description, NovelCategory category, String coverImage, List<String> tags,
-            String synopsis,
-            LocalDateTime now) {
+                        String synopsis,
+                        LocalDateTime now) {
         return new Novel(title, description, coverImage, tags, synopsis, category, now, now, null);
     }
 
@@ -158,5 +163,19 @@ public class Novel extends BaseEntity {
                     createdAt);
             this.storyArcs.add(storyArc);
         }
+    }
+
+    @Nonnull
+    public ChapterText addChapterText(@Nonnull AccountId accountId, @Nonnull ChapterId chapterId,
+                                      @Nonnull String content,
+                                      @Nonnull LocalDateTime now) {
+        return this.chapters.stream()
+                .filter(c -> c.getId().equals(chapterId))
+                .findFirst()
+                .map(chapter -> chapter.addChapterText(
+                        accountId,
+                        content,
+                        now))
+                .orElseThrow();
     }
 }

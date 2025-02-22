@@ -48,14 +48,4 @@ public class ChapterText extends BaseEntity {
     public ChapterTextId getId() {
         return ChapterTextId.from(this.id);
     }
-
-    @Nonnull
-    public String getContent() {
-        return content;
-    }
-
-    @Nonnull
-    public Chapter getChapter() {
-        return chapter;
-    }
 }

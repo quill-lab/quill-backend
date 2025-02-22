@@ -3,9 +3,12 @@ package lab.ujumeonji.literaturebackend.domain.novel;
 import com.github.f4b6a3.uuid.UuidCreator;
 import jakarta.annotation.Nonnull;
 import jakarta.persistence.*;
+import lab.ujumeonji.literaturebackend.domain.account.AccountId;
 import lab.ujumeonji.literaturebackend.domain.common.BaseEntity;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -28,6 +31,9 @@ public class Chapter extends BaseEntity {
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "story_arc_id", foreignKey = @ForeignKey(name = "fk_chapter_story_arc"))
     private StoryArc storyArc;
+
+    @OneToMany(mappedBy = "chapter", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<ChapterText> chapterTexts = new ArrayList<>();
 
     @Column
     private LocalDateTime approvedAt;
@@ -55,20 +61,30 @@ public class Chapter extends BaseEntity {
         setDeletedAt(deletedAt);
     }
 
-    static Chapter create(@Nonnull String title, @Nonnull String description, @Nonnull Novel novel, @Nonnull StoryArc storyArc,
+    static Chapter create(@Nonnull String title, @Nonnull String description, @Nonnull Novel novel,
+                          @Nonnull StoryArc storyArc,
                           int chapterNumber, @Nonnull LocalDateTime now) {
         return new Chapter(title, description, novel, storyArc, chapterNumber, now, now, null);
-    }
-
-    void setStoryArc(StoryArc storyArc) {
-        this.storyArc = storyArc;
     }
 
     public ChapterId getId() {
         return ChapterId.from(this.id);
     }
 
-    int getChapterNumber() {
-        return chapterNumber;
+    @Nonnull
+    public ChapterText addChapterText(@Nonnull AccountId accountId,
+                                      @Nonnull String content,
+                                      @Nonnull LocalDateTime now) {
+        ChapterText createdChapterText = ChapterText.create(
+                this,
+                accountId,
+                content, now
+        );
+
+        this.chapterTexts.add(
+                createdChapterText
+        );
+
+        return createdChapterText;
     }
 }

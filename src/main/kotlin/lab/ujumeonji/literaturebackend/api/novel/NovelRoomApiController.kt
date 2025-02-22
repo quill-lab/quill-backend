@@ -27,6 +27,7 @@ class NovelRoomApiController(
     private val createNovelRoomRecruitmentPostUseCase: CreateNovelRoomRecruitmentPostUseCase,
     private val findNovelStoryArcsUseCase: FindNovelStoryArcsUseCase,
     private val updateStoryPhaseUseCase: UpdateStoryPhaseUseCase,
+    private val writeChapterTextUseCase: WriteChapterTextUseCase
 ) {
 
     @Operation(summary = "소설 공방 수정", description = "소설 공방을 수정합니다.")
@@ -303,6 +304,31 @@ class NovelRoomApiController(
         return ResponseEntity.ok(
             UpdateStoryPhaseResponse(
                 id = result.id,
+            )
+        )
+    }
+
+    @Operation(summary = "챕터 텍스트 작성", description = "특정 챕터에 텍스트를 작성합니다.")
+    @PostMapping("/{novelRoomId}/chapters/{chapterId}/texts")
+    fun createChapterText(
+        @RequiredAuth accountId: String,
+        @PathVariable novelRoomId: String,
+        @PathVariable chapterId: String,
+        @Valid @RequestBody request: WriteChapterTextRequest
+    ): ResponseEntity<WriteChapterTextResponse> {
+        val result = writeChapterTextUseCase.execute(
+            request = WriteChapterTextUseCase.Request(
+                accountId = accountId,
+                chapterId = chapterId,
+                content = request.content,
+                contributorGroupId = novelRoomId,
+            ),
+            executedAt = LocalDateTime.now()
+        )
+
+        return ResponseEntity.ok(
+            WriteChapterTextResponse(
+                id = result.id
             )
         )
     }
