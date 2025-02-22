@@ -33,8 +33,8 @@ class FindNovelStoryArcsUseCase(
                 description = storyArc.description,
                 phase = storyArc.phase,
                 phaseAlias = storyArc.phase.koreanName,
-                firstChapterNumber = storyArc.firstChapterNumber,
-                lastChapterNumber = storyArc.lastChapterNumber,
+                firstChapterNumber = storyArc.startChapterNumber,
+                lastChapterNumber = storyArc.endChapterNumber,
                 lastModifiedAt = storyArc.lastModifiedAt,
             )
         }

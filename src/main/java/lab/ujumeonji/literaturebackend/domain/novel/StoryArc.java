@@ -7,7 +7,6 @@ import org.jetbrains.annotations.Nullable;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
@@ -25,13 +24,11 @@ public class StoryArc extends BaseEntity {
     @Column(nullable = false)
     private StoryPhase phase;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "start_chapter_id")
-    private Chapter startChapter;
+    @Column
+    private Integer startChapterNumber;
 
-    @OneToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "end_chapter_id")
-    private Chapter endChapter;
+    @Column
+    private Integer endChapterNumber;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "novel_id", nullable = false)
@@ -44,14 +41,14 @@ public class StoryArc extends BaseEntity {
     }
 
     StoryArc(String description, Novel novel, StoryPhase phase,
-            Chapter startChapter, Chapter endChapter,
-            LocalDateTime createdAt, LocalDateTime updatedAt, LocalDateTime deletedAt) {
+             Integer startChapterNumber, Integer endChapterNumber,
+             LocalDateTime createdAt, LocalDateTime updatedAt, LocalDateTime deletedAt) {
         this.id = UuidCreator.getTimeOrderedEpoch();
         this.description = description;
         this.novel = novel;
         this.phase = phase;
-        this.startChapter = startChapter;
-        this.endChapter = endChapter;
+        this.startChapterNumber = startChapterNumber;
+        this.endChapterNumber = endChapterNumber;
         setCreatedAt(createdAt);
         setUpdatedAt(updatedAt);
         setDeletedAt(deletedAt);
@@ -74,54 +71,18 @@ public class StoryArc extends BaseEntity {
     }
 
     @Nullable
-    public Integer getLastChapterNumber() {
-        if (startChapter != null) {
-            return startChapter.getChapterNumber();
-        }
-
-        return null;
+    public Integer getStartChapterNumber() {
+        return startChapterNumber;
     }
 
     @Nullable
-    public Integer getFirstChapterNumber() {
-        if (endChapter != null) {
-            return endChapter.getChapterNumber();
-        }
-
-        return null;
-    }
-
-    void addChapter(Chapter chapter) {
-        this.chapters.add(chapter);
-        chapter.setStoryArc(this);
-        updateChapterRange();
-    }
-
-    void removeChapter(Chapter chapter) {
-        this.chapters.remove(chapter);
-        chapter.setStoryArc(null);
-        updateChapterRange();
+    public Integer getEndChapterNumber() {
+        return endChapterNumber;
     }
 
     void updatePhase(String description, LocalDateTime now) {
         this.description = description;
         setUpdatedAt(now);
-    }
-
-    private void updateChapterRange() {
-        if (chapters.isEmpty()) {
-            this.startChapter = null;
-            this.endChapter = null;
-            return;
-        }
-
-        this.startChapter = chapters.stream()
-                .min(Comparator.comparing(Chapter::getChapterNumber))
-                .orElse(null);
-
-        this.endChapter = chapters.stream()
-                .max(Comparator.comparing(Chapter::getChapterNumber))
-                .orElse(null);
     }
 
     @Nullable
