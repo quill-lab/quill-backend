@@ -3,7 +3,7 @@ package lab.ujumeonji.literaturebackend.api.novel.dto
 import io.swagger.v3.oas.annotations.media.Schema
 import java.time.LocalDateTime
 
-data class ChapterTextsResponse(
+data class GetChapterTextsResponse(
     @Schema(description = "챕터 텍스트 목록")
     val items: List<ChapterText>
 ) {

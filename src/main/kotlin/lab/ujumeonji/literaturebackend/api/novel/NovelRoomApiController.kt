@@ -340,7 +340,7 @@ class NovelRoomApiController(
         @RequiredAuth accountId: String,
         @PathVariable novelRoomId: String,
         @PathVariable chapterId: String
-    ): ResponseEntity<ChapterTextsResponse> {
+    ): ResponseEntity<GetChapterTextsResponse> {
         val result = findChapterTextsUseCase.execute(
             request = FindChapterTextsUseCase.Request(
                 accountId = accountId,
@@ -351,9 +351,9 @@ class NovelRoomApiController(
         )
 
         return ResponseEntity.ok(
-            ChapterTextsResponse(
+            GetChapterTextsResponse(
                 items = result.items.map { chapterText ->
-                    ChapterTextsResponse.ChapterText(
+                    GetChapterTextsResponse.ChapterText(
                         id = chapterText.id,
                         content = chapterText.content,
                         authorName = chapterText.authorName,
