@@ -163,17 +163,16 @@ public class Novel extends BaseEntity {
     }
 
     @Nonnull
-    public ChapterText addChapterText(@Nonnull AccountId accountId, @Nonnull ChapterId chapterId,
+    public Optional<ChapterText> addChapterText(@Nonnull AccountId accountId, @Nonnull ChapterId chapterId,
             @Nonnull String content,
             @Nonnull LocalDateTime now) {
         return this.chapters.stream()
                 .filter(c -> c.getId().equals(chapterId))
                 .findFirst()
-                .map(chapter -> chapter.addChapterText(
+                .flatMap(chapter -> chapter.addChapterText(
                         accountId,
                         content,
-                        now))
-                .orElseThrow();
+                        now));
     }
 
     @Nonnull

@@ -3,13 +3,17 @@ package lab.ujumeonji.literaturebackend.domain.novel;
 import com.github.f4b6a3.uuid.UuidCreator;
 import jakarta.annotation.Nonnull;
 import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import lab.ujumeonji.literaturebackend.domain.account.AccountId;
 import lab.ujumeonji.literaturebackend.domain.common.BaseEntity;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
+
+import org.jetbrains.annotations.Nullable;
 
 @Entity
 @Table(name = "chapters")
@@ -71,10 +75,14 @@ public class Chapter extends BaseEntity {
         return ChapterId.from(this.id);
     }
 
-    @Nonnull
-    public ChapterText addChapterText(@Nonnull AccountId accountId,
+    @NotNull
+    public Optional<ChapterText> addChapterText(@Nonnull AccountId accountId,
             @Nonnull String content,
             @Nonnull LocalDateTime now) {
+        if (this.status != ChapterStatus.IN_PROGRESS) {
+            return Optional.empty();
+        }
+
         ChapterText createdChapterText = ChapterText.create(
                 this,
                 accountId,
@@ -83,7 +91,7 @@ public class Chapter extends BaseEntity {
         this.chapterTexts.add(
                 createdChapterText);
 
-        return createdChapterText;
+        return Optional.of(createdChapterText);
     }
 
     @Nonnull

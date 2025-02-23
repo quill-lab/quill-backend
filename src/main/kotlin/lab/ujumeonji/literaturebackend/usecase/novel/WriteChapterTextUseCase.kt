@@ -41,7 +41,7 @@ class WriteChapterTextUseCase(
             ChapterId.from(request.chapterId),
             request.content,
             executedAt,
-        )
+        ).orElseThrow { BusinessException(ErrorCode.CURRENT_CHAPTER_NOT_EDITABLE) }
 
         return Response(
             id = addedChapterText.id.toString()
