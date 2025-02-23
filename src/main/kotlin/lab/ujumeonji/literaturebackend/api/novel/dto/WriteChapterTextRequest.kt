@@ -2,6 +2,7 @@ package lab.ujumeonji.literaturebackend.api.novel.dto
 
 import io.swagger.v3.oas.annotations.media.Schema
 import jakarta.validation.constraints.NotBlank
+import jakarta.validation.constraints.Size
 
 data class WriteChapterTextRequest(
     @field:NotBlank(message = "Content must not be blank")
