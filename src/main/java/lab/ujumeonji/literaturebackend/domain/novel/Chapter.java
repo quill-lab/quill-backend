@@ -13,8 +13,6 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.jetbrains.annotations.Nullable;
-
 @Entity
 @Table(name = "chapters")
 public class Chapter extends BaseEntity {
@@ -66,8 +64,8 @@ public class Chapter extends BaseEntity {
     }
 
     static Chapter create(@Nonnull String title, @Nonnull String description, @Nonnull Novel novel,
-            @Nonnull StoryArc storyArc,
-            int chapterNumber, @Nonnull LocalDateTime now) {
+                          @Nonnull StoryArc storyArc,
+                          int chapterNumber, @Nonnull LocalDateTime now) {
         return new Chapter(title, description, novel, storyArc, chapterNumber, now, now, null);
     }
 
@@ -77,8 +75,8 @@ public class Chapter extends BaseEntity {
 
     @NotNull
     public Optional<ChapterText> addChapterText(@Nonnull AccountId accountId,
-            @Nonnull String content,
-            @Nonnull LocalDateTime now) {
+                                                @Nonnull String content,
+                                                @Nonnull LocalDateTime now) {
         if (this.status != ChapterStatus.IN_PROGRESS) {
             return Optional.empty();
         }

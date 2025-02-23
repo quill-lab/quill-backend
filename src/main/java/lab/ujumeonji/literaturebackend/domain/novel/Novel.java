@@ -53,10 +53,10 @@ public class Novel extends BaseEntity {
     }
 
     Novel(String title, String description, String coverImage, List<String> tags, String synopsis,
-            NovelCategory category,
-            LocalDateTime createdAt,
-            LocalDateTime updatedAt,
-            LocalDateTime deletedAt) {
+          NovelCategory category,
+          LocalDateTime createdAt,
+          LocalDateTime updatedAt,
+          LocalDateTime deletedAt) {
         this.id = UuidCreator.getTimeOrderedEpoch();
         this.title = title;
         this.description = description;
@@ -73,8 +73,8 @@ public class Novel extends BaseEntity {
     }
 
     static Novel create(String title, String description, NovelCategory category, String coverImage, List<String> tags,
-            String synopsis,
-            LocalDateTime now) {
+                        String synopsis,
+                        LocalDateTime now) {
         return new Novel(title, description, coverImage, tags, synopsis, category, now, now, null);
     }
 
@@ -164,8 +164,8 @@ public class Novel extends BaseEntity {
 
     @Nonnull
     public Optional<ChapterText> addChapterText(@Nonnull AccountId accountId, @Nonnull ChapterId chapterId,
-            @Nonnull String content,
-            @Nonnull LocalDateTime now) {
+                                                @Nonnull String content,
+                                                @Nonnull LocalDateTime now) {
         return this.chapters.stream()
                 .filter(c -> c.getId().equals(chapterId))
                 .findFirst()

@@ -2,11 +2,9 @@ package lab.ujumeonji.literaturebackend.domain.novel;
 
 import com.github.f4b6a3.uuid.UuidCreator;
 import jakarta.persistence.*;
-import lab.ujumeonji.literaturebackend.domain.account.Account;
 import lab.ujumeonji.literaturebackend.domain.account.AccountId;
 import lab.ujumeonji.literaturebackend.domain.common.BaseEntity;
 import org.jetbrains.annotations.NotNull;
-import org.jetbrains.annotations.Nullable;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
