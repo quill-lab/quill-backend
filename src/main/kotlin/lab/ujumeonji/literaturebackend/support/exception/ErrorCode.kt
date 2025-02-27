@@ -24,4 +24,7 @@ enum class ErrorCode(
     UNAUTHORIZED(401, "AUTH-000", "로그인 후 서비스 이용이 가능합니다."),
     INVALID_CREDENTIALS(401, "AUTH-001", "이메일 또는 비밀번호가 올바르지 않습니다."),
     DUPLICATE_EMAIL(409, "AUTH-002", "이미 사용중인 이메일입니다."),
+
+    // Common
+    BAD_REQUEST(400, "REQ-001", "잘못된 요청입니다."),
 }
