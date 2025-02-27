@@ -6,16 +6,19 @@ import jakarta.validation.Valid
 import lab.ujumeonji.literaturebackend.api.novel.dto.*
 import lab.ujumeonji.literaturebackend.domain.novel.StoryPhase
 import lab.ujumeonji.literaturebackend.support.auth.RequiredAuth
+import lab.ujumeonji.literaturebackend.support.validation.ValidUUID
 import lab.ujumeonji.literaturebackend.usecase.novel.*
 import lab.ujumeonji.literaturebackend.usecase.post.CreateNovelRoomRecruitmentPostUseCase
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.*
 import java.time.LocalDateTime
+import org.springframework.validation.annotation.Validated
 
 @Tag(name = "Novel Room", description = "소설 공방 API")
 @RestController
 @RequestMapping("/api/v1/novel-rooms")
+@Validated
 class NovelRoomApiController(
     private val createNovelRoomUseCase: CreateNovelRoomUseCase,
     private val viewJoinedNovelRoomUseCase: ViewJoinedNovelRoomUseCase,
@@ -35,7 +38,7 @@ class NovelRoomApiController(
     @PatchMapping("/{novelRoomId}")
     fun updateNovelRoom(
         @RequiredAuth accountId: String,
-        @PathVariable novelRoomId: String,
+        @PathVariable @ValidUUID novelRoomId: String,
         @Valid @RequestBody request: UpdateNovelRequest
     ): ResponseEntity<UpdateNovelResponse> {
         val result = updateNovelUseCase.execute(
@@ -62,7 +65,7 @@ class NovelRoomApiController(
     @GetMapping("/{novelRoomId}")
     fun getNovelRoom(
         @RequiredAuth accountId: String,
-        @PathVariable novelRoomId: String,
+        @PathVariable @ValidUUID novelRoomId: String,
     ): ResponseEntity<ViewNovelRoomResponse> {
         val result = viewJoinedNovelRoomUseCase.execute(
             request = ViewJoinedNovelRoomUseCase.Request(
@@ -126,7 +129,7 @@ class NovelRoomApiController(
     @Operation(summary = "소설 등장인물 목록 조회", description = "소설의 등장인물 목록을 조회합니다.")
     @GetMapping("/{novelRoomId}/characters")
     fun getCharacters(
-        @PathVariable novelRoomId: String,
+        @PathVariable @ValidUUID novelRoomId: String,
     ): ResponseEntity<List<NovelCharacterResponse>> {
         val result = findNovelCharactersUseCase.execute(
             request = FindNovelCharactersUseCase.Request(
@@ -158,7 +161,7 @@ class NovelRoomApiController(
     @PostMapping("/{novelRoomId}/characters")
     fun addCharacter(
         @RequiredAuth accountId: String,
-        @PathVariable novelRoomId: String,
+        @PathVariable @ValidUUID novelRoomId: String,
         @Valid @RequestBody request: AddCharacterRequest
     ): ResponseEntity<AddCharacterResponse> {
         val result = addNovelCharacterUseCase.execute(
@@ -181,7 +184,7 @@ class NovelRoomApiController(
     @Operation(summary = "소설 공방 참여자 목록 조회", description = "소설 공방의 참여자 목록을 조회합니다.")
     @GetMapping("/{novelRoomId}/participants")
     fun getParticipants(
-        @PathVariable novelRoomId: String,
+        @PathVariable @ValidUUID novelRoomId: String,
         @RequiredAuth accountId: String,
     ): ResponseEntity<List<NovelRoomParticipantsResponse>> {
         val result = findNovelRoomParticipantsUseCase.execute(
@@ -208,8 +211,8 @@ class NovelRoomApiController(
     @Operation(summary = "소설 공방 참여자 작성 순서 변경", description = "소설 공방의 참여자 작성 순서를 변경합니다.")
     @PatchMapping("/{novelRoomId}/participants/{participantId}/order")
     fun updateParticipantOrder(
-        @PathVariable novelRoomId: String,
-        @PathVariable participantId: String,
+        @PathVariable @ValidUUID novelRoomId: String,
+        @PathVariable @ValidUUID participantId: String,
         @Valid @RequestBody request: UpdateParticipantOrderRequest,
         @RequiredAuth accountId: String,
     ): ResponseEntity<UpdateParticipantOrderResponse> {
@@ -234,7 +237,7 @@ class NovelRoomApiController(
     @PostMapping("/{novelRoomId}/recruitments")
     fun createRecruitment(
         @RequiredAuth accountId: String,
-        @PathVariable novelRoomId: String,
+        @PathVariable @ValidUUID novelRoomId: String,
         @Valid @RequestBody request: CreateNovelRoomRecruitmentRequest
     ): ResponseEntity<CreateNovelRoomRecruitmentResponse> {
         val result = createNovelRoomRecruitmentPostUseCase.execute(
@@ -259,7 +262,7 @@ class NovelRoomApiController(
     @GetMapping("/{novelRoomId}/story-arcs")
     fun findStoryArcs(
         @RequiredAuth accountId: String,
-        @PathVariable novelRoomId: String
+        @PathVariable @ValidUUID novelRoomId: String
     ): ResponseEntity<List<StoryArcResponse>> {
         val result = findNovelStoryArcsUseCase.execute(
             request = FindNovelStoryArcsUseCase.Request(
@@ -288,7 +291,7 @@ class NovelRoomApiController(
     @PatchMapping("/{novelRoomId}/story-arcs/{phase}")
     fun updateStoryPhase(
         @RequiredAuth accountId: String,
-        @PathVariable novelRoomId: String,
+        @PathVariable @ValidUUID novelRoomId: String,
         @PathVariable phase: StoryPhase,
         @Valid @RequestBody request: UpdateStoryPhaseRequest
     ): ResponseEntity<UpdateStoryPhaseResponse> {
@@ -313,8 +316,8 @@ class NovelRoomApiController(
     @PostMapping("/{novelRoomId}/chapters/{chapterId}/texts")
     fun createChapterText(
         @RequiredAuth accountId: String,
-        @PathVariable novelRoomId: String,
-        @PathVariable chapterId: String,
+        @PathVariable @ValidUUID novelRoomId: String,
+        @PathVariable @ValidUUID chapterId: String,
         @Valid @RequestBody request: WriteChapterTextRequest
     ): ResponseEntity<WriteChapterTextResponse> {
         val result = writeChapterTextUseCase.execute(
@@ -338,8 +341,8 @@ class NovelRoomApiController(
     @GetMapping("/{novelRoomId}/chapters/{chapterId}/texts")
     fun findChapterTexts(
         @RequiredAuth accountId: String,
-        @PathVariable novelRoomId: String,
-        @PathVariable chapterId: String
+        @PathVariable @ValidUUID novelRoomId: String,
+        @PathVariable @ValidUUID chapterId: String
     ): ResponseEntity<GetChapterTextsResponse> {
         val result = findChapterTextsUseCase.execute(
             request = FindChapterTextsUseCase.Request(
