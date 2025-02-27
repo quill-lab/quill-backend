@@ -8,6 +8,7 @@ plugins {
     kotlin("jvm") version "1.9.25"
     kotlin("plugin.spring") version "1.9.25"
     kotlin("plugin.jpa") version "1.9.25"
+    id("com.netflix.dgs.codegen") version "7.0.3"
 }
 
 group = "lab.ujumeonji"
@@ -83,6 +84,9 @@ dependencies {
         exclude(group = "org.springframework.boot", module = "spring-boot-starter-logging")
         exclude(group = "org.apache.logging.log4j", module = "log4j-slf4j2-impl")
     }
+    implementation("com.netflix.graphql.dgs:graphql-dgs-spring-graphql-starter")
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
+    testImplementation("com.netflix.graphql.dgs:graphql-dgs-spring-graphql-starter-test")
 }
 
 kotlin {
@@ -170,5 +174,14 @@ jib {
 dependencyManagement {
     imports {
         mavenBom("org.springframework.cloud:spring-cloud-dependencies:2022.0.3")
+        mavenBom("com.netflix.graphql.dgs:graphql-dgs-platform-dependencies:10.0.3")
     }
+}
+
+tasks.withType<com.netflix.graphql.dgs.codegen.gradle.GenerateJavaTask> {
+    generateClient = true
+    packageName = "lab.ujumeonji.literaturebackend.graphql.generated"
+    typeMapping = mutableMapOf(
+        "UUID" to "java.util.UUID"
+    )
 }
