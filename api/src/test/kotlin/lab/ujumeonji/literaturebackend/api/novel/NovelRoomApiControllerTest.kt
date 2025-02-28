@@ -1,7 +1,7 @@
 package lab.ujumeonji.literaturebackend.api.novel
 
 import com.fasterxml.jackson.databind.ObjectMapper
-import lab.ujumeonji.literaturebackend.domain.novel.StoryPhase
+import lab.ujumeonji.literaturebackend.domain.novel.command.StoryPhaseEnum
 import lab.ujumeonji.literaturebackend.support.AuthControllerTest
 import lab.ujumeonji.literaturebackend.support.exception.ErrorCode
 import org.springframework.beans.factory.annotation.Autowired
@@ -185,7 +185,7 @@ class NovelRoomApiControllerTest @Autowired constructor(
 
             `when`("인증된 사용자가 순서를 변경하면") {
                 val response = performAuthPatch(
-                    "/api/v1/novel-rooms/$novelRoomId/participants/$validUuid/order",
+                    "/api/v1/novel-rooms/$novelRoomId/participants/${account.id}/order",
                     request,
                     account
                 )
@@ -199,7 +199,7 @@ class NovelRoomApiControllerTest @Autowired constructor(
 
             `when`("인증되지 않은 사용자가 순서를 변경하면") {
                 val response =
-                    performPatch("/api/v1/novel-rooms/$novelRoomId/participants/$validUuid/order", request)
+                    performPatch("/api/v1/novel-rooms/$novelRoomId/participants/${account.id}/order", request)
 
                 then("인증 오류가 발생한다") {
                     response
@@ -210,7 +210,7 @@ class NovelRoomApiControllerTest @Autowired constructor(
 
             `when`("잘못된 형식의 novelRoomId UUID로 요청하면") {
                 val response = performAuthPatch(
-                    "/api/v1/novel-rooms/$invalidUuid/participants/$validUuid/order",
+                    "/api/v1/novel-rooms/$invalidUuid/participants/${account.id}/order",
                     request,
                     account
                 )
@@ -224,7 +224,7 @@ class NovelRoomApiControllerTest @Autowired constructor(
 
             `when`("잘못된 형식의 participantId UUID로 요청하면") {
                 val response = performAuthPatch(
-                    "/api/v1/novel-rooms/$validUuid/participants/$invalidUuid/order",
+                    "/api/v1/novel-rooms/$novelRoomId/participants/$invalidUuid/order",
                     request,
                     account
                 )
@@ -365,7 +365,7 @@ class NovelRoomApiControllerTest @Autowired constructor(
         given("스토리 아크의 스토리 페이즈를 수정할 때") {
             val account = fixtureAccount()
             val novelRoomId = fixtureNovelRoom(account)
-            val phase = StoryPhase.DEVELOPMENT
+            val phase = StoryPhaseEnum.DEVELOPMENT
 
             val request = mapOf(
                 "description" to "Test description",
