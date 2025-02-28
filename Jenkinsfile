@@ -37,7 +37,7 @@ spec:
         stage('Test') {
             steps {
                 container('gradle') {
-                    sh "./gradlew test"
+                    sh "./gradlew :api:test :application:test :core:test :lib:test --parallel"
                 }
             }
         }
@@ -52,7 +52,7 @@ spec:
                             passwordVariable: 'DOCKER_HUB_PASSWORD'
                         )]) {
                             sh """
-                                ./gradlew clean jib \
+                                ./gradlew clean :api:jib \
                                     -Dorg.gradle.jvmargs="-Xmx2048m -XX:MaxMetaspaceSize=512m" \
                                     -Djib.from.image=eclipse-temurin:21-jdk-jammy \
                                     -Djib.to.tags=${VERSION} \
