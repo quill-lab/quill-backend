@@ -73,6 +73,7 @@ class NovelRoomApiControllerTest @Autowired constructor(
         given("특정 소설 공방 조회시") {
             val account = fixtureAccount()
             val novelRoomId = fixtureNovelRoom(account)
+            val invalidUuid = "invalid-uuid-format"
 
             `when`("인증된 사용자가 조회하면") {
                 val response = performAuthGet("/api/v1/novel-rooms/$novelRoomId", account)
@@ -101,11 +102,22 @@ class NovelRoomApiControllerTest @Autowired constructor(
                         .andExpect(jsonPath("$.code").value(ErrorCode.UNAUTHORIZED.code))
                 }
             }
+
+            `when`("잘못된 형식의 UUID로 조회하면") {
+                val response = performAuthGet("/api/v1/novel-rooms/$invalidUuid", account)
+
+                then("400 Bad Request 응답이 반환된다") {
+                    response.andExpect(
+                        jsonPath("$.code").value(ErrorCode.BAD_REQUEST.code)
+                    )
+                }
+            }
         }
 
         given("소설 공방 등장인물 목록 조회시") {
             val account = fixtureAccount()
             val novelRoomId = fixtureNovelRoom(account)
+            val invalidUuid = "invalid-uuid-format"
 
             `when`("등장인물 목록을 조회하면") {
                 val response = performGet("/api/v1/novel-rooms/$novelRoomId/characters")
@@ -116,11 +128,22 @@ class NovelRoomApiControllerTest @Autowired constructor(
                         .andExpect(jsonPath("$").isArray)
                 }
             }
+
+            `when`("잘못된 형식의 UUID로 조회하면") {
+                val response = performGet("/api/v1/novel-rooms/$invalidUuid/characters")
+
+                then("400 Bad Request 응답이 반환된다") {
+                    response.andExpect(
+                        jsonPath("$.code").value(ErrorCode.BAD_REQUEST.code)
+                    )
+                }
+            }
         }
 
         given("소설 공방 참여자 목록 조회시") {
             val account = fixtureAccount()
             val novelRoomId = fixtureNovelRoom(account)
+            val invalidUuid = "invalid-uuid-format"
 
             `when`("인증된 사용자가 조회하면") {
                 val response = performAuthGet("/api/v1/novel-rooms/$novelRoomId/participants", account)
@@ -141,19 +164,28 @@ class NovelRoomApiControllerTest @Autowired constructor(
                         .andExpect(jsonPath("$.code").value(ErrorCode.UNAUTHORIZED.code))
                 }
             }
+
+            `when`("잘못된 형식의 UUID로 조회하면") {
+                val response = performAuthGet("/api/v1/novel-rooms/$invalidUuid/participants", account)
+
+                then("400 Bad Request 응답이 반환된다") {
+                    response.andExpect(
+                        jsonPath("$.code").value(ErrorCode.BAD_REQUEST.code)
+                    )
+                }
+            }
         }
 
         given("소설 공방 참여자 순서 변경시") {
             val account = fixtureAccount()
             val novelRoomId = fixtureNovelRoom(account)
-
-            val request = mapOf(
-                "order" to 1
-            )
+            val invalidUuid = "invalid-uuid-format"
+            val validUuid = "f9c1a048-b0e4-464a-8a7f-59403ffa56e7"
+            val request = mapOf("writingOrder" to 1)
 
             `when`("인증된 사용자가 순서를 변경하면") {
                 val response = performAuthPatch(
-                    "/api/v1/novel-rooms/$novelRoomId/participants/${account.id}/order",
+                    "/api/v1/novel-rooms/$novelRoomId/participants/$validUuid/order",
                     request,
                     account
                 )
@@ -167,12 +199,40 @@ class NovelRoomApiControllerTest @Autowired constructor(
 
             `when`("인증되지 않은 사용자가 순서를 변경하면") {
                 val response =
-                    performPatch("/api/v1/novel-rooms/$novelRoomId/participants/${account.id}/order", request)
+                    performPatch("/api/v1/novel-rooms/$novelRoomId/participants/$validUuid/order", request)
 
                 then("인증 오류가 발생한다") {
                     response
                         .andExpect(status().isUnauthorized)
                         .andExpect(jsonPath("$.code").value(ErrorCode.UNAUTHORIZED.code))
+                }
+            }
+
+            `when`("잘못된 형식의 novelRoomId UUID로 요청하면") {
+                val response = performAuthPatch(
+                    "/api/v1/novel-rooms/$invalidUuid/participants/$validUuid/order",
+                    request,
+                    account
+                )
+
+                then("400 Bad Request 응답이 반환된다") {
+                    response.andExpect(
+                        jsonPath("$.code").value(ErrorCode.BAD_REQUEST.code)
+                    )
+                }
+            }
+
+            `when`("잘못된 형식의 participantId UUID로 요청하면") {
+                val response = performAuthPatch(
+                    "/api/v1/novel-rooms/$validUuid/participants/$invalidUuid/order",
+                    request,
+                    account
+                )
+
+                then("400 Bad Request 응답이 반환된다") {
+                    response.andExpect(
+                        jsonPath("$.code").value(ErrorCode.BAD_REQUEST.code)
+                    )
                 }
             }
         }
@@ -238,6 +298,7 @@ class NovelRoomApiControllerTest @Autowired constructor(
         given("소설 공방의 스토리 아크 목록을 조회할 수 있다") {
             val account = fixtureAccount()
             val novelRoomId = fixtureNovelRoom(account)
+            val invalidUuid = "invalid-uuid-format"
 
             `when`("인증된 사용자가 스토리 아크 목록을 조회하면") {
                 val response = performAuthGet("/api/v1/novel-rooms/$novelRoomId/story-arcs", account)
@@ -272,6 +333,16 @@ class NovelRoomApiControllerTest @Autowired constructor(
                     response
                         .andExpect(status().isForbidden)
                         .andExpect(jsonPath("$.code").value(ErrorCode.NO_PERMISSION_TO_VIEW.code))
+                }
+            }
+
+            `when`("잘못된 형식의 UUID로 조회하면") {
+                val response = performAuthGet("/api/v1/novel-rooms/$invalidUuid/story-arcs", account)
+
+                then("400 Bad Request 응답이 반환된다") {
+                    response.andExpect(
+                        jsonPath("$.code").value(ErrorCode.BAD_REQUEST.code)
+                    )
                 }
             }
         }
