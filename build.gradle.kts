@@ -32,22 +32,11 @@ repositories {
 }
 
 dependencies {
-    implementation("org.springframework.boot:spring-boot-starter-data-jpa") {
-        exclude(group = "org.springframework.boot", module = "spring-boot-starter-logging")
-    }
-    implementation("org.springframework.boot:spring-boot-starter-validation") {
-        exclude(group = "org.springframework.boot", module = "spring-boot-starter-logging")
-    }
-    implementation("org.springframework.boot:spring-boot-starter-web") {
-        exclude(group = "org.springframework.boot", module = "spring-boot-starter-logging")
-    }
-    implementation("org.springframework.boot:spring-boot-starter-webflux") {
-        exclude(group = "org.springframework.boot", module = "spring-boot-starter-logging")
-    }
-    implementation("org.springframework.boot:spring-boot-starter-actuator") {
-        exclude(group = "org.springframework.boot", module = "spring-boot-starter-logging")
-    }
-    implementation("org.springframework.boot:spring-boot-starter-log4j2")
+    implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    implementation("org.springframework.boot:spring-boot-starter-validation")
+    implementation("org.springframework.boot:spring-boot-starter-web")
+    implementation("org.springframework.boot:spring-boot-starter-webflux")
+    implementation("org.springframework.boot:spring-boot-starter-actuator")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("io.projectreactor.kotlin:reactor-kotlin-extensions")
     implementation("org.flywaydb:flyway-core")
@@ -78,12 +67,7 @@ dependencies {
     testImplementation("io.kotest:kotest-framework-datatest:5.9.0")
     testImplementation("io.kotest.extensions:kotest-extensions-spring:1.3.0")
     testImplementation("io.mockk:mockk:1.13.16")
-    testImplementation("org.springframework.boot:spring-boot-starter-test") {
-        exclude(group = "org.junit.vintage", module = "junit-vintage-engine")
-        exclude(module = "mockito-core")
-        exclude(group = "org.springframework.boot", module = "spring-boot-starter-logging")
-        exclude(group = "org.apache.logging.log4j", module = "log4j-slf4j2-impl")
-    }
+    testImplementation("org.springframework.boot:spring-boot-starter-test")
     implementation("com.netflix.graphql.dgs:graphql-dgs-spring-graphql-starter")
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("com.netflix.graphql.dgs:graphql-dgs-spring-graphql-starter-test")
