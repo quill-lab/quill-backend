@@ -1,11 +1,11 @@
 package lab.ujumeonji.literaturebackend.domain.contributor.command
 
-enum class NovelRoomSortType {
+enum class NovelRoomSortTypeEnum {
     LATEST,
     OLDEST;
 
     companion object {
-        fun from(value: String?): NovelRoomSortType {
+        fun from(value: String?): NovelRoomSortTypeEnum {
             return when (value?.uppercase()) {
                 "LATEST" -> LATEST
                 "OLDEST" -> OLDEST

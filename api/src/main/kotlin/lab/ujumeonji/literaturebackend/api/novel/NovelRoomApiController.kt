@@ -4,16 +4,16 @@ import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import lab.ujumeonji.literaturebackend.api.novel.dto.*
-import lab.ujumeonji.literaturebackend.domain.novel.StoryPhase
+import lab.ujumeonji.literaturebackend.domain.novel.command.StoryPhaseEnum
 import lab.ujumeonji.literaturebackend.support.auth.RequiredAuth
 import lab.ujumeonji.literaturebackend.support.validation.ValidUUID
 import lab.ujumeonji.literaturebackend.usecase.novel.*
 import lab.ujumeonji.literaturebackend.usecase.post.CreateNovelRoomRecruitmentPostUseCase
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
+import org.springframework.validation.annotation.Validated
 import org.springframework.web.bind.annotation.*
 import java.time.LocalDateTime
-import org.springframework.validation.annotation.Validated
 
 @Tag(name = "Novel Room", description = "소설 공방 API")
 @RestController
@@ -292,7 +292,7 @@ class NovelRoomApiController(
     fun updateStoryPhase(
         @RequiredAuth accountId: String,
         @PathVariable @ValidUUID novelRoomId: String,
-        @PathVariable phase: StoryPhase,
+        @PathVariable phase: StoryPhaseEnum,
         @Valid @RequestBody request: UpdateStoryPhaseRequest
     ): ResponseEntity<UpdateStoryPhaseResponse> {
         val result = updateStoryPhaseUseCase.execute(

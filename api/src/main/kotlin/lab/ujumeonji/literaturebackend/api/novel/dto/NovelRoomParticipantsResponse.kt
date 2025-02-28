@@ -1,7 +1,7 @@
 package lab.ujumeonji.literaturebackend.api.novel.dto
 
 import io.swagger.v3.oas.annotations.media.Schema
-import lab.ujumeonji.literaturebackend.domain.contributor.ContributorRole
+import lab.ujumeonji.literaturebackend.domain.contributor.command.ContributorRoleEnum
 import java.time.LocalDateTime
 
 @Schema(description = "소설 공방 참여자 조회 응답")
@@ -13,7 +13,7 @@ data class NovelRoomParticipantsResponse(
     val nickname: String,
 
     @Schema(description = "참여자 역할")
-    val role: ContributorRole,
+    val role: ContributorRoleEnum,
 
     @Schema(description = "집필 순서")
     val writingOrder: Int?,

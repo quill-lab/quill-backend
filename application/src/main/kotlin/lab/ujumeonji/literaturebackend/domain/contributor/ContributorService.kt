@@ -4,7 +4,7 @@ import lab.ujumeonji.literaturebackend.domain.account.AccountId
 import lab.ujumeonji.literaturebackend.domain.contributor.command.CreateContributorGroupCommand
 import lab.ujumeonji.literaturebackend.domain.contributor.command.FindContributorGroupsCommand
 import lab.ujumeonji.literaturebackend.domain.contributor.command.FindContributorRequestHistoriesCommand
-import lab.ujumeonji.literaturebackend.domain.contributor.command.NovelRoomSortType
+import lab.ujumeonji.literaturebackend.domain.contributor.command.NovelRoomSortTypeEnum
 import lab.ujumeonji.literaturebackend.domain.contributor.dto.ContributorRequestHistory
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
@@ -38,8 +38,8 @@ class ContributorService(
         command: FindContributorGroupsCommand
     ): Page<ContributorGroup> {
         val sortDirection = when (command.sort) {
-            NovelRoomSortType.LATEST -> Sort.Direction.DESC
-            NovelRoomSortType.OLDEST -> Sort.Direction.ASC
+            NovelRoomSortTypeEnum.LATEST -> Sort.Direction.DESC
+            NovelRoomSortTypeEnum.OLDEST -> Sort.Direction.ASC
         }
         val pageable = PageRequest.of(
             command.page,

@@ -4,8 +4,8 @@ import lab.ujumeonji.literaturebackend.domain.account.AccountId
 import lab.ujumeonji.literaturebackend.domain.account.AccountService
 import lab.ujumeonji.literaturebackend.domain.contributor.ContributorGroupId
 import lab.ujumeonji.literaturebackend.domain.contributor.ContributorService
-import lab.ujumeonji.literaturebackend.domain.novel.NovelCategory
 import lab.ujumeonji.literaturebackend.domain.novel.NovelService
+import lab.ujumeonji.literaturebackend.domain.novel.command.NovelCategoryEnum
 import lab.ujumeonji.literaturebackend.domain.novel.command.UpdateNovelCommand
 import lab.ujumeonji.literaturebackend.support.exception.BusinessException
 import lab.ujumeonji.literaturebackend.support.exception.ErrorCode
@@ -41,7 +41,7 @@ class UpdateNovelUseCase(
             UpdateNovelCommand(
                 title = request.title,
                 description = request.description,
-                category = request.category,
+                category = request.category?.toNovelCategory(),
                 tags = request.tags,
                 synopsis = request.synopsis,
             ),
@@ -56,7 +56,7 @@ class UpdateNovelUseCase(
         val contributorGroupId: String,
         val title: String?,
         val description: String?,
-        val category: NovelCategory?,
+        val category: NovelCategoryEnum?,
         val tags: List<String>?,
         val synopsis: String?,
     )

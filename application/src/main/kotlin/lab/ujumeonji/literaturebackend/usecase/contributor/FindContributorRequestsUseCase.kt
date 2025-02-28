@@ -1,8 +1,8 @@
 package lab.ujumeonji.literaturebackend.usecase.contributor
 
 import lab.ujumeonji.literaturebackend.domain.account.AccountId
-import lab.ujumeonji.literaturebackend.domain.contributor.ContributorRequestStatus
 import lab.ujumeonji.literaturebackend.domain.contributor.ContributorService
+import lab.ujumeonji.literaturebackend.domain.contributor.command.ContributorRequestStatusEnum
 import lab.ujumeonji.literaturebackend.domain.contributor.command.FindContributorRequestHistoriesCommand
 import lab.ujumeonji.literaturebackend.usecase.UseCase
 import org.springframework.stereotype.Component
@@ -28,7 +28,7 @@ class FindContributorRequestsUseCase(
                 Response.ResponseItem(
                     id = history.id.toString(),
                     title = history.title,
-                    status = history.status,
+                    status = ContributorRequestStatusEnum.fromContributorRequestStatus(history.status),
                     requestedAt = history.requestedAt,
                     joinedAt = history.joinedAt,
                     leftAt = history.leftAt
@@ -55,7 +55,7 @@ class FindContributorRequestsUseCase(
         data class ResponseItem(
             val id: String,
             val title: String,
-            val status: ContributorRequestStatus,
+            val status: ContributorRequestStatusEnum,
             val requestedAt: LocalDateTime,
             val joinedAt: LocalDateTime?,
             val leftAt: LocalDateTime?,

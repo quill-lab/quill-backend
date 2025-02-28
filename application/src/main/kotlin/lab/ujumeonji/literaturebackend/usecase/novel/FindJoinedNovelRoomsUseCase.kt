@@ -6,7 +6,7 @@ import lab.ujumeonji.literaturebackend.domain.contributor.ContributorGroup
 import lab.ujumeonji.literaturebackend.domain.contributor.ContributorRole
 import lab.ujumeonji.literaturebackend.domain.contributor.ContributorService
 import lab.ujumeonji.literaturebackend.domain.contributor.command.FindContributorGroupsCommand
-import lab.ujumeonji.literaturebackend.domain.contributor.command.NovelRoomSortType
+import lab.ujumeonji.literaturebackend.domain.contributor.command.NovelRoomSortTypeEnum
 import lab.ujumeonji.literaturebackend.domain.novel.NovelService
 import lab.ujumeonji.literaturebackend.support.exception.BusinessException
 import lab.ujumeonji.literaturebackend.support.exception.ErrorCode
@@ -85,7 +85,7 @@ class FindJoinedNovelRoomsUseCase(
         val accountId: String,
         val page: Int,
         val size: Int,
-        val sort: NovelRoomSortType = NovelRoomSortType.LATEST,
+        val sort: NovelRoomSortTypeEnum = NovelRoomSortTypeEnum.LATEST,
     )
 
     data class Response(

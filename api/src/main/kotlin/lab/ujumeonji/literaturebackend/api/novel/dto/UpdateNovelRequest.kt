@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotBlank
 import jakarta.validation.constraints.NotEmpty
 import jakarta.validation.constraints.NotNull
 import jakarta.validation.constraints.Size
-import lab.ujumeonji.literaturebackend.domain.novel.NovelCategory
+import lab.ujumeonji.literaturebackend.domain.novel.command.NovelCategoryEnum
 
 data class UpdateNovelRequest(
     @field:NotBlank(message = "제목은 필수입니다")
@@ -20,7 +20,7 @@ data class UpdateNovelRequest(
     val tags: List<String>,
 
     @field:NotNull(message = "카테고리는 필수입니다")
-    val category: NovelCategory,
+    val category: NovelCategoryEnum,
 
     @field:NotBlank(message = "줄거리는 필수입니다")
     @field:Size(max = 1000, message = "줄거리는 1000자 이하여야 합니다")

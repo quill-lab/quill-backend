@@ -3,16 +3,13 @@ package lab.ujumeonji.literaturebackend.support.session.impl
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.security.Keys
 import lab.ujumeonji.literaturebackend.support.session.TokenManager
-import org.springframework.beans.factory.annotation.Value
-import org.springframework.stereotype.Component
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.util.*
 
-@Component
 class JwtTokenManager(
-    @Value("\${jwt.secret.access}") private val secret: String,
-    @Value("\${jwt.access-token-validity}") private val accessTokenValidity: Long,
+    private val secret: String,
+    private val accessTokenValidity: Long,
 ) : TokenManager {
 
     override fun createToken(payload: Map<String, *>, issuedAt: LocalDateTime): String =

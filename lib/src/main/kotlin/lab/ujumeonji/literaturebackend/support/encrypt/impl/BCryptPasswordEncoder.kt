@@ -1,9 +1,7 @@
 package lab.ujumeonji.literaturebackend.support.encrypt.impl
 
 import lab.ujumeonji.literaturebackend.support.encrypt.PasswordEncoder
-import org.springframework.stereotype.Component
 
-@Component
 class BCryptPasswordEncoder : PasswordEncoder {
 
     private val passwordEncoder = org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder()

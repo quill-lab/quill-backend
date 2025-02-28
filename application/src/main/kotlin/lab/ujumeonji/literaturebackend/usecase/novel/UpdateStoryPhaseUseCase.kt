@@ -5,7 +5,7 @@ import lab.ujumeonji.literaturebackend.domain.account.AccountService
 import lab.ujumeonji.literaturebackend.domain.contributor.ContributorGroupId
 import lab.ujumeonji.literaturebackend.domain.contributor.ContributorService
 import lab.ujumeonji.literaturebackend.domain.novel.NovelService
-import lab.ujumeonji.literaturebackend.domain.novel.StoryPhase
+import lab.ujumeonji.literaturebackend.domain.novel.command.StoryPhaseEnum
 import lab.ujumeonji.literaturebackend.support.exception.BusinessException
 import lab.ujumeonji.literaturebackend.support.exception.ErrorCode
 import lab.ujumeonji.literaturebackend.usecase.UseCase
@@ -36,7 +36,7 @@ class UpdateStoryPhaseUseCase(
         val novel = novelService.findNovel(contributorGroup.novelId)
             ?: throw BusinessException(ErrorCode.NOVEL_NOT_FOUND)
 
-        novel.updatePhase(request.phase, request.description, executedAt)
+        novel.updatePhase(request.phase.toStoryPhase(), request.description, executedAt)
 
         return Response(
             id = novel.id.toString()
@@ -46,7 +46,7 @@ class UpdateStoryPhaseUseCase(
     data class Request(
         val accountId: String,
         val contributorGroupId: String,
-        val phase: StoryPhase,
+        val phase: StoryPhaseEnum,
         val description: String?,
     )
 

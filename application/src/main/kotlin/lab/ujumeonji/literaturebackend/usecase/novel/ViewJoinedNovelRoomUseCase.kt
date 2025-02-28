@@ -3,9 +3,10 @@ package lab.ujumeonji.literaturebackend.usecase.novel
 import lab.ujumeonji.literaturebackend.domain.account.AccountId
 import lab.ujumeonji.literaturebackend.domain.account.AccountService
 import lab.ujumeonji.literaturebackend.domain.contributor.ContributorGroupId
-import lab.ujumeonji.literaturebackend.domain.contributor.ContributorGroupStatus
 import lab.ujumeonji.literaturebackend.domain.contributor.ContributorRole
 import lab.ujumeonji.literaturebackend.domain.contributor.ContributorService
+import lab.ujumeonji.literaturebackend.domain.contributor.command.ContributorGroupStatusEnum
+import lab.ujumeonji.literaturebackend.domain.contributor.command.ContributorRoleEnum
 import lab.ujumeonji.literaturebackend.domain.novel.NovelService
 import lab.ujumeonji.literaturebackend.support.exception.BusinessException
 import lab.ujumeonji.literaturebackend.support.exception.ErrorCode
@@ -50,7 +51,9 @@ class ViewJoinedNovelRoomUseCase(
             synopsis = novel.synopsis,
             createdAt = contributorGroup.createdAt,
             completedAt = contributorGroup.completedAt,
-            role = contributorGroup.getCollaboratorRole(me.id) ?: ContributorRole.COLLABORATOR,
+            role = ContributorRoleEnum.fromContributorRole(
+                contributorGroup.getCollaboratorRole(me.id) ?: ContributorRole.COLLABORATOR
+            ),
             contributorCount = contributorGroup.contributorCount,
             maxContributorCount = contributorGroup.maxContributorCount,
             author = currentAuthor?.let {
@@ -59,7 +62,7 @@ class ViewJoinedNovelRoomUseCase(
                     name = it.name
                 )
             },
-            status = contributorGroup.status,
+            status = ContributorGroupStatusEnum.fromContributorGroupStatus(contributorGroup.status),
             tags = novel.tagNames
         )
     }
@@ -77,11 +80,11 @@ class ViewJoinedNovelRoomUseCase(
         val synopsis: String?,
         val createdAt: LocalDateTime,
         val completedAt: LocalDateTime?,
-        val role: ContributorRole,
+        val role: ContributorRoleEnum,
         val contributorCount: Int,
         val maxContributorCount: Int,
         val author: Author?,
-        val status: ContributorGroupStatus,
+        val status: ContributorGroupStatusEnum,
         val tags: List<String>
     ) {
 

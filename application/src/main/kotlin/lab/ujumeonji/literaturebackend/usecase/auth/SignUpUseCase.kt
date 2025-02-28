@@ -6,8 +6,6 @@ import lab.ujumeonji.literaturebackend.support.exception.BusinessException
 import lab.ujumeonji.literaturebackend.support.exception.ErrorCode
 import lab.ujumeonji.literaturebackend.support.mail.MailPort
 import lab.ujumeonji.literaturebackend.usecase.UseCase
-import org.apache.logging.log4j.LogManager
-import org.apache.logging.log4j.Logger
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
@@ -58,7 +56,7 @@ class SignUpUseCase(
             try {
                 mailPort.sendHtmlEmail(email, subject, htmlContent)
             } catch (e: Exception) {
-                logger.error("Failed to send welcome email. email=$email", e)
+                // TODO: Logger 추가
             }
         }
     }
@@ -72,8 +70,4 @@ class SignUpUseCase(
     data class Response(
         val id: String,
     )
-
-    companion object {
-        private val logger: Logger = LogManager.getLogger(SignUpUseCase::class.java)
-    }
 }

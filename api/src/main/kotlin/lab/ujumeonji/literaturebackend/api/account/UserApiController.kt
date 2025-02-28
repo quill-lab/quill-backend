@@ -7,7 +7,7 @@ import lab.ujumeonji.literaturebackend.api.account.dto.ContributorRequestsQueryR
 import lab.ujumeonji.literaturebackend.api.account.dto.ContributorRequestsResponse
 import lab.ujumeonji.literaturebackend.api.account.dto.JoinedNovelRoomsQueryRequest
 import lab.ujumeonji.literaturebackend.api.novel.dto.JoinedNovelRoomsResponse
-import lab.ujumeonji.literaturebackend.domain.contributor.command.NovelRoomSortType
+import lab.ujumeonji.literaturebackend.domain.contributor.command.NovelRoomSortTypeEnum
 import lab.ujumeonji.literaturebackend.support.auth.RequiredAuth
 import lab.ujumeonji.literaturebackend.usecase.contributor.FindContributorRequestsUseCase
 import lab.ujumeonji.literaturebackend.usecase.novel.FindJoinedNovelRoomsUseCase
@@ -35,7 +35,7 @@ class UserApiController(
                 accountId = accountId,
                 page = request.page,
                 size = request.size,
-                sort = NovelRoomSortType.from(request.sort),
+                sort = NovelRoomSortTypeEnum.from(request.sort),
             ),
             executedAt = LocalDateTime.now()
         )

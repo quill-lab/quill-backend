@@ -23,7 +23,6 @@ dependencies {
     implementation("org.springframework.data:spring-data-jpa")
     implementation("jakarta.persistence:jakarta.persistence-api")
     implementation("jakarta.validation:jakarta.validation-api")
-    implementation("org.springframework.security:spring-security-crypto")
 
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("org.jetbrains.kotlin:kotlin-reflect")
