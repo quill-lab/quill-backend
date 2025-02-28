@@ -24,7 +24,7 @@ configurations {
 }
 
 dependencies {
-    implementation(project(":core"))
+    implementation(project(":application"))
     implementation(project(":lib"))
 
     implementation("org.springframework.boot:spring-boot-starter-web")

@@ -17,24 +17,11 @@ java {
 dependencies {
     implementation(kotlin("reflect"))
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
-    implementation("org.springframework:spring-context")
 
-    // Spring Web 관련 의존성
-    implementation("org.springframework:spring-web")
-    implementation("org.springframework:spring-webmvc")
-    implementation("org.springframework.security:spring-security-core")
-    implementation("jakarta.servlet:jakarta.servlet-api")
-    implementation("jakarta.validation:jakarta.validation-api")
-
-    // JWT 관련 의존성
     implementation("io.jsonwebtoken:jjwt-api:0.12.5")
     runtimeOnly("io.jsonwebtoken:jjwt-impl:0.12.5")
     runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.12.5")
 
-    // Swagger 관련 의존성
-    implementation("io.swagger.core.v3:swagger-annotations:2.2.8")
-
-    testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("io.kotest:kotest-runner-junit5:5.5.5")
     testImplementation("io.kotest:kotest-assertions-core:5.5.5")
     testImplementation("io.kotest.extensions:kotest-extensions-spring:1.1.2")
