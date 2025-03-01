@@ -11,7 +11,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "contributors")
-public class Contributor extends BaseEntity {
+public class Contributor extends BaseEntity<UUID> {
 
     @Id
     private UUID id;
@@ -55,6 +55,11 @@ public class Contributor extends BaseEntity {
         return new Contributor(accountId, contributorGroup, role, writingOrder, now, now, null);
     }
 
+    @Override
+    public UUID getId() {
+        return id;
+    }
+
     public AccountId getAccountId() {
         return AccountId.from(accountId);
     }
@@ -75,7 +80,7 @@ public class Contributor extends BaseEntity {
         this.writingOrder = writingOrder;
     }
 
-    ContributorId getId() {
+    ContributorId getIdValue() {
         return ContributorId.from(this.id);
     }
 }

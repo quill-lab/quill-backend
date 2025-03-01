@@ -15,7 +15,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "contributor_group_recruitments")
-public class ContributorGroupRecruitment extends BaseEntity {
+public class ContributorGroupRecruitment extends BaseEntity<UUID> {
 
     @Id
     private UUID id;
@@ -76,7 +76,12 @@ public class ContributorGroupRecruitment extends BaseEntity {
         );
     }
 
-    public ContributorGroupRecruitmentId getId() {
+    @Override
+    public UUID getId() {
+        return id;
+    }
+
+    public ContributorGroupRecruitmentId getIdValue() {
         return ContributorGroupRecruitmentId.from(this.id);
     }
 }

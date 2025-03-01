@@ -11,7 +11,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "contributor_requests")
-public class ContributorRequest extends BaseEntity {
+public class ContributorRequest extends BaseEntity<UUID> {
 
     @Id
     private UUID id;
@@ -47,7 +47,12 @@ public class ContributorRequest extends BaseEntity {
         setDeletedAt(deletedAt);
     }
 
-    public ContributorRequestId getId() {
+    @Override
+    public UUID getId() {
+        return id;
+    }
+
+    public ContributorRequestId getIdValue() {
         return ContributorRequestId.from(this.id);
     }
 }

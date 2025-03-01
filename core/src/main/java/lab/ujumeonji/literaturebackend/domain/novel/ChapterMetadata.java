@@ -11,7 +11,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "chapter_metadata")
-public class ChapterMetadata extends BaseEntity {
+public class ChapterMetadata extends BaseEntity<UUID> {
 
     @Id
     private UUID id;
@@ -33,5 +33,10 @@ public class ChapterMetadata extends BaseEntity {
         this.likes = likes;
         this.views = views;
         this.commentCount = commentCount;
+    }
+
+    @Override
+    public UUID getId() {
+        return id;
     }
 }

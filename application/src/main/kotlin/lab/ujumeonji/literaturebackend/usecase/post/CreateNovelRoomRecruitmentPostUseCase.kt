@@ -42,7 +42,7 @@ class CreateNovelRoomRecruitmentPostUseCase @Autowired constructor(
         )
 
         return Response(
-            id = recruitment.id.toString(),
+            id = recruitment.idValue.toString(),
         )
     }
 

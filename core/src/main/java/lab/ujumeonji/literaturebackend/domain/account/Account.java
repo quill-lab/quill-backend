@@ -13,7 +13,7 @@ import java.util.UUID;
 @Table(name = "accounts", indexes = {
         @Index(name = "idx_account_email", columnList = "email")
 })
-public class Account extends BaseEntity {
+public class Account extends BaseEntity<UUID> {
 
     public static final String UNKNOWN = "알 수 없음";
 
@@ -56,6 +56,11 @@ public class Account extends BaseEntity {
         return passwordEncoder.matches(password, this.password);
     }
 
+    @Override
+    public UUID getId() {
+        return id;
+    }
+
     public String getEmail() {
         return email;
     }
@@ -64,7 +69,7 @@ public class Account extends BaseEntity {
         return name;
     }
 
-    public AccountId getId() {
+    public AccountId getIdValue() {
         return AccountId.from(this.id);
     }
 

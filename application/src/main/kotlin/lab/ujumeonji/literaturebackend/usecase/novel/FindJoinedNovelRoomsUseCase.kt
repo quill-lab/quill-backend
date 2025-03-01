@@ -39,16 +39,16 @@ class FindJoinedNovelRoomsUseCase(
             ?: throw BusinessException(ErrorCode.ACCOUNT_NOT_FOUND)
 
         val novels = novelService.findNovels(contributorGroups.map { it.novelId })
-            .associateBy { it.id }
+            .associateBy { it.idValue }
 
         val accounts = accountService.findByIds(contributorGroups.mapNotNull { it.activeContributorAccountId })
-            .associateBy { it.id }
+            .associateBy { it.idValue }
 
         val result = contributorGroups.mapNotNull { contributorGroup ->
             novels[contributorGroup.novelId]?.let { novel ->
                 with(contributorGroup) {
                     Response.ResponseItem(
-                        id = id.toString(),
+                        id = idValue.toString(),
                         category = Response.ResponseItem.Category(
                             name = novel.category.name,
                             alias = novel.category.alias
@@ -56,13 +56,13 @@ class FindJoinedNovelRoomsUseCase(
                         title = novel.title,
                         createdAt = createdAt,
                         completedAt = completedAt,
-                        role = (getCollaboratorRole(me.id) ?: ContributorRole.COLLABORATOR).name,
+                        role = (getCollaboratorRole(me.idValue) ?: ContributorRole.COLLABORATOR).name,
                         contributorCount = contributorCount,
                         maxContributorCount = maxContributorCount,
                         currentAuthor = activeContributorAccountId?.let { authorId ->
                             accounts[authorId]?.let { author ->
                                 Response.ResponseItem.Author(
-                                    id = author.id.toString(),
+                                    id = author.idValue.toString(),
                                     name = author.name
                                 )
                             }

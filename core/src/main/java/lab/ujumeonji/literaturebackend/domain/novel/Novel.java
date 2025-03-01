@@ -16,7 +16,7 @@ import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "novels")
-public class Novel extends BaseEntity {
+public class Novel extends BaseEntity<UUID> {
 
     @Id
     private UUID id;
@@ -83,7 +83,7 @@ public class Novel extends BaseEntity {
 
         this.characters.add(character);
 
-        return character.getId();
+        return character.getIdValue();
     }
 
     public List<Character> getCharacters() {
@@ -129,7 +129,12 @@ public class Novel extends BaseEntity {
         });
     }
 
-    public NovelId getId() {
+    @Override
+    public UUID getId() {
+        return id;
+    }
+
+    public NovelId getIdValue() {
         return NovelId.from(this.id);
     }
 
@@ -167,7 +172,7 @@ public class Novel extends BaseEntity {
                                                 @Nonnull String content,
                                                 @Nonnull LocalDateTime now) {
         return this.chapters.stream()
-                .filter(c -> c.getId().equals(chapterId))
+                .filter(c -> c.getIdValue().equals(chapterId))
                 .findFirst()
                 .flatMap(chapter -> chapter.addChapterText(
                         accountId,
@@ -178,7 +183,7 @@ public class Novel extends BaseEntity {
     @Nonnull
     public List<ChapterText> findChapterTexts(@Nonnull ChapterId chapterId) {
         return this.chapters.stream()
-                .filter(c -> c.getId().equals(chapterId))
+                .filter(c -> c.getIdValue().equals(chapterId))
                 .findFirst()
                 .map(Chapter::getChapterTexts)
                 .orElse(Collections.emptyList());

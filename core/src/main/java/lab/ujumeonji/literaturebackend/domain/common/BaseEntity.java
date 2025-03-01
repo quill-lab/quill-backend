@@ -3,14 +3,17 @@ package lab.ujumeonji.literaturebackend.domain.common;
 import jakarta.persistence.MappedSuperclass;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.domain.Persistable;
 
 import java.time.LocalDateTime;
 
 @MappedSuperclass
-public abstract class BaseEntity {
+public abstract class BaseEntity<ID> implements Persistable<ID> {
+
+    private LocalDateTime createdAt;
 
     @CreatedDate
-    private LocalDateTime createdAt;
+    private LocalDateTime persistedAt;
 
     @LastModifiedDate
     private LocalDateTime updatedAt;
@@ -39,5 +42,10 @@ public abstract class BaseEntity {
 
     protected void setDeletedAt(LocalDateTime deletedAt) {
         this.deletedAt = deletedAt;
+    }
+
+    @Override
+    public boolean isNew() {
+        return persistedAt == null;
     }
 }

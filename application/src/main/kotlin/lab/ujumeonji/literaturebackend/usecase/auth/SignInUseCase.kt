@@ -29,7 +29,7 @@ class SignInUseCase(
             ?: throw BusinessException(ErrorCode.INVALID_CREDENTIALS)
 
     private fun validatePassword(account: Account, password: String) {
-        if (!accountService.checkPassword(account.id, password)) {
+        if (!accountService.checkPassword(account.idValue, password)) {
             throw BusinessException(ErrorCode.INVALID_CREDENTIALS)
         }
     }
@@ -37,7 +37,7 @@ class SignInUseCase(
     private fun createAuthToken(account: Account, now: LocalDateTime): String =
         tokenManager.createToken(
             payload = mapOf(
-                "id" to account.id.toString(),
+                "id" to account.idValue.toString(),
                 "email" to account.email,
             ),
             issuedAt = now

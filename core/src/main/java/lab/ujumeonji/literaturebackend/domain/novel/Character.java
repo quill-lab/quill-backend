@@ -12,7 +12,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "characters")
-public class Character extends BaseEntity {
+public class Character extends BaseEntity<UUID> {
 
     @Id
     private UUID id;
@@ -95,7 +95,12 @@ public class Character extends BaseEntity {
         return priority;
     }
 
-    public CharacterId getId() {
+    @Override
+    public UUID getId() {
+        return id;
+    }
+
+    public CharacterId getIdValue() {
         return CharacterId.from(this.id);
     }
 }

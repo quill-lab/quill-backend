@@ -15,7 +15,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "contributor_groups")
-public class ContributorGroup extends BaseEntity {
+public class ContributorGroup extends BaseEntity<UUID> {
 
     @Id
     private UUID id;
@@ -105,6 +105,11 @@ public class ContributorGroup extends BaseEntity {
         contributorCount++;
     }
 
+    @Override
+    public UUID getId() {
+        return id;
+    }
+
     public ContributorGroupStatus getStatus() {
         return status;
     }
@@ -142,7 +147,7 @@ public class ContributorGroup extends BaseEntity {
 
     public void updateWritingOrder(@Nonnull ContributorId contributorId, int writingOrder) {
         contributors.stream()
-                .filter(c -> c.getId().equals(contributorId))
+                .filter(c -> c.getIdValue().equals(contributorId))
                 .findFirst()
                 .ifPresent(contributor -> {
                     if (contributor.isDeleted()) {
@@ -168,7 +173,7 @@ public class ContributorGroup extends BaseEntity {
 
     private void shiftOrdersUp(@Nonnull ContributorId contributorId, int targetOrder, int currentOrder) {
         contributors.stream()
-                .filter(c -> !c.getId().equals(contributorId)
+                .filter(c -> !c.getIdValue().equals(contributorId)
                         && c.getWritingOrder() >= targetOrder
                         && c.getWritingOrder() < currentOrder)
                 .forEach(c -> c.updateWritingOrder(c.getWritingOrder() + 1));
@@ -176,7 +181,7 @@ public class ContributorGroup extends BaseEntity {
 
     private void shiftOrdersDown(@Nonnull ContributorId contributorId, int currentOrder, int targetOrder) {
         contributors.stream()
-                .filter(c -> !c.getId().equals(contributorId)
+                .filter(c -> !c.getIdValue().equals(contributorId)
                         && c.getWritingOrder() <= targetOrder
                         && c.getWritingOrder() > currentOrder)
                 .forEach(c -> c.updateWritingOrder(c.getWritingOrder() - 1));
@@ -187,7 +192,7 @@ public class ContributorGroup extends BaseEntity {
                 .anyMatch(contributor -> contributor.getAccountId().equals(accountId) && !contributor.isDeleted());
     }
 
-    public ContributorGroupId getId() {
+    public ContributorGroupId getIdValue() {
         return ContributorGroupId.from(this.id);
     }
 
@@ -203,7 +208,7 @@ public class ContributorGroup extends BaseEntity {
     @Nullable
     private Contributor getCurrentContributor() {
         return contributors.stream()
-                .filter(contributor -> contributor.getId().equals(getActiveContributorId()))
+                .filter(contributor -> contributor.getIdValue().equals(getActiveContributorId()))
                 .findFirst()
                 .orElse(null);
     }

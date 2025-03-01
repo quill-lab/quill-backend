@@ -22,7 +22,7 @@ class RequestTemporaryPasswordUseCase(
             ?: throw BusinessException(ErrorCode.EMAIL_NOT_FOUND)
 
         val temporaryPassword = generateTemporaryPassword()
-        accountService.updatePassword(account.id, temporaryPassword)
+        accountService.updatePassword(account.idValue, temporaryPassword)
 
         mailPort.sendHtmlEmail(
             to = request.email,

@@ -12,7 +12,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "story_arcs")
-public class StoryArc extends BaseEntity {
+public class StoryArc extends BaseEntity<UUID> {
 
     @Id
     private UUID id;
@@ -58,8 +58,13 @@ public class StoryArc extends BaseEntity {
         return new StoryArc(null, novel, phase, null, null, now, now, null);
     }
 
+    @Override
     public UUID getId() {
         return id;
+    }
+
+    public StoryArcId getIdValue() {
+        return StoryArcId.from(id);
     }
 
     public String getDescription() {

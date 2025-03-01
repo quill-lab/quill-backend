@@ -30,12 +30,12 @@ class FindNovelRoomParticipantsUseCase(
         val contributors = contributorGroup.contributors
             .sortedBy { it.writingOrder ?: Int.MAX_VALUE }
         val accountIds = contributors.map { it.accountId }
-        val accounts = accountService.findByIds(accountIds).associateBy { it.id }
+        val accounts = accountService.findByIds(accountIds).associateBy { it.idValue }
 
         return contributors.mapNotNull { contributor ->
             accounts[contributor.accountId]?.let { account ->
                 Response(
-                    id = account.id.toString(),
+                    id = account.idValue.toString(),
                     nickname = account.name,
                     role = ContributorRoleEnum.fromContributorRole(contributor.role),
                     writingOrder = contributor.writingOrder,

@@ -27,11 +27,11 @@ class FindNovelCharactersUseCase(
             ?: throw BusinessException(ErrorCode.NOVEL_NOT_FOUND)
 
         val accountIds = novel.characters.mapNotNull { it.lastUpdatedBy }
-        val accountMap = accountService.findByIds(accountIds).associateBy { it.id }
+        val accountMap = accountService.findByIds(accountIds).associateBy { it.idValue }
 
         return novel.characters.map { character ->
             Response(
-                id = character.id.toString(),
+                id = character.idValue.toString(),
                 name = character.name,
                 description = character.description,
                 profileImage = character.profileImage,
@@ -39,7 +39,7 @@ class FindNovelCharactersUseCase(
                 updatedBy = character.lastUpdatedBy?.let { accountId ->
                     accountMap[accountId]?.let { account ->
                         Response.LastCharacterUpdatedBy(
-                            id = account.id.toString(),
+                            id = account.idValue.toString(),
                             name = account.name,
                         )
                     }

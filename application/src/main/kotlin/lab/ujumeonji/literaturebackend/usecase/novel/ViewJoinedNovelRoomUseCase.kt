@@ -41,7 +41,7 @@ class ViewJoinedNovelRoomUseCase(
         val currentAuthor = currentAuthorAccountId?.let { accountService.findById(it) }
 
         return Response(
-            id = contributorGroup.id.toString(),
+            id = contributorGroup.idValue.toString(),
             category = Response.Category(
                 name = novel.category.name,
                 alias = novel.category.alias
@@ -52,13 +52,13 @@ class ViewJoinedNovelRoomUseCase(
             createdAt = contributorGroup.createdAt,
             completedAt = contributorGroup.completedAt,
             role = ContributorRoleEnum.fromContributorRole(
-                contributorGroup.getCollaboratorRole(me.id) ?: ContributorRole.COLLABORATOR
+                contributorGroup.getCollaboratorRole(me.idValue) ?: ContributorRole.COLLABORATOR
             ),
             contributorCount = contributorGroup.contributorCount,
             maxContributorCount = contributorGroup.maxContributorCount,
             author = currentAuthor?.let {
                 Response.Author(
-                    id = it.id.toString(),
+                    id = it.idValue.toString(),
                     name = it.name
                 )
             },

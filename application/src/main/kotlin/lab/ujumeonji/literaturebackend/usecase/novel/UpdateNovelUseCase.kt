@@ -48,7 +48,7 @@ class UpdateNovelUseCase(
             executedAt
         )
 
-        return Response(contributorGroup.id.toString())
+        return Response(contributorGroup.idValue.toString())
     }
 
     data class Request(

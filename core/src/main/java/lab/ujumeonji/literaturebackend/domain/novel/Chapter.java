@@ -15,7 +15,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "chapters")
-public class Chapter extends BaseEntity {
+public class Chapter extends BaseEntity<UUID> {
 
     @Id
     private UUID id;
@@ -69,7 +69,12 @@ public class Chapter extends BaseEntity {
         return new Chapter(title, description, novel, storyArc, chapterNumber, now, now, null);
     }
 
-    public ChapterId getId() {
+    @Override
+    public UUID getId() {
+        return id;
+    }
+
+    public ChapterId getIdValue() {
         return ChapterId.from(this.id);
     }
 

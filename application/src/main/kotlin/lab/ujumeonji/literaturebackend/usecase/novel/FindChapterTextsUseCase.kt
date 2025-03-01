@@ -39,12 +39,12 @@ class FindChapterTextsUseCase(
 
         val chapterTexts = novel.findChapterTexts(ChapterId.from(request.chapterId))
 
-        val authors = accountService.findByIds(chapterTexts.map { it.accountId }).associateBy { it.id }
+        val authors = accountService.findByIds(chapterTexts.map { it.accountId }).associateBy { it.idValue }
 
         return Response(
             items = chapterTexts.map { chapterText ->
                 Response.ChapterText(
-                    id = chapterText.id.toString(),
+                    id = chapterText.idValue.toString(),
                     content = chapterText.content,
                     authorName = authors[chapterText.accountId]?.name ?: Account.UNKNOWN,
                     createdAt = chapterText.createdAt

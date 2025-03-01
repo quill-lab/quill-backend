@@ -39,7 +39,7 @@ class UpdateStoryPhaseUseCase(
         novel.updatePhase(request.phase.toStoryPhase(), request.description, executedAt)
 
         return Response(
-            id = novel.id.toString()
+            id = novel.idValue.toString()
         )
     }
 

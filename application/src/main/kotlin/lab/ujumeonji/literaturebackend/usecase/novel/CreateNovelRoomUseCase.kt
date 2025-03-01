@@ -29,9 +29,9 @@ class CreateNovelRoomUseCase(
 
         val novel = createNovel(request, executedAt)
 
-        val contributorGroup = createContributorGroup(request, novel.id, executedAt)
+        val contributorGroup = createContributorGroup(request, novel.idValue, executedAt)
 
-        return Response("${contributorGroup.id}")
+        return Response("${contributorGroup.idValue}")
     }
 
     private fun createNovel(request: Request, executedAt: LocalDateTime) = novelService.createNovel(

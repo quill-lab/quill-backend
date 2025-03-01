@@ -34,7 +34,7 @@ class SignUpUseCase(
 
         sendWelcomeEmail(request.email)
 
-        return Response(id = account.id.id.toString())
+        return Response(id = account.idValue.id.toString())
     }
 
     private fun sendWelcomeEmail(email: String) {

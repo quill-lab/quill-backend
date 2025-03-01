@@ -9,7 +9,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "novel_tags")
-public class NovelTag extends BaseEntity {
+public class NovelTag extends BaseEntity<UUID> {
 
     @Id
     private UUID id;
@@ -41,7 +41,12 @@ public class NovelTag extends BaseEntity {
         return name;
     }
 
-    public NovelTagId getId() {
+    @Override
+    public UUID getId() {
+        return id;
+    }
+
+    public NovelTagId getIdValue() {
         return NovelTagId.from(this.id);
     }
 
