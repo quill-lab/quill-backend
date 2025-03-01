@@ -37,7 +37,7 @@ spec:
         stage('Test') {
             steps {
                 container('gradle') {
-                    sh "./gradlew :api:test :application:test :core:test :lib:test --parallel"
+                    sh "./gradlew :api:test :application:test :core:test :lib:test :graphql:test --parallel"
                 }
             }
         }
