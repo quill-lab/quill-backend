@@ -35,9 +35,6 @@ public class ContributorGroup extends BaseEntity<UUID> {
     @Column
     private LocalDateTime completedAt;
 
-    @Column
-    private UUID activeContributorId;
-
     @OneToMany(mappedBy = "contributorGroup", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<Contributor> contributors = new ArrayList<>();
 
@@ -48,9 +45,8 @@ public class ContributorGroup extends BaseEntity<UUID> {
     }
 
     ContributorGroup(int maxContributorCount, @Nonnull NovelId novelId, @Nonnull LocalDateTime createdAt,
-                     @Nonnull LocalDateTime updatedAt, LocalDateTime deletedAt) {
+            @Nonnull LocalDateTime updatedAt, LocalDateTime deletedAt) {
         this.id = UuidCreator.getTimeOrderedEpoch();
-        this.activeContributorId = null;
         this.contributorCount = 0;
         this.maxContributorCount = maxContributorCount;
         this.status = ContributorGroupStatus.PREPARING;
@@ -87,7 +83,7 @@ public class ContributorGroup extends BaseEntity<UUID> {
     }
 
     static ContributorGroup create(@Nonnull AccountId accountId, int maxContributorCount, @Nonnull NovelId novelId,
-                                   LocalDateTime now) {
+            LocalDateTime now) {
         ContributorGroup createdContributorGroup = new ContributorGroup(maxContributorCount, novelId, now, now, null);
 
         createdContributorGroup.addHostContributor(accountId, now);
@@ -128,10 +124,6 @@ public class ContributorGroup extends BaseEntity<UUID> {
 
     public LocalDateTime getCompletedAt() {
         return completedAt;
-    }
-
-    ContributorId getActiveContributorId() {
-        return ContributorId.from(activeContributorId);
     }
 
     public List<Contributor> getContributors() {
@@ -208,7 +200,7 @@ public class ContributorGroup extends BaseEntity<UUID> {
     @Nullable
     private Contributor getCurrentContributor() {
         return contributors.stream()
-                .filter(contributor -> contributor.getIdValue().equals(getActiveContributorId()))
+                .filter(Contributor::isCurrentWriter)
                 .findFirst()
                 .orElse(null);
     }
