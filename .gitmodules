@@ -1,0 +1,3 @@
+[submodule "graphql/src/main/resources/schema"]
+	path = graphql/src/main/resources/schema
+	url = https://github.com/quill-lab/idl.git
