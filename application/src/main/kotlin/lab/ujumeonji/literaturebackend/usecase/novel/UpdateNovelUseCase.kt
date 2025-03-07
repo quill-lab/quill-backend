@@ -15,7 +15,7 @@ import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
 
 @Component
-@Transactional(readOnly = true)
+@Transactional
 class UpdateNovelUseCase(
     private val accountService: AccountService,
     private val contributorService: ContributorService,
