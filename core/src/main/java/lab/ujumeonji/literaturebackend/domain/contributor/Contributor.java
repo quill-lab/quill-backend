@@ -91,4 +91,8 @@ public class Contributor extends BaseEntity<UUID> {
     ContributorId getIdValue() {
         return ContributorId.from(this.id);
     }
+
+    void setCurrentWriter() {
+        this.isCurrentWriter = true;
+    }
 }
