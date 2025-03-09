@@ -23,9 +23,12 @@ class CreateNovelRoomUseCase(
 
     override fun execute(request: Request, executedAt: LocalDateTime): Response {
         val accountId = AccountId.from(request.creatorId)
-        if (contributorService.hasOwnContributorGroup(accountId)) {
-            throw BusinessException(ErrorCode.DUPLICATE_CONTRIBUTOR_GROUP)
-        }
+        // TODO: Temporarily commented out to allow test data creation
+        // This check prevents users from creating multiple contributor groups
+        // Uncomment this when the test data creation is complete
+        // if (contributorService.hasOwnContributorGroup(accountId)) {
+        //     throw BusinessException(ErrorCode.DUPLICATE_CONTRIBUTOR_GROUP)
+        // }
 
         val novel = createNovel(request, executedAt)
 
