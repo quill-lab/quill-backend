@@ -6,7 +6,7 @@ data class NovelCharacterResponse(
     val id: String,
     val name: String,
     val description: String,
-    val profileImage: String,
+    val profileImage: String?,
     val updatedAt: LocalDateTime?,
     val updatedBy: LastCharacterUpdatedBy?,
 ) {

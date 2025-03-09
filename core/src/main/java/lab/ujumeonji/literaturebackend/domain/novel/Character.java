@@ -1,11 +1,11 @@
 package lab.ujumeonji.literaturebackend.domain.novel;
 
 import com.github.f4b6a3.uuid.UuidCreator;
-import jakarta.annotation.Nonnull;
-import jakarta.annotation.Nullable;
 import jakarta.persistence.*;
 import lab.ujumeonji.literaturebackend.domain.account.AccountId;
 import lab.ujumeonji.literaturebackend.domain.common.BaseEntity;
+import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -59,9 +59,9 @@ public class Character extends BaseEntity<UUID> {
     private void validate() {
     }
 
-    static Character create(@Nonnull Novel novel, @Nonnull String name, @Nonnull String description,
+    static Character create(@NotNull Novel novel, @NotNull String name, @NotNull String description,
                             String profileImage,
-                            Integer priority, @Nonnull LocalDateTime now) {
+                            Integer priority, @NotNull LocalDateTime now) {
         return new Character(name, description, profileImage, null, novel, priority, now, now, null);
     }
 
@@ -73,6 +73,7 @@ public class Character extends BaseEntity<UUID> {
         return description;
     }
 
+    @Nullable
     public String getProfileImage() {
         return profileImage;
     }
