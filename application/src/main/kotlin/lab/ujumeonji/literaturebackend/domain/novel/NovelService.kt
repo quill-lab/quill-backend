@@ -1,14 +1,21 @@
 package lab.ujumeonji.literaturebackend.domain.novel
 
 import lab.ujumeonji.literaturebackend.domain.novel.command.CreateNovelCommand
+import lab.ujumeonji.literaturebackend.domain.novel.dto.ChapterData
+import lab.ujumeonji.literaturebackend.domain.novel.dto.ChapterMetadata
+import lab.ujumeonji.literaturebackend.domain.common.dto.PageResponse
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
+import java.util.UUID
 
 @Service
 @Transactional(readOnly = true)
 class NovelService(
-    private val novelRepository: NovelRepository
+    private val novelRepository: NovelRepository,
+    private val chapterRepository: ChapterRepository,
 ) {
 
     @Transactional
@@ -28,4 +35,31 @@ class NovelService(
     fun findNovel(id: NovelId): Novel? = novelRepository.findOneById(id.id)
 
     fun findNovels(ids: List<NovelId>): List<Novel> = novelRepository.findAllById(ids.map { it.id }).toList()
+
+    fun findChaptersByNovelId(novelId: NovelId, offset: Int, limit: Int): PageResponse<ChapterData> {
+        val pageable = PageRequest.of(offset / limit, limit, Sort.by(Sort.Direction.ASC, "chapterNumber"))
+        val chaptersPage = chapterRepository.findByNovelId(novelId.id, pageable)
+
+        val chapters = chaptersPage.content.map { chapter ->
+            ChapterData(
+                id = ChapterId.from(chapter.id),
+                title = chapter.title,
+                description = chapter.description,
+                chapterNumber = chapter.chapterNumber,
+                status = chapter.status,
+                approvedAt = chapter.approvedAt,
+                createdAt = chapter.createdAt,
+                updatedAt = chapter.updatedAt,
+            )
+        }
+
+        return PageResponse(
+            items = chapters,
+            totalCount = chaptersPage.totalElements.toInt(),
+            offset = offset,
+            limit = limit,
+            hasNext = chaptersPage.hasNext(),
+            hasPrevious = chaptersPage.hasPrevious()
+        )
+    }
 }
