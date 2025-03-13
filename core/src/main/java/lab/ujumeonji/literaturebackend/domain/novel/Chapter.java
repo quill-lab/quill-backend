@@ -101,4 +101,28 @@ public class Chapter extends BaseEntity<UUID> {
     public List<ChapterText> getChapterTexts() {
         return this.chapterTexts;
     }
+
+    String getTitle() {
+        return title;
+    }
+
+    String getDescription() {
+        return description;
+    }
+
+    Novel getNovel() {
+        return novel;
+    }
+
+    LocalDateTime getApprovedAt() {
+        return approvedAt;
+    }
+
+    ChapterStatus getStatus() {
+        return status;
+    }
+
+    Integer getChapterNumber() {
+        return chapterNumber;
+    }
 }
