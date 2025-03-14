@@ -1,0 +1,122 @@
+replicaCount: 1
+
+image:
+  repository: postgres
+  pullPolicy: IfNotPresent
+  tag: "17.4"
+
+imagePullSecrets: []
+nameOverride: "gow-pg"
+fullnameOverride: "gow-pg"
+
+serviceAccount:
+  create: true
+  automount: true
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext:
+  fsGroup: 999
+
+securityContext:
+  runAsUser: 999
+  runAsGroup: 999
+
+service:
+  type: ClusterIP
+  port: 5432
+
+ingress:
+  enabled: false
+  className: ""
+  annotations: {}
+  hosts:
+    - host: chart-example.local
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls: []
+
+resources:
+  limits:
+    cpu: 1000m
+    memory: 1Gi
+  requests:
+    cpu: 500m
+    memory: 512Mi
+
+livenessProbe:
+  exec:
+    command:
+      - pg_isready
+      - -U
+      - gowuser
+  initialDelaySeconds: 30
+  periodSeconds: 10
+  timeoutSeconds: 5
+  failureThreshold: 6
+readinessProbe:
+  exec:
+    command:
+      - pg_isready
+      - -U
+      - gowuser
+  initialDelaySeconds: 5
+  periodSeconds: 10
+  timeoutSeconds: 5
+  failureThreshold: 6
+
+autoscaling:
+  enabled: false
+  minReplicas: 1
+  maxReplicas: 3
+  targetCPUUtilizationPercentage: 80
+  targetMemoryUtilizationPercentage: 80
+
+postgresql:
+  database: gow
+  username: gowuser
+  password: MUvR1A46zwX2Q5565sz4Vg
+  postgresPassword: QJeSVpDUDF8SRjbNLIVxdVau3
+  initdbScripts:
+    init.sql: |
+      CREATE EXTENSION IF NOT EXISTS "uuid-ossp";
+      ALTER SYSTEM SET timezone TO 'UTC';
+
+env:
+  - name: POSTGRES_DB
+    value: "gow"
+  - name: POSTGRES_USER
+    value: "gowuser"
+  - name: POSTGRES_PASSWORD
+    value: "MUvR1A46zwX2Q5565sz4Vg"
+  - name: PGDATA
+    value: "/var/lib/postgresql/data/pgdata"
+  - name: TZ
+    value: "UTC"
+
+persistence:
+  enabled: true
+  storageClass: ""
+  size: 2Gi
+  mountPath: /var/lib/postgresql/data
+  subPath: pgdata
+
+volumes:
+  - name: postgres-data
+    persistentVolumeClaim:
+      claimName: gow-pg-data
+
+volumeMounts:
+  - name: postgres-data
+    mountPath: /var/lib/postgresql/data
+    subPath: pgdata
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
