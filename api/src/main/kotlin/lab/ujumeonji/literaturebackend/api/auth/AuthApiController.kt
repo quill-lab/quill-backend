@@ -4,10 +4,7 @@ import io.swagger.v3.oas.annotations.Operation
 import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import lab.ujumeonji.literaturebackend.api.auth.dto.*
-import lab.ujumeonji.literaturebackend.usecase.auth.CheckEmailDuplicationUseCase
-import lab.ujumeonji.literaturebackend.usecase.auth.RequestTemporaryPasswordUseCase
-import lab.ujumeonji.literaturebackend.usecase.auth.SignInUseCase
-import lab.ujumeonji.literaturebackend.usecase.auth.SignUpUseCase
+import lab.ujumeonji.literaturebackend.usecase.auth.*
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -23,6 +20,7 @@ class AuthApiController(
     private val signUpUseCase: SignUpUseCase,
     private val requestTemporaryPasswordUseCase: RequestTemporaryPasswordUseCase,
     private val checkEmailDuplicationUseCase: CheckEmailDuplicationUseCase,
+    private val checkNameDuplicationUseCase: CheckNameDuplicationUseCase,
 ) {
 
     @Operation(summary = "회원 가입", description = "회원 가입을 진행합니다.")
@@ -83,5 +81,23 @@ class AuthApiController(
         )
 
         return ResponseEntity.ok(CheckEmailDuplicationResponse(isDuplicated = result.isDuplicated))
+    }
+
+    @Operation(
+        summary = "닉네임 중복 검사",
+        description = "회원 가입 시 사용할 닉네임의 중복 여부를 검사합니다."
+    )
+    @PostMapping("/check-nickname")
+    fun checkNicknameDuplication(
+        @Valid @RequestBody request: CheckNameDuplicationRequest
+    ): ResponseEntity<CheckNameDuplicationResponse> {
+        val result = checkNameDuplicationUseCase.execute(
+            request = CheckNameDuplicationUseCase.Request(
+                name = request.name
+            ),
+            executedAt = LocalDateTime.now()
+        )
+
+        return ResponseEntity.ok(CheckNameDuplicationResponse(isDuplicated = result.isDuplicated))
     }
 }
