@@ -15,6 +15,8 @@ class AccountService(
 
     fun findByEmail(email: String): Account? = accountRepository.findByEmail(email)
 
+    fun findByName(email: String): Account? = accountRepository.findByName(email)
+
     fun findById(id: AccountId): Account? = accountRepository.findById(id.id).orElse(null)
 
     fun findByIds(ids: List<AccountId>): List<Account> = accountRepository.findAllById(ids.map { it.id }).toList()

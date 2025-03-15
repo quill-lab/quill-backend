@@ -5,4 +5,6 @@ import java.util.*
 
 interface AccountRepository : CrudRepository<Account, UUID> {
     fun findByEmail(email: String): Account?
+
+    fun findByName(email: String): Account?
 }
