@@ -36,7 +36,13 @@ class UpdateStoryPhaseUseCase(
         val novel = novelService.findNovel(contributorGroup.novelId)
             ?: throw BusinessException(ErrorCode.NOVEL_NOT_FOUND)
 
-        novel.updatePhase(request.phase.toStoryPhase(), request.description, executedAt)
+        novel.updatePhase(
+            request.phase.toStoryPhase(),
+            request.startChapterNumber,
+            request.endChapterNumber,
+            request.description,
+            executedAt
+        )
 
         return Response(
             id = novel.idValue.toString()
@@ -47,6 +53,8 @@ class UpdateStoryPhaseUseCase(
         val accountId: String,
         val contributorGroupId: String,
         val phase: StoryPhaseEnum,
+        val startChapterNumber: Int?,
+        val endChapterNumber: Int?,
         val description: String?,
     )
 
