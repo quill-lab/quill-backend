@@ -405,6 +405,8 @@ class NovelRoomApiControllerTest @Autowired constructor(
 
             val request = mapOf(
                 "description" to "Test description",
+                "startChapterNumber" to 0,
+                "endChapterNumber" to 1,
             )
 
             `when`("대표 작가가 스토리 페이즈를 수정하면") {
