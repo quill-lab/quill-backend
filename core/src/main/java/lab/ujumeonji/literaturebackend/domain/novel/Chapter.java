@@ -17,14 +17,14 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "chapters")
-@SQLDelete(sql = "UPDATE chapters SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?")
+@SQLDelete(sql = "update chapters set deleted_at = current_timestamp where id = ?")
 @Where(clause = "deleted_at IS NULL")
 public class Chapter extends BaseEntity<UUID> {
 
     @Id
     private UUID id;
 
-    @Column(nullable = false)
+    @Column
     private String title;
 
     @Column(columnDefinition = "text")
@@ -33,10 +33,6 @@ public class Chapter extends BaseEntity<UUID> {
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "novel_id", nullable = false, foreignKey = @ForeignKey(name = "fk_chapter_novel"))
     private Novel novel;
-
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "story_arc_id", foreignKey = @ForeignKey(name = "fk_chapter_story_arc"))
-    private StoryArc storyArc;
 
     @OneToMany(mappedBy = "chapter", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ChapterText> chapterTexts = new ArrayList<>();
@@ -54,23 +50,30 @@ public class Chapter extends BaseEntity<UUID> {
     protected Chapter() {
     }
 
-    Chapter(String title, String description, Novel novel, StoryArc storyArc, int chapterNumber,
+    Chapter(String title, String description, Novel novel, Integer chapterNumber,
             LocalDateTime createdAt, LocalDateTime updatedAt, LocalDateTime deletedAt) {
         this.id = UuidCreator.getTimeOrderedEpoch();
         this.title = title;
         this.description = description;
         this.novel = novel;
-        this.storyArc = storyArc;
         this.chapterNumber = chapterNumber;
+        this.status = ChapterStatus.DRAFT;
         setCreatedAt(createdAt);
         setUpdatedAt(updatedAt);
         setDeletedAt(deletedAt);
     }
 
+    Chapter(Novel novel, LocalDateTime now) {
+        this(null, null, novel, null, now, now, null);
+    }
+
     static Chapter create(@Nonnull String title, @Nonnull String description, @Nonnull Novel novel,
-                          @Nonnull StoryArc storyArc,
                           int chapterNumber, @Nonnull LocalDateTime now) {
-        return new Chapter(title, description, novel, storyArc, chapterNumber, now, now, null);
+        return new Chapter(title, description, novel, chapterNumber, now, now, null);
+    }
+
+    static Chapter createEmpty(@Nonnull Novel novel, @Nonnull LocalDateTime now) {
+        return new Chapter(novel, now);
     }
 
     @Override

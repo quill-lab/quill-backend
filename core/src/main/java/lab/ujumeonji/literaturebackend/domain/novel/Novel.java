@@ -199,4 +199,10 @@ public class Novel extends BaseEntity<UUID> {
                 .map(Chapter::getChapterTexts)
                 .orElse(Collections.emptyList());
     }
+
+    public Chapter createEmptyChapter(@Nonnull LocalDateTime now) {
+        Chapter chapter = Chapter.createEmpty(this, now);
+        this.chapters.add(chapter);
+        return chapter;
+    }
 }
