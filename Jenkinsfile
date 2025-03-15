@@ -73,10 +73,10 @@ spec:
                             rm -rf deploy-repo
                             git clone https://\${GIT_USERNAME}:\${GIT_PASSWORD}@github.com/dygma0/literature-backend.git deploy-repo
                             cd deploy-repo
-                            sed -i 's/tag: ".*"/tag: "${VERSION}"/g' deploy/values.yaml
+                            sed -i 's/tag: ".*"/tag: "${VERSION}"/g' deploy/api/values.yaml
                             git config --global user.email "webdev0594@gmail.com" 
                             git config --global user.name "dygma0"
-                            git add deploy/values.yaml
+                            git add deploy/api/values.yaml
                             git commit -m "🚀 BEHOLD! The grand deployment of version ${VERSION} has arrived! 🎉"
                             git push origin develop
                         """
