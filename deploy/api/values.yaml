@@ -3,7 +3,7 @@ replicaCount: 3
 image:
   repository: webdev0594/gow-api
   pullPolicy: IfNotPresent
-  tag: "21b28e5021b014be665d4813ba2ede61"
+  tag: "fd3e179c8b2c5db6cfb722eba07eb272"
 
 imagePullSecrets: []
 nameOverride: "gow-jvm-api"
