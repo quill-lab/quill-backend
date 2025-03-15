@@ -8,8 +8,6 @@ import org.hibernate.annotations.Where;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -86,7 +84,9 @@ public class StoryArc extends BaseEntity<UUID> {
         return endChapterNumber;
     }
 
-    void updatePhase(String description, LocalDateTime now) {
+    void updatePhase(Integer startChapterNumber, Integer endChapterNumber, String description, LocalDateTime now) {
+        this.startChapterNumber = startChapterNumber;
+        this.endChapterNumber = endChapterNumber;
         this.description = description;
         setUpdatedAt(now);
     }
