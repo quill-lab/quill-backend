@@ -302,6 +302,8 @@ class NovelRoomApiController(
                 contributorGroupId = novelRoomId,
                 phase = phase,
                 description = request.description,
+                startChapterNumber = request.startChapterNumber,
+                endChapterNumber = request.endChapterNumber,
             ),
             executedAt = LocalDateTime.now()
         )
