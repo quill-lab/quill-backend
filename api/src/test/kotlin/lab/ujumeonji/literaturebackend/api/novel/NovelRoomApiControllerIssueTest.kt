@@ -2,7 +2,6 @@ package lab.ujumeonji.literaturebackend.api.novel
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import lab.ujumeonji.literaturebackend.support.AuthControllerTest
-import lab.ujumeonji.literaturebackend.support.exception.ErrorCode
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
