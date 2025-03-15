@@ -12,7 +12,6 @@ interface ContributorRepository : CrudRepository<Contributor, UUID> {
         SELECT c FROM Contributor c
         WHERE c.accountId = :accountId
         AND c.role = :#{#role}
-        AND c.deletedAt IS NULL
         ORDER BY c.createdAt DESC
     """
     )

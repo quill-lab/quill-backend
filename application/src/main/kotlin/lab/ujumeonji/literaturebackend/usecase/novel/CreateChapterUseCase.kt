@@ -19,12 +19,12 @@ class CreateChapterUseCase(
 ) : UseCase<CreateChapterUseCase.Request, CreateChapterUseCase.Response> {
 
     override fun execute(request: Request, executedAt: LocalDateTime): Response {
-        if (!contributorService.hasOwnContributorGroup(AccountId.from(request.accountId))) {
-            throw BusinessException(ErrorCode.NO_PERMISSION_TO_UPDATE)
-        }
-
         val contributorGroup = contributorService.findGroupById(ContributorGroupId.from(request.contributorGroupId))
             ?: throw BusinessException(ErrorCode.CONTRIBUTOR_GROUP_NOT_FOUND)
+
+        if (contributorGroup.hasManagePermission(AccountId.from(request.accountId))) {
+            throw BusinessException(ErrorCode.NO_PERMISSION_TO_UPDATE)
+        }
 
         val novel = novelService.findNovel(contributorGroup.novelId)
             ?: throw BusinessException(ErrorCode.NOVEL_NOT_FOUND)

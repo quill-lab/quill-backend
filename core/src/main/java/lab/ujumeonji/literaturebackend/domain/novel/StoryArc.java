@@ -38,9 +38,6 @@ public class StoryArc extends BaseEntity<UUID> {
     @JoinColumn(name = "novel_id", nullable = false)
     private Novel novel;
 
-    @OneToMany(mappedBy = "storyArc", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Chapter> chapters = new ArrayList<>();
-
     protected StoryArc() {
     }
 
