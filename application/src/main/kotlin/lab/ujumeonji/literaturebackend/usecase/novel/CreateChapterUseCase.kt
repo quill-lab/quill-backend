@@ -1,12 +1,11 @@
 package lab.ujumeonji.literaturebackend.usecase.novel
 
 import lab.ujumeonji.literaturebackend.domain.account.AccountId
+import lab.ujumeonji.literaturebackend.domain.contributor.ContributorGroupId
 import lab.ujumeonji.literaturebackend.domain.contributor.ContributorService
-import lab.ujumeonji.literaturebackend.domain.contributor.command.CreateContributorGroupCommand
-import lab.ujumeonji.literaturebackend.domain.novel.NovelId
 import lab.ujumeonji.literaturebackend.domain.novel.NovelService
-import lab.ujumeonji.literaturebackend.domain.novel.command.CreateNovelCommand
-import lab.ujumeonji.literaturebackend.domain.novel.command.NovelCategoryEnum
+import lab.ujumeonji.literaturebackend.support.exception.BusinessException
+import lab.ujumeonji.literaturebackend.support.exception.ErrorCode
 import lab.ujumeonji.literaturebackend.usecase.UseCase
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
@@ -14,62 +13,33 @@ import java.time.LocalDateTime
 
 @Component
 @Transactional
-class CreateNovelRoomUseCase(
+class CreateChapterUseCase(
     private val contributorService: ContributorService,
     private val novelService: NovelService,
-) : UseCase<CreateNovelRoomUseCase.Request, CreateNovelRoomUseCase.Response> {
+) : UseCase<CreateChapterUseCase.Request, CreateChapterUseCase.Response> {
 
     override fun execute(request: Request, executedAt: LocalDateTime): Response {
-        val accountId = AccountId.from(request.creatorId)
-        // TODO: Temporarily commented out to allow test data creation
-        // This check prevents users from creating multiple contributor groups
-        // Uncomment this when the test data creation is complete
-        // if (contributorService.hasOwnContributorGroup(accountId)) {
-        //     throw BusinessException(ErrorCode.DUPLICATE_CONTRIBUTOR_GROUP)
-        // }
+        if (!contributorService.hasOwnContributorGroup(AccountId.from(request.accountId))) {
+            throw BusinessException(ErrorCode.NO_PERMISSION_TO_UPDATE)
+        }
 
-        val novel = createNovel(request, executedAt)
+        val contributorGroup = contributorService.findGroupById(ContributorGroupId.from(request.contributorGroupId))
+            ?: throw BusinessException(ErrorCode.CONTRIBUTOR_GROUP_NOT_FOUND)
 
-        val contributorGroup = createContributorGroup(request, novel.idValue, executedAt)
+        val novel = novelService.findNovel(contributorGroup.novelId)
+            ?: throw BusinessException(ErrorCode.NOVEL_NOT_FOUND)
 
-        return Response("${contributorGroup.idValue}")
+        val createdEmptyChapter = novel.createEmptyChapter(executedAt)
+
+        return Response(createdEmptyChapter.idValue.toString())
     }
 
-    private fun createNovel(request: Request, executedAt: LocalDateTime) = novelService.createNovel(
-        command = CreateNovelCommand(
-            title = request.title,
-            description = request.description,
-            category = request.category.toNovelCategory(),
-            coverImage = request.novelCoverImage,
-            synopsis = request.synopsis,
-            tags = request.tags,
-        ),
-        now = executedAt
-    )
-
-    private fun createContributorGroup(request: Request, novelId: NovelId, executedAt: LocalDateTime) =
-        contributorService.createContributorGroup(
-            command = CreateContributorGroupCommand(
-                novelId = novelId,
-                ownerId = AccountId.from(request.creatorId),
-                tags = request.tags,
-                maxContributorCount = request.maxContributorCount,
-            ),
-            now = executedAt
-        )
-
     data class Request(
-        val creatorId: String,
-        val title: String,
-        val description: String,
-        val category: NovelCategoryEnum,
-        val tags: List<String>,
-        val synopsis: String?,
-        val maxContributorCount: Int,
-        val novelCoverImage: String?,
+        val accountId: String,
+        val contributorGroupId: String,
     )
 
     data class Response(
-        val novelRoomId: String
+        val id: String
     )
 }
