@@ -5,6 +5,7 @@ import jakarta.persistence.*;
 import lab.ujumeonji.literaturebackend.domain.common.BaseEntity;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
+import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -56,5 +57,9 @@ public class NovelTag extends BaseEntity<UUID> {
 
     public Novel getNovel() {
         return novel;
+    }
+
+    void markAsDeleted(@NotNull LocalDateTime deletedAt) {
+        setDeletedAt(deletedAt);
     }
 }

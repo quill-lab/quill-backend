@@ -6,6 +6,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.data.domain.Persistable;
 
 import java.time.LocalDateTime;
+import java.util.Objects;
 
 @MappedSuperclass
 public abstract class BaseEntity<ID> implements Persistable<ID> {
@@ -46,6 +47,6 @@ public abstract class BaseEntity<ID> implements Persistable<ID> {
 
     @Override
     public boolean isNew() {
-        return persistedAt == null;
+        return Objects.isNull(persistedAt);
     }
 }

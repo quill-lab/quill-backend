@@ -158,7 +158,12 @@ public class Novel extends BaseEntity<UUID> {
                 .toList();
 
         this.tags.addAll(newTags);
-        this.tags.removeIf(existingTag -> !tagNames.contains(existingTag.getName()));
+
+        this.tags.forEach(tag -> {
+            if (!tagNames.contains(tag.getName())) {
+                tag.markAsDeleted(now);
+            }
+        });
     }
 
     private void setUpStoryArcs(LocalDateTime createdAt) {
