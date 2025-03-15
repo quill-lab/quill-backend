@@ -18,6 +18,42 @@ class NovelRoomApiControllerTest @Autowired constructor(
 ) {
 
     init {
+        given("대표 작가가 챕터 생성을 요청할 때") {
+            val account = fixtureAccount()
+            val novelRoomId = fixtureNovelRoom(account)
+
+            `when`("인증된 사용자가 챕터 생성을 요청하면") {
+                val response = performAuthPost("/api/v1/novel-rooms/$novelRoomId/chapters", account)
+
+                then("새로운 챕터가 생성된다") {
+                    response
+                        .andExpect(status().isCreated)
+                        .andExpect(jsonPath("$.id").exists())
+                }
+            }
+
+            `when`("인증되지 않은 사용자가 챕터 생성을 요청하면") {
+                val response = performPost("/api/v1/novel-rooms/$novelRoomId/chapters")
+
+                then("인증 오류가 발생한다") {
+                    response
+                        .andExpect(status().isUnauthorized)
+                        .andExpect(jsonPath("$.code").value(ErrorCode.UNAUTHORIZED.code))
+                }
+            }
+
+            `when`("존재하지 않는 소설 공방에 챕터 생성을 요청하면") {
+                val invalidNovelRoomId = "00000000-0000-0000-0000-000000000000"
+                val response = performAuthPost("/api/v1/novel-rooms/$invalidNovelRoomId/chapters", account)
+
+                then("소설 공방을 찾을 수 없다는 오류가 발생한다") {
+                    response
+                        .andExpect(status().isNotFound)
+                        .andExpect(jsonPath("$.code").value(ErrorCode.CONTRIBUTOR_GROUP_NOT_FOUND.code))
+                }
+            }
+        }
+
         given("유효한 소설 공방 생성 요청이 주어지고") {
             val request = mapOf(
                 "maxContributors" to 5,

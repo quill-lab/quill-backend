@@ -28,7 +28,7 @@ abstract class ControllerTest(
 
     override suspend fun beforeEach(testCase: TestCase) = Unit
 
-    protected fun toJson(obj: Any): String {
+    protected fun toJson(obj: Any?): String {
         return objectMapper.writeValueAsString(obj)
     }
 
@@ -41,7 +41,7 @@ abstract class ControllerTest(
             .accept(MediaType.APPLICATION_JSON)
     ).andDo(MockMvcResultHandlers.print())
 
-    fun performPost(url: String, body: Any) = mockMvc.perform(
+    fun performPost(url: String, body: Any? = null) = mockMvc.perform(
         MockMvcRequestBuilders.post(url)
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
