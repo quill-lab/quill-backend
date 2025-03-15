@@ -18,7 +18,7 @@ import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "novels")
-@SQLDelete(sql = "UPDATE novels SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?")
+@SQLDelete(sql = "update novels set deleted_at = current_timestamp where id = ?")
 @Where(clause = "deleted_at IS NULL")
 public class Novel extends BaseEntity<UUID> {
 
@@ -57,10 +57,10 @@ public class Novel extends BaseEntity<UUID> {
     }
 
     Novel(String title, String description, String coverImage, List<String> tags, String synopsis,
-            NovelCategory category,
-            LocalDateTime createdAt,
-            LocalDateTime updatedAt,
-            LocalDateTime deletedAt) {
+          NovelCategory category,
+          LocalDateTime createdAt,
+          LocalDateTime updatedAt,
+          LocalDateTime deletedAt) {
         this.id = UuidCreator.getTimeOrderedEpoch();
         this.title = title;
         this.description = description;
@@ -77,8 +77,8 @@ public class Novel extends BaseEntity<UUID> {
     }
 
     static Novel create(String title, String description, NovelCategory category, String coverImage, List<String> tags,
-            String synopsis,
-            LocalDateTime now) {
+                        String synopsis,
+                        LocalDateTime now) {
         return new Novel(title, description, coverImage, tags, synopsis, category, now, now, null);
     }
 
@@ -180,8 +180,8 @@ public class Novel extends BaseEntity<UUID> {
 
     @Nonnull
     public Optional<ChapterText> addChapterText(@Nonnull AccountId accountId, @Nonnull ChapterId chapterId,
-            @Nonnull String content,
-            @Nonnull LocalDateTime now) {
+                                                @Nonnull String content,
+                                                @Nonnull LocalDateTime now) {
         return this.chapters.stream()
                 .filter(c -> c.getIdValue().equals(chapterId))
                 .findFirst()

@@ -44,8 +44,8 @@ public class Character extends BaseEntity<UUID> {
     }
 
     Character(String name, String description, String profileImage, @Nullable AccountId lastUpdatedBy, Novel novel,
-            Integer priority, LocalDateTime createdAt, LocalDateTime updatedAt,
-            LocalDateTime deletedAt) {
+              Integer priority, LocalDateTime createdAt, LocalDateTime updatedAt,
+              LocalDateTime deletedAt) {
         this.id = UuidCreator.getTimeOrderedEpoch();
         this.name = name;
         this.description = description;
@@ -60,13 +60,13 @@ public class Character extends BaseEntity<UUID> {
         validate();
     }
 
-    private void validate() {
+    static Character create(@NotNull Novel novel, @NotNull String name, @NotNull String description,
+                            String profileImage,
+                            Integer priority, @NotNull LocalDateTime now) {
+        return new Character(name, description, profileImage, null, novel, priority, now, now, null);
     }
 
-    static Character create(@NotNull Novel novel, @NotNull String name, @NotNull String description,
-            String profileImage,
-            Integer priority, @NotNull LocalDateTime now) {
-        return new Character(name, description, profileImage, null, novel, priority, now, now, null);
+    private void validate() {
     }
 
     public String getName() {

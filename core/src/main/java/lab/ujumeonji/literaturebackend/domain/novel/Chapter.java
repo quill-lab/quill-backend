@@ -68,8 +68,8 @@ public class Chapter extends BaseEntity<UUID> {
     }
 
     static Chapter create(@Nonnull String title, @Nonnull String description, @Nonnull Novel novel,
-            @Nonnull StoryArc storyArc,
-            int chapterNumber, @Nonnull LocalDateTime now) {
+                          @Nonnull StoryArc storyArc,
+                          int chapterNumber, @Nonnull LocalDateTime now) {
         return new Chapter(title, description, novel, storyArc, chapterNumber, now, now, null);
     }
 
@@ -84,8 +84,8 @@ public class Chapter extends BaseEntity<UUID> {
 
     @NotNull
     public Optional<ChapterText> addChapterText(@Nonnull AccountId accountId,
-            @Nonnull String content,
-            @Nonnull LocalDateTime now) {
+                                                @Nonnull String content,
+                                                @Nonnull LocalDateTime now) {
         if (this.status != ChapterStatus.IN_PROGRESS) {
             return Optional.empty();
         }

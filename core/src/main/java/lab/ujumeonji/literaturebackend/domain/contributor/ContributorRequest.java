@@ -38,8 +38,8 @@ public class ContributorRequest extends BaseEntity<UUID> {
     }
 
     ContributorRequest(@Nonnull ContributorGroup contributorGroup,
-            @Nonnull AccountId accountId, LocalDateTime approvedAt, ContributorRequestStatus status,
-            LocalDateTime createdAt, LocalDateTime updatedAt, LocalDateTime deletedAt) {
+                       @Nonnull AccountId accountId, LocalDateTime approvedAt, ContributorRequestStatus status,
+                       LocalDateTime createdAt, LocalDateTime updatedAt, LocalDateTime deletedAt) {
         this.id = UuidCreator.getTimeOrderedEpoch();
         this.contributorGroup = contributorGroup;
         this.accountId = accountId.getId();

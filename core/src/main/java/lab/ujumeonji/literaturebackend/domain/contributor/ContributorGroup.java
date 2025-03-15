@@ -49,7 +49,7 @@ public class ContributorGroup extends BaseEntity<UUID> {
     }
 
     ContributorGroup(int maxContributorCount, @Nonnull NovelId novelId, @Nonnull LocalDateTime createdAt,
-            @Nonnull LocalDateTime updatedAt, LocalDateTime deletedAt) {
+                     @Nonnull LocalDateTime updatedAt, LocalDateTime deletedAt) {
         this.id = UuidCreator.getTimeOrderedEpoch();
         this.contributorCount = 0;
         this.maxContributorCount = maxContributorCount;
@@ -62,6 +62,15 @@ public class ContributorGroup extends BaseEntity<UUID> {
         setDeletedAt(deletedAt);
 
         validate();
+    }
+
+    static ContributorGroup create(@Nonnull AccountId accountId, int maxContributorCount, @Nonnull NovelId novelId,
+                                   @Nonnull LocalDateTime now) {
+        ContributorGroup createdContributorGroup = new ContributorGroup(maxContributorCount, novelId, now, now, null);
+
+        createdContributorGroup.addContributor(accountId, ContributorRole.MAIN, now);
+
+        return createdContributorGroup;
     }
 
     private void validate() {
@@ -84,15 +93,6 @@ public class ContributorGroup extends BaseEntity<UUID> {
         if (status == null) {
             throw new IllegalArgumentException("상태는 필수입니다");
         }
-    }
-
-    static ContributorGroup create(@Nonnull AccountId accountId, int maxContributorCount, @Nonnull NovelId novelId,
-            @Nonnull LocalDateTime now) {
-        ContributorGroup createdContributorGroup = new ContributorGroup(maxContributorCount, novelId, now, now, null);
-
-        createdContributorGroup.addContributor(accountId, ContributorRole.MAIN, now);
-
-        return createdContributorGroup;
     }
 
     private void addContributor(AccountId accountId, ContributorRole role, LocalDateTime now) {

@@ -1,7 +1,9 @@
 package lab.ujumeonji.literaturebackend.domain.post;
 
 import com.github.f4b6a3.uuid.UuidCreator;
-import jakarta.persistence.*;
+import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lab.ujumeonji.literaturebackend.domain.account.AccountId;
 import lab.ujumeonji.literaturebackend.domain.common.BaseEntity;
 import lab.ujumeonji.literaturebackend.domain.contributor.ContributorGroupId;

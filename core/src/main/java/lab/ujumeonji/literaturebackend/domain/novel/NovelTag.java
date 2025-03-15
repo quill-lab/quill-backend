@@ -12,7 +12,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "novel_tags")
-@SQLDelete(sql = "UPDATE novel_tags SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?")
+@SQLDelete(sql = "update novel_tags set deleted_at = current_timestamp where id = ?")
 @Where(clause = "deleted_at IS NULL")
 public class NovelTag extends BaseEntity<UUID> {
 

@@ -49,11 +49,11 @@ public class Account extends BaseEntity<UUID> {
         validate();
     }
 
-    private void validate() {
-    }
-
     static Account create(String email, String name, String hashedPassword, LocalDateTime now) {
         return new Account(email, hashedPassword, name, now, now, null);
+    }
+
+    private void validate() {
     }
 
     boolean checkPassword(String password, PasswordEncoder passwordEncoder) {

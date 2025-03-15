@@ -14,7 +14,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "story_arcs")
-@SQLDelete(sql = "UPDATE story_arcs SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?")
+@SQLDelete(sql = "update story_arcs set deleted_at = current_timestamp where id = ?")
 @Where(clause = "deleted_at IS NULL")
 public class StoryArc extends BaseEntity<UUID> {
 
@@ -45,8 +45,8 @@ public class StoryArc extends BaseEntity<UUID> {
     }
 
     StoryArc(String description, Novel novel, StoryPhase phase,
-            Integer startChapterNumber, Integer endChapterNumber,
-            LocalDateTime createdAt, LocalDateTime updatedAt, LocalDateTime deletedAt) {
+             Integer startChapterNumber, Integer endChapterNumber,
+             LocalDateTime createdAt, LocalDateTime updatedAt, LocalDateTime deletedAt) {
         this.id = UuidCreator.getTimeOrderedEpoch();
         this.description = description;
         this.novel = novel;
