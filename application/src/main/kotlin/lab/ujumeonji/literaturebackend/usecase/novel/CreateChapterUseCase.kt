@@ -31,7 +31,11 @@ class CreateChapterUseCase(
 
         val createdEmptyChapter = novel.createEmptyChapter(executedAt)
 
-        return Response(createdEmptyChapter.idValue.toString())
+        if (createdEmptyChapter.isEmpty) {
+            throw BusinessException(ErrorCode.CHAPTER_ALREADY_REQUESTED)
+        }
+
+        return Response(createdEmptyChapter.orElseThrow().idValue.toString())
     }
 
     data class Request(
