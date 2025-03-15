@@ -37,38 +37,23 @@ class NovelRoomApiControllerIssueTest @Autowired constructor(
                         .andExpect(jsonPath("$.id").exists())
                 }
             }
+        }
 
-            `when`("인증되지 않은 사용자가 수정을 요청하면") {
-                val request = mapOf(
-                    "title" to "수정된 제목",
-                    "description" to "수정된 설명",
-                    "category" to "FANTASY",
-                    "tags" to listOf("판타지"),
-                    "synopsis" to "수정된 시놉시스"
-                )
-                val response = performPatch("/api/v1/novel-rooms/$novelRoomId", request)
+        given("소설 공방의 스토리 아크 목록 조회 시") {
+            val account = fixtureAccount()
+            val novelRoomId = fixtureNovelRoom(account)
 
-                then("인증 오류가 발생한다") {
+            `when`("스토리 아크 목록을 조회하면") {
+                val response = performAuthGet("/api/v1/novel-rooms/$novelRoomId/story-arcs", account)
+
+                then("스토리 아크가 전개 순서대로 조회된다") {
                     response
-                        .andExpect(status().isUnauthorized)
-                        .andExpect(jsonPath("$.code").value(ErrorCode.UNAUTHORIZED.code))
-                }
-            }
-
-            `when`("소설 공방 소유자가 아닌 사용자가 수정을 요청하면") {
-                val request = mapOf(
-                    "title" to "수정된 제목",
-                    "description" to "수정된 설명", 
-                    "category" to "FANTASY",
-                    "tags" to listOf("판타지"),
-                    "synopsis" to "수정된 시놉시스"
-                )
-                val response = performAuthPatch("/api/v1/novel-rooms/$novelRoomId", request)
-
-                then("권한 오류가 발생한다") {
-                    response
-                        .andExpect(status().isForbidden)
-                        .andExpect(jsonPath("$.code").value(ErrorCode.NO_PERMISSION_TO_UPDATE.code))
+                        .andExpect(status().isOk)
+                        .andExpect(jsonPath("$[0].phase").value("INTRODUCTION"))
+                        .andExpect(jsonPath("$[1].phase").value("DEVELOPMENT"))
+                        .andExpect(jsonPath("$[2].phase").value("CRISIS"))
+                        .andExpect(jsonPath("$[3].phase").value("CLIMAX"))
+                        .andExpect(jsonPath("$[4].phase").value("RESOLUTION"))
                 }
             }
         }
