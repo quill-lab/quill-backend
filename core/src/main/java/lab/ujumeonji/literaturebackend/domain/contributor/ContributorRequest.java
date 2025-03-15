@@ -5,12 +5,16 @@ import jakarta.annotation.Nonnull;
 import jakarta.persistence.*;
 import lab.ujumeonji.literaturebackend.domain.account.AccountId;
 import lab.ujumeonji.literaturebackend.domain.common.BaseEntity;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
 @Table(name = "contributor_requests")
+@SQLDelete(sql = "UPDATE contributor_requests SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?")
+@Where(clause = "deleted_at IS NULL")
 public class ContributorRequest extends BaseEntity<UUID> {
 
     @Id
@@ -34,8 +38,8 @@ public class ContributorRequest extends BaseEntity<UUID> {
     }
 
     ContributorRequest(@Nonnull ContributorGroup contributorGroup,
-                       @Nonnull AccountId accountId, LocalDateTime approvedAt, ContributorRequestStatus status,
-                       LocalDateTime createdAt, LocalDateTime updatedAt, LocalDateTime deletedAt) {
+            @Nonnull AccountId accountId, LocalDateTime approvedAt, ContributorRequestStatus status,
+            LocalDateTime createdAt, LocalDateTime updatedAt, LocalDateTime deletedAt) {
         this.id = UuidCreator.getTimeOrderedEpoch();
         this.contributorGroup = contributorGroup;
         this.accountId = accountId.getId();

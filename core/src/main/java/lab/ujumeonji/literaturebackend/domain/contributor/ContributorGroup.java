@@ -6,6 +6,8 @@ import jakarta.persistence.*;
 import lab.ujumeonji.literaturebackend.domain.account.AccountId;
 import lab.ujumeonji.literaturebackend.domain.common.BaseEntity;
 import lab.ujumeonji.literaturebackend.domain.novel.NovelId;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.LocalDateTime;
@@ -15,6 +17,8 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "contributor_groups")
+@SQLDelete(sql = "UPDATE contributor_groups SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?")
+@Where(clause = "deleted_at IS NULL")
 public class ContributorGroup extends BaseEntity<UUID> {
 
     @Id
@@ -45,7 +49,7 @@ public class ContributorGroup extends BaseEntity<UUID> {
     }
 
     ContributorGroup(int maxContributorCount, @Nonnull NovelId novelId, @Nonnull LocalDateTime createdAt,
-                     @Nonnull LocalDateTime updatedAt, LocalDateTime deletedAt) {
+            @Nonnull LocalDateTime updatedAt, LocalDateTime deletedAt) {
         this.id = UuidCreator.getTimeOrderedEpoch();
         this.contributorCount = 0;
         this.maxContributorCount = maxContributorCount;
@@ -83,7 +87,7 @@ public class ContributorGroup extends BaseEntity<UUID> {
     }
 
     static ContributorGroup create(@Nonnull AccountId accountId, int maxContributorCount, @Nonnull NovelId novelId,
-                                   @Nonnull LocalDateTime now) {
+            @Nonnull LocalDateTime now) {
         ContributorGroup createdContributorGroup = new ContributorGroup(maxContributorCount, novelId, now, now, null);
 
         createdContributorGroup.addContributor(accountId, ContributorRole.MAIN, now);

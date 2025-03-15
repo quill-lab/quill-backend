@@ -3,6 +3,8 @@ package lab.ujumeonji.literaturebackend.domain.novel;
 import com.github.f4b6a3.uuid.UuidCreator;
 import jakarta.persistence.*;
 import lab.ujumeonji.literaturebackend.domain.common.BaseEntity;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.LocalDateTime;
@@ -12,6 +14,8 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "story_arcs")
+@SQLDelete(sql = "UPDATE story_arcs SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?")
+@Where(clause = "deleted_at IS NULL")
 public class StoryArc extends BaseEntity<UUID> {
 
     @Id
@@ -41,8 +45,8 @@ public class StoryArc extends BaseEntity<UUID> {
     }
 
     StoryArc(String description, Novel novel, StoryPhase phase,
-             Integer startChapterNumber, Integer endChapterNumber,
-             LocalDateTime createdAt, LocalDateTime updatedAt, LocalDateTime deletedAt) {
+            Integer startChapterNumber, Integer endChapterNumber,
+            LocalDateTime createdAt, LocalDateTime updatedAt, LocalDateTime deletedAt) {
         this.id = UuidCreator.getTimeOrderedEpoch();
         this.description = description;
         this.novel = novel;

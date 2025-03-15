@@ -3,12 +3,16 @@ package lab.ujumeonji.literaturebackend.domain.novel;
 import com.github.f4b6a3.uuid.UuidCreator;
 import jakarta.persistence.*;
 import lab.ujumeonji.literaturebackend.domain.common.BaseEntity;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
 @Table(name = "novel_tags")
+@SQLDelete(sql = "UPDATE novel_tags SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?")
+@Where(clause = "deleted_at IS NULL")
 public class NovelTag extends BaseEntity<UUID> {
 
     @Id

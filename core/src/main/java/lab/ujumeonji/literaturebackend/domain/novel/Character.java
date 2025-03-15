@@ -4,6 +4,8 @@ import com.github.f4b6a3.uuid.UuidCreator;
 import jakarta.persistence.*;
 import lab.ujumeonji.literaturebackend.domain.account.AccountId;
 import lab.ujumeonji.literaturebackend.domain.common.BaseEntity;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -12,6 +14,8 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "characters")
+@SQLDelete(sql = "UPDATE characters SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?")
+@Where(clause = "deleted_at IS NULL")
 public class Character extends BaseEntity<UUID> {
 
     @Id
@@ -40,8 +44,8 @@ public class Character extends BaseEntity<UUID> {
     }
 
     Character(String name, String description, String profileImage, @Nullable AccountId lastUpdatedBy, Novel novel,
-              Integer priority, LocalDateTime createdAt, LocalDateTime updatedAt,
-              LocalDateTime deletedAt) {
+            Integer priority, LocalDateTime createdAt, LocalDateTime updatedAt,
+            LocalDateTime deletedAt) {
         this.id = UuidCreator.getTimeOrderedEpoch();
         this.name = name;
         this.description = description;
@@ -60,8 +64,8 @@ public class Character extends BaseEntity<UUID> {
     }
 
     static Character create(@NotNull Novel novel, @NotNull String name, @NotNull String description,
-                            String profileImage,
-                            Integer priority, @NotNull LocalDateTime now) {
+            String profileImage,
+            Integer priority, @NotNull LocalDateTime now) {
         return new Character(name, description, profileImage, null, novel, priority, now, now, null);
     }
 

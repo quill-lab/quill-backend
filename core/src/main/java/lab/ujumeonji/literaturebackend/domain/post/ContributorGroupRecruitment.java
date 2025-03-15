@@ -1,12 +1,12 @@
 package lab.ujumeonji.literaturebackend.domain.post;
 
 import com.github.f4b6a3.uuid.UuidCreator;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lab.ujumeonji.literaturebackend.domain.account.AccountId;
 import lab.ujumeonji.literaturebackend.domain.common.BaseEntity;
 import lab.ujumeonji.literaturebackend.domain.contributor.ContributorGroupId;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -15,6 +15,8 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "contributor_group_recruitments")
+@SQLDelete(sql = "UPDATE contributor_group_recruitments SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?")
+@Where(clause = "deleted_at IS NULL")
 public class ContributorGroupRecruitment extends BaseEntity<UUID> {
 
     @Id
@@ -42,8 +44,7 @@ public class ContributorGroupRecruitment extends BaseEntity<UUID> {
             @Nullable final String link,
             @NotNull final LocalDateTime createdAt,
             @NotNull final LocalDateTime updatedAt,
-            @Nullable final LocalDateTime deletedAt
-    ) {
+            @Nullable final LocalDateTime deletedAt) {
         this.id = id;
         this.contributorGroupId = contributorGroupId.getId();
         this.authorId = authorId.getId();
@@ -61,8 +62,7 @@ public class ContributorGroupRecruitment extends BaseEntity<UUID> {
             @NotNull final String title,
             @NotNull final String content,
             @Nullable final String link,
-            @NotNull final LocalDateTime now
-    ) {
+            @NotNull final LocalDateTime now) {
         return new ContributorGroupRecruitment(
                 UuidCreator.getTimeOrderedEpoch(),
                 contributorGroupId,
@@ -72,8 +72,7 @@ public class ContributorGroupRecruitment extends BaseEntity<UUID> {
                 link,
                 now,
                 now,
-                null
-        );
+                null);
     }
 
     @Override

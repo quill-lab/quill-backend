@@ -6,11 +6,15 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 import lab.ujumeonji.literaturebackend.domain.common.BaseEntity;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 
 import java.util.UUID;
 
 @Entity
 @Table(name = "chapter_metadata")
+@SQLDelete(sql = "UPDATE chapter_metadata SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?")
+@Where(clause = "deleted_at IS NULL")
 public class ChapterMetadata extends BaseEntity<UUID> {
 
     @Id
