@@ -143,7 +143,9 @@ public class Novel extends BaseEntity<UUID> {
     }
 
     public List<StoryArc> getStoryArcs() {
-        return storyArcs;
+        return storyArcs.stream()
+                .sorted(Comparator.comparing(storyArc -> storyArc.getPhase().ordinal()))
+                .collect(Collectors.toList());
     }
 
     private void addTags(@NotNull List<String> tagNames, @NotNull LocalDateTime now) {
