@@ -1,0 +1,110 @@
+replicaCount: 3
+
+image:
+  repository: webdev0594/gow-graphql
+  pullPolicy: IfNotPresent
+  tag: "25834963ce619cbc0b78349cc6ea41a9"
+
+imagePullSecrets: []
+nameOverride: "gow-jvm-graphql"
+fullnameOverride: "gow-jvm-graphql"
+
+serviceAccount:
+  create: true
+  automount: true
+  annotations: {}
+  name: ""
+
+podAnnotations: {}
+podLabels: {}
+
+podSecurityContext: {}
+
+securityContext: {}
+
+service:
+  type: ClusterIP
+  port: 8080
+
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+     kubernetes.io/ingress.class: nginx
+     kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: gow-jvm-graphql-dev.cd80.run
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls:
+    - secretName: gow-jvm-graphql-dev-tls
+      hosts:
+        - gow-jvm-graphql-dev.cd80.run
+
+resources:
+  requests:
+    cpu: 1024m
+    memory: 2048Mi
+  limits:
+    cpu: 2048m
+    memory: 2048Mi
+
+# livenessProbe:
+#   httpGet:
+#     path: /actuator/health/liveness
+#     port: 8080
+#   initialDelaySeconds: 60
+#   periodSeconds: 10
+#   timeoutSeconds: 5
+#   failureThreshold: 3
+
+# readinessProbe:
+#   httpGet:
+#     path: /actuator/health/readiness
+#     port: 8080
+#   initialDelaySeconds: 60
+#   periodSeconds: 10
+#   timeoutSeconds: 5
+#   failureThreshold: 3
+
+autoscaling:
+  enabled: true
+  minReplicas: 3
+  maxReplicas: 10
+  targetCPUUtilizationPercentage: 80
+  targetMemoryUtilizationPercentage: 80
+
+env:
+  - name: SPRING_PROFILES_ACTIVE
+    value: "prod"
+  - name: JAVA_OPTS
+    value: "-Xms1024m -Xmx1024m"
+
+volumes: []
+
+volumeMounts: []
+
+nodeSelector: {}
+
+tolerations: []
+
+affinity: {}
+
+secrets:
+  DB_HOST: ""
+  DB_PORT: ""
+  DB_USERNAME: ""
+  DB_PASSWORD: ""
+  DB_DATABASE: ""
+
+  JWT_ACCESS_KEY: ""
+  JWT_REFRESH_KEY: ""
+
+  MAIL_USER: ""
+  MAIL_PASSWORD: ""
+  MAIL_CLIENT_ID: ""
+  MAIL_CLIENT_SECRET: ""
+  MAIL_REFRESH_TOKEN: ""
+
+  TRACING_ENDPOINT: ""
