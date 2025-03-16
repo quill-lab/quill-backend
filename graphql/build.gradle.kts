@@ -1,5 +1,6 @@
 plugins {
     id("org.springframework.boot")
+    id("com.google.cloud.tools.jib")
     id("com.netflix.dgs.codegen") version "7.0.3"
 }
 
@@ -21,6 +22,38 @@ dependencies {
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("com.netflix.graphql.dgs:graphql-dgs-client")
     testRuntimeOnly("org.junit.platform:junit-platform-launcher")
+}
+
+jib {
+    from {
+        image = "eclipse-temurin:21-jre-alpine"
+        platforms {
+            platform {
+                architecture = "amd64"
+                os = "linux"
+            }
+            platform {
+                architecture = "arm64"
+                os = "linux"
+            }
+        }
+    }
+    to {
+        image = "webdev0594/gow-graphql"
+        tags = setOf("latest", version.toString())
+        auth {
+            username = System.getenv("DOCKER_HUB_USERNAME")
+            password = System.getenv("DOCKER_HUB_PASSWORD")
+        }
+    }
+    container {
+        jvmFlags = listOf("-Xms1024m", "-Xmx1024m")
+        ports = listOf("8080")
+        environment = mapOf(
+            "SPRING_PROFILES_ACTIVE" to "prod"
+        )
+        creationTime.set("USE_CURRENT_TIMESTAMP")
+    }
 }
 
 tasks.withType<com.netflix.graphql.dgs.codegen.gradle.GenerateJavaTask> {
