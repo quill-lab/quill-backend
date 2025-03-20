@@ -14,7 +14,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "characters")
-@SQLDelete(sql = "UPDATE characters SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?")
+@SQLDelete(sql = "update characters set deleted_at = current_timestamp where id = ?")
 @Where(clause = "deleted_at IS NULL")
 public class Character extends BaseEntity<UUID> {
 
@@ -60,10 +60,8 @@ public class Character extends BaseEntity<UUID> {
         validate();
     }
 
-    static Character create(@NotNull Novel novel, @NotNull String name, @NotNull String description,
-                            String profileImage,
-                            Integer priority, @NotNull LocalDateTime now) {
-        return new Character(name, description, profileImage, null, novel, priority, now, now, null);
+    static Character create(@NotNull Novel novel, @NotNull String name, @Nullable String description, @NotNull LocalDateTime now) {
+        return new Character(name, description, null, null, novel, null, now, now, null);
     }
 
     private void validate() {
@@ -96,10 +94,6 @@ public class Character extends BaseEntity<UUID> {
         return super.getUpdatedAt();
     }
 
-    public Integer getPriority() {
-        return priority;
-    }
-
     @Override
     public UUID getId() {
         return id;
@@ -107,5 +101,10 @@ public class Character extends BaseEntity<UUID> {
 
     public CharacterId getIdValue() {
         return CharacterId.from(this.id);
+    }
+
+    void update(@NotNull String name, @Nullable String description) {
+        this.name = name;
+        this.description = description;
     }
 }

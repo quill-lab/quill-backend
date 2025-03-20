@@ -5,6 +5,7 @@ import io.swagger.v3.oas.annotations.tags.Tag
 import jakarta.validation.Valid
 import lab.ujumeonji.literaturebackend.api.novel.dto.*
 import lab.ujumeonji.literaturebackend.domain.novel.command.StoryPhaseEnum
+import lab.ujumeonji.literaturebackend.domain.novel.command.UpsertNovelCharacterCommand
 import lab.ujumeonji.literaturebackend.support.auth.RequiredAuth
 import lab.ujumeonji.literaturebackend.support.validation.ValidUUID
 import lab.ujumeonji.literaturebackend.usecase.novel.*
@@ -33,6 +34,7 @@ class NovelRoomApiController(
     private val writeChapterTextUseCase: WriteChapterTextUseCase,
     private val findChapterTextsUseCase: FindChapterTextsUseCase,
     private val createChapterUseCase: CreateChapterUseCase,
+    private val upsertNovelCharactersUseCase: UpsertNovelCharactersUseCase,
 ) {
 
     @Operation(summary = "소설 공방 수정", description = "소설 공방을 수정합니다.")
@@ -158,7 +160,7 @@ class NovelRoomApiController(
         )
     }
 
-    @Operation(summary = "캐릭터 추가", description = "소설 공방에 캐릭터를 추가합니다.")
+    @Operation(summary = "등장인물 추가", description = "소설 공방에 등장인물을 추가합니다.", deprecated = true)
     @PostMapping("/{novelRoomId}/characters")
     fun addCharacter(
         @RequiredAuth accountId: String,
@@ -387,6 +389,39 @@ class NovelRoomApiController(
         return ResponseEntity.status(HttpStatus.CREATED).body(
             CreateChapterResponse(
                 id = result.id
+            )
+        )
+    }
+
+    @Operation(summary = "등장인물 생성/수정", description = "소설 공방의 등장인물을 생성하거나 수정합니다.")
+    @PutMapping("/{novelRoomId}/characters")
+    fun upsertCharacters(
+        @RequiredAuth accountId: String,
+        @PathVariable @ValidUUID novelRoomId: String,
+        @Valid @RequestBody request: UpsertNovelCharactersRequest
+    ): ResponseEntity<UpsertNovelCharactersResponse> {
+        val result = upsertNovelCharactersUseCase.execute(
+            request = UpsertNovelCharactersUseCase.Request(
+                accountId = accountId,
+                contributorGroupId = novelRoomId,
+                characters = request.characters.map { character ->
+                    UpsertNovelCharacterCommand(
+                        id = character.id,
+                        name = character.name,
+                        description = character.description
+                    )
+                }
+            ),
+            executedAt = LocalDateTime.now()
+        )
+
+        return ResponseEntity.ok(
+            UpsertNovelCharactersResponse(
+                characters = result.characters.map { character ->
+                    UpsertNovelCharactersResponse.CharacterResponse(
+                        id = character.id
+                    )
+                }
             )
         )
     }

@@ -8,6 +8,7 @@ import lab.ujumeonji.literaturebackend.domain.account.AccountId;
 import lab.ujumeonji.literaturebackend.domain.common.BaseEntity;
 import lab.ujumeonji.literaturebackend.domain.novel.command.AddCharacterCommand;
 import lab.ujumeonji.literaturebackend.domain.novel.command.UpdateNovelCommand;
+import lab.ujumeonji.literaturebackend.domain.novel.command.UpsertCharactersCommand;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 import org.jetbrains.annotations.Nullable;
@@ -83,7 +84,7 @@ public class Novel extends BaseEntity<UUID> {
     }
 
     public CharacterId addCharacter(@NotNull AddCharacterCommand command, @NotNull LocalDateTime now) {
-        Character character = Character.create(this, command.getName(), command.getDescription(), null, null, now);
+        Character character = Character.create(this, command.getName(), command.getDescription(), now);
 
         this.characters.add(character);
 
@@ -217,5 +218,22 @@ public class Novel extends BaseEntity<UUID> {
         Chapter chapter = Chapter.createEmpty(this, now);
         this.chapters.add(chapter);
         return Optional.of(chapter);
+    }
+
+    public CharacterId upsertCharacter(@Nonnull UpsertCharactersCommand command, @Nonnull AccountId updatedBy, @Nonnull LocalDateTime now) {
+        Optional<Character> character = this.characters
+                .stream()
+                .filter(element -> element.getIdValue().equals(command.getId()))
+                .findFirst();
+
+        if (character.isPresent()) {
+            character.get().update(command.getName(), command.getDescription());
+            return character.get().getIdValue();
+        }
+
+        return this.addCharacter(new AddCharacterCommand(
+                command.getName(),
+                command.getDescription()
+        ), now);
     }
 }
