@@ -6,6 +6,7 @@ import lab.ujumeonji.literaturebackend.domain.contributor.command.FindContributo
 import lab.ujumeonji.literaturebackend.domain.contributor.command.FindContributorRequestHistoriesCommand
 import lab.ujumeonji.literaturebackend.domain.contributor.command.NovelRoomSortTypeEnum
 import lab.ujumeonji.literaturebackend.domain.contributor.dto.ContributorRequestHistory
+import lab.ujumeonji.literaturebackend.domain.novel.NovelId
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.PageRequest
 import org.springframework.data.domain.Sort
@@ -65,6 +66,9 @@ class ContributorService(
 
     fun findGroupById(id: ContributorGroupId): ContributorGroup? =
         contributorGroupRepository.findById(id.id).orElse(null)
+
+    fun findGroupByNovelId(id: NovelId): ContributorGroup? =
+        contributorGroupRepository.findByNovelId(id.id).orElse(null)
 
     fun hasOwnContributorGroup(accountId: AccountId): Boolean =
         contributorRepository.findAllByAccountIdAndRole(accountId.id).isNotEmpty()

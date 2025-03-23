@@ -4,8 +4,8 @@ import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.boot.runApplication
 
 @SpringBootApplication
-class GraphQLApplication
+class LiteratureGraphQLApplication
 
 fun main(args: Array<String>) {
-    runApplication<GraphQLApplication>(*args)
+    runApplication<LiteratureGraphQLApplication>(*args)
 }

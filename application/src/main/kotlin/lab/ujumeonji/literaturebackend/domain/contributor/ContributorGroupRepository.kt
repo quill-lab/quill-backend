@@ -19,4 +19,13 @@ interface ContributorGroupRepository : CrudRepository<ContributorGroup, UUID> {
         """
     )
     fun findByAccountId(@Param("accountId") accountId: UUID, pageable: Pageable): Page<ContributorGroup>
+
+    @Query(
+        """
+        SELECT cg FROM ContributorGroup cg
+        WHERE cg.novelId = :novelId
+        AND cg.deletedAt IS NULL
+        """
+    )
+    fun findByNovelId(@Param("novelId") novelId: UUID): Optional<ContributorGroup>
 }

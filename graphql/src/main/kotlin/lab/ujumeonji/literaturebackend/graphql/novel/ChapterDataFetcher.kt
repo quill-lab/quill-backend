@@ -4,6 +4,7 @@ import com.netflix.graphql.dgs.DgsComponent
 import com.netflix.graphql.dgs.DgsQuery
 import com.netflix.graphql.dgs.InputArgument
 import lab.ujumeonji.literaturebackend.domain.novel.command.ChapterStatusEnum
+import lab.ujumeonji.literaturebackend.graphql.auth.RequiredGraphQLAuth
 import lab.ujumeonji.literaturebackend.graphql.generated.types.*
 import lab.ujumeonji.literaturebackend.usecase.novel.FindChaptersUseCase
 import java.time.LocalDateTime
@@ -16,12 +17,18 @@ class ChapterDataFetcher(
 
     @DgsQuery
     fun chaptersConnection(
+        @RequiredGraphQLAuth accountId: String,
         @InputArgument novelId: String,
         @InputArgument offset: Int = 0,
         @InputArgument limit: Int = 20
     ): ChapterConnection {
         val result = findChaptersUseCase.execute(
-            request = FindChaptersUseCase.Request(novelId, offset, limit),
+            request = FindChaptersUseCase.Request(
+                accountId = accountId,
+                novelId = novelId,
+                offset = offset,
+                limit = limit
+            ),
             executedAt = LocalDateTime.now()
         )
 

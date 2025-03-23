@@ -1,5 +1,7 @@
 package lab.ujumeonji.literaturebackend.usecase.novel
 
+import lab.ujumeonji.literaturebackend.domain.account.AccountId
+import lab.ujumeonji.literaturebackend.domain.contributor.ContributorService
 import lab.ujumeonji.literaturebackend.domain.novel.NovelId
 import lab.ujumeonji.literaturebackend.domain.novel.NovelService
 import lab.ujumeonji.literaturebackend.domain.novel.command.ChapterStatusEnum
@@ -14,11 +16,19 @@ import java.time.LocalDateTime
 @Transactional(readOnly = true)
 class FindChaptersUseCase(
     private val novelService: NovelService,
+    private val contributorService: ContributorService,
 ) : UseCase<FindChaptersUseCase.Request, FindChaptersUseCase.Response> {
 
     override fun execute(request: Request, executedAt: LocalDateTime): Response {
-        novelService.findNovel(NovelId.from(request.novelId))
+        val novel = novelService.findNovel(NovelId.from(request.novelId))
             ?: throw BusinessException(ErrorCode.NOVEL_NOT_FOUND)
+
+        val group = contributorService.findGroupByNovelId(novel.idValue)
+            ?: throw BusinessException(ErrorCode.CONTRIBUTOR_GROUP_NOT_FOUND)
+
+        if (!group.isParticipating(AccountId.from(request.accountId))) {
+            throw BusinessException(ErrorCode.NO_PERMISSION_TO_VIEW)
+        }
 
         val pageResponse = novelService.findChaptersByNovelId(
             novelId = NovelId.from(request.novelId),
@@ -49,6 +59,7 @@ class FindChaptersUseCase(
     }
 
     data class Request(
+        val accountId: String,
         val novelId: String,
         val offset: Int = 0,
         val limit: Int = 20
