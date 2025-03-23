@@ -22,7 +22,7 @@ class CreateChapterUseCase(
         val contributorGroup = contributorService.findGroupById(ContributorGroupId.from(request.contributorGroupId))
             ?: throw BusinessException(ErrorCode.CONTRIBUTOR_GROUP_NOT_FOUND)
 
-        if (contributorGroup.hasManagePermission(AccountId.from(request.accountId))) {
+        if (!contributorGroup.hasManagePermission(AccountId.from(request.accountId))) {
             throw BusinessException(ErrorCode.NO_PERMISSION_TO_UPDATE)
         }
 
