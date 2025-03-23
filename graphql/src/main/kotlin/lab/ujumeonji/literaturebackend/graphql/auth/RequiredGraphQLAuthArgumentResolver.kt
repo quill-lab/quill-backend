@@ -1,30 +1,23 @@
 package lab.ujumeonji.literaturebackend.support.auth
 
+import com.netflix.graphql.dgs.internal.method.ArgumentResolver
+import graphql.schema.DataFetchingEnvironment
 import lab.ujumeonji.literaturebackend.graphql.auth.AuthContext
 import lab.ujumeonji.literaturebackend.graphql.auth.RequiredGraphQLAuth
 import lab.ujumeonji.literaturebackend.support.exception.BusinessException
 import lab.ujumeonji.literaturebackend.support.exception.ErrorCode
 import org.springframework.core.MethodParameter
 import org.springframework.stereotype.Component
-import org.springframework.web.bind.support.WebDataBinderFactory
-import org.springframework.web.context.request.NativeWebRequest
-import org.springframework.web.method.support.HandlerMethodArgumentResolver
-import org.springframework.web.method.support.ModelAndViewContainer
 
 @Component
-class AuthArgumentResolver(
+class RequiredGraphQLAuthArgumentResolver(
     private val authContext: AuthContext
-) : HandlerMethodArgumentResolver {
+) : ArgumentResolver {
 
     override fun supportsParameter(parameter: MethodParameter): Boolean =
         parameter.hasParameterAnnotation(RequiredGraphQLAuth::class.java) && parameter.parameterType == String::class.java
 
-    override fun resolveArgument(
-        parameter: MethodParameter,
-        mavContainer: ModelAndViewContainer?,
-        webRequest: NativeWebRequest,
-        binderFactory: WebDataBinderFactory?
-    ): String? = when {
+    override fun resolveArgument(parameter: MethodParameter, dfe: DataFetchingEnvironment): String? = when {
         parameter.hasParameterAnnotation(RequiredGraphQLAuth::class.java) &&
                 parameter.parameterType == String::class.java ->
             authContext.accountId ?: throw BusinessException(ErrorCode.UNAUTHORIZED)
