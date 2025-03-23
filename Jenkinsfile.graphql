@@ -34,6 +34,17 @@ spec:
             }
         }
 
+        stage('Generate GraphQL Code') {
+            steps {
+                container('gradle') {
+                    sh """
+                        ./gradlew :graphql:generateJava \
+                            -Dorg.gradle.jvmargs="-Xmx2048m -XX:MaxMetaspaceSize=512m"
+                    """
+                }
+            }
+        }
+
         stage('Build & Push Docker Image') {
             steps {
                 container('gradle') {
