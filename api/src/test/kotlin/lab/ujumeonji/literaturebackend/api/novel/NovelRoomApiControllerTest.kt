@@ -21,9 +21,10 @@ class NovelRoomApiControllerTest @Autowired constructor(
         given("대표 작가가 챕터 생성을 요청할 때") {
             val account = fixtureAccount()
             val novelRoomId = fixtureNovelRoom(account)
+            val dummyBody = emptyMap<String, String>()
 
             `when`("인증된 사용자가 챕터 생성을 요청하면") {
-                val response = performAuthPost("/api/v1/novel-rooms/$novelRoomId/chapters", account)
+                val response = performAuthPost("/api/v1/novel-rooms/$novelRoomId/chapters", dummyBody, account)
 
                 then("새로운 챕터가 생성된다") {
                     response
