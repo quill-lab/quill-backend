@@ -1,6 +1,7 @@
 package lab.ujumeonji.literaturebackend.domain.novel;
 
 import jakarta.annotation.Nonnull;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.UUID;
 
@@ -8,17 +9,17 @@ public class CharacterId {
 
     private final UUID id;
 
-    public CharacterId(UUID id) {
+    CharacterId(@NotNull UUID id) {
         this.id = id;
     }
 
     @Nonnull
-    public static CharacterId from(UUID id) {
+    public static CharacterId from(@NotNull UUID id) {
         return new CharacterId(id);
     }
 
     @Nonnull
-    public static CharacterId from(String id) {
+    public static CharacterId from(@NotNull String id) {
         return new CharacterId(UUID.fromString(id));
     }
 

@@ -20,4 +20,4 @@ data class UpsertNovelCharactersRequest(
         @field:Size(max = 1000, message = "등장인물 설명은 1000자 이하여야 합니다")
         val description: String?
     )
-} 
+}

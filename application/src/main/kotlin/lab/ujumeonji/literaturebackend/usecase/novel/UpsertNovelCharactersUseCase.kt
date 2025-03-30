@@ -36,7 +36,7 @@ class UpsertNovelCharactersUseCase(
         val characters = request.characters.map { command ->
             novel.upsertCharacter(
                 UpsertCharactersCommand(
-                    CharacterId.from(command.id),
+                    command.id?.let { CharacterId.from(it) },
                     command.name,
                     command.description,
                 ),
