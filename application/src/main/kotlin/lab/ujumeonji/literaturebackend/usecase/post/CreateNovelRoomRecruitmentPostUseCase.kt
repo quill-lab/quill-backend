@@ -10,13 +10,16 @@ import lab.ujumeonji.literaturebackend.support.exception.ErrorCode
 import lab.ujumeonji.literaturebackend.usecase.UseCase
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.stereotype.Component
+import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
 
 @Component
+@Transactional(readOnly = true)
 class CreateNovelRoomRecruitmentPostUseCase @Autowired constructor(
     private val contributorService: ContributorService,
     private val contributorGroupRecruitmentService: ContributorGroupRecruitmentService,
 ) : UseCase<CreateNovelRoomRecruitmentPostUseCase.Request, CreateNovelRoomRecruitmentPostUseCase.Response> {
+
     override fun execute(
         request: Request,
         executedAt: LocalDateTime
