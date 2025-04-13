@@ -18,14 +18,14 @@ class ChapterDataFetcher(
     @DgsQuery
     fun chaptersConnection(
         @RequiredGraphQLAuth accountId: String,
-        @InputArgument novelId: String,
+        @InputArgument contributorGroupId: String,
         @InputArgument offset: Int = 0,
         @InputArgument limit: Int = 20
     ): ChapterConnection {
         val result = findChaptersUseCase.execute(
             request = FindChaptersUseCase.Request(
                 accountId = accountId,
-                novelId = novelId,
+                contributorGroupId = contributorGroupId,
                 offset = offset,
                 limit = limit
             ),

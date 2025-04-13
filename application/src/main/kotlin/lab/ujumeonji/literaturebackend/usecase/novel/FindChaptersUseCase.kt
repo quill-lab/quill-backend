@@ -1,8 +1,8 @@
 package lab.ujumeonji.literaturebackend.usecase.novel
 
 import lab.ujumeonji.literaturebackend.domain.account.AccountId
+import lab.ujumeonji.literaturebackend.domain.contributor.ContributorGroupId
 import lab.ujumeonji.literaturebackend.domain.contributor.ContributorService
-import lab.ujumeonji.literaturebackend.domain.novel.NovelId
 import lab.ujumeonji.literaturebackend.domain.novel.NovelService
 import lab.ujumeonji.literaturebackend.domain.novel.command.ChapterStatusEnum
 import lab.ujumeonji.literaturebackend.support.exception.BusinessException
@@ -20,7 +20,10 @@ class FindChaptersUseCase(
 ) : UseCase<FindChaptersUseCase.Request, FindChaptersUseCase.Response> {
 
     override fun execute(request: Request, executedAt: LocalDateTime): Response {
-        val novel = novelService.findNovel(NovelId.from(request.novelId))
+        val contributorGroup = contributorService.findGroupById(ContributorGroupId.from(request.contributorGroupId))
+            ?: throw BusinessException(ErrorCode.CONTRIBUTOR_GROUP_NOT_FOUND)
+
+        val novel = novelService.findNovel(contributorGroup.novelId)
             ?: throw BusinessException(ErrorCode.NOVEL_NOT_FOUND)
 
         val group = contributorService.findGroupByNovelId(novel.idValue)
@@ -31,7 +34,7 @@ class FindChaptersUseCase(
         }
 
         val pageResponse = novelService.findChaptersByNovelId(
-            novelId = NovelId.from(request.novelId),
+            novelId = novel.idValue,
             offset = request.offset,
             limit = request.limit
         )
@@ -60,7 +63,7 @@ class FindChaptersUseCase(
 
     data class Request(
         val accountId: String,
-        val novelId: String,
+        val contributorGroupId: String,
         val offset: Int = 0,
         val limit: Int = 20
     )
