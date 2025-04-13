@@ -3,9 +3,7 @@ package lab.ujumeonji.literaturebackend.usecase.novel
 import lab.ujumeonji.literaturebackend.domain.account.AccountId
 import lab.ujumeonji.literaturebackend.domain.contributor.ContributorGroupId
 import lab.ujumeonji.literaturebackend.domain.contributor.ContributorService
-import lab.ujumeonji.literaturebackend.domain.novel.CharacterId
 import lab.ujumeonji.literaturebackend.domain.novel.NovelService
-import lab.ujumeonji.literaturebackend.domain.novel.command.UpsertCharactersCommand
 import lab.ujumeonji.literaturebackend.domain.novel.command.UpsertNovelCharacterCommand
 import lab.ujumeonji.literaturebackend.domain.novel.dto.NovelCharacterData
 import lab.ujumeonji.literaturebackend.support.exception.BusinessException
@@ -14,6 +12,7 @@ import lab.ujumeonji.literaturebackend.usecase.UseCase
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
+import lab.ujumeonji.literaturebackend.domain.novel.command.UpsertCharactersCommand
 
 @Component
 @Transactional
@@ -30,20 +29,19 @@ class UpsertNovelCharactersUseCase(
             throw BusinessException(ErrorCode.NO_PERMISSION_TO_UPDATE)
         }
 
-        val novel =
-            novelService.findNovel(contributorGroup.novelId) ?: throw BusinessException(ErrorCode.NOVEL_NOT_FOUND)
+        val novel = novelService.findNovel(contributorGroup.novelId)
+            ?: throw BusinessException(ErrorCode.NOVEL_NOT_FOUND)
 
-        val characters = request.characters.map { command ->
-            novel.upsertCharacter(
+        val characters = novel.replaceCharacters(
+            request.characters.map { command ->
                 UpsertCharactersCommand(
-                    command.id?.let { CharacterId.from(it) },
                     command.name,
-                    command.description,
-                ),
-                AccountId.from(request.accountId),
-                executedAt
-            )
-        }
+                    command.description
+                )
+            },
+            AccountId.from(request.accountId),
+            executedAt
+        )
 
         return Response(
             characters = characters.map { character ->

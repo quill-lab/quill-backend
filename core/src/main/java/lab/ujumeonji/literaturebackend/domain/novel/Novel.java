@@ -38,10 +38,10 @@ public class Novel extends BaseEntity<UUID> {
     @Column(columnDefinition = "text")
     private String synopsis;
 
-    @OneToMany(mappedBy = "novel", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "novel", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<NovelTag> tags = new ArrayList<>();
 
-    @OneToMany(mappedBy = "novel", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "novel", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
     private List<Character> characters = new ArrayList<>();
 
     @OneToMany(mappedBy = "novel", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
@@ -131,8 +131,7 @@ public class Novel extends BaseEntity<UUID> {
             @Nullable Integer startChapterNumber,
             @Nullable Integer endChapterNumber,
             @Nullable String description,
-            @NotNull LocalDateTime now
-    ) {
+            @NotNull LocalDateTime now) {
         this.storyArcs.forEach(storyArc -> {
             if (storyArc.getPhase().equals(phase)) {
                 storyArc.updatePhase(startChapterNumber, endChapterNumber, description, now);
@@ -220,20 +219,16 @@ public class Novel extends BaseEntity<UUID> {
         return Optional.of(chapter);
     }
 
-    public CharacterId upsertCharacter(@Nonnull UpsertCharactersCommand command, @Nonnull AccountId updatedBy, @Nonnull LocalDateTime now) {
-        Optional<Character> character = this.characters
-                .stream()
-                .filter(element -> element.getIdValue().equals(command.getId()))
-                .findFirst();
+    public List<Character> replaceCharacters(@Nonnull List<UpsertCharactersCommand> commands,
+                                             @Nonnull AccountId updatedBy, @Nonnull LocalDateTime now) {
+        // Remove existing characters
+        this.characters.clear();
 
-        if (character.isPresent()) {
-            character.get().update(command.getName(), command.getDescription());
-            return character.get().getIdValue();
-        }
-
-        return this.addCharacter(new AddCharacterCommand(
-                command.getName(),
-                command.getDescription()
-        ), now);
+        // Add new characters
+        List<Character> newCharacters = commands.stream()
+                .map(command -> Character.create(this, command.getName(), command.getDescription(), now))
+                .collect(Collectors.toList());
+        this.characters.addAll(newCharacters);
+        return newCharacters;
     }
 }
