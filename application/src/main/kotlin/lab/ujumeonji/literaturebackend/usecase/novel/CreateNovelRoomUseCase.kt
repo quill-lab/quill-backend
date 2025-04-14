@@ -30,8 +30,6 @@ class CreateNovelRoomUseCase(
 
         val novel = createNovel(request, executedAt)
 
-        novel.createEmptyChapter(executedAt)
-
         val contributorGroup = createContributorGroup(request, novel.idValue, executedAt)
 
         return Response("${contributorGroup.idValue}")
