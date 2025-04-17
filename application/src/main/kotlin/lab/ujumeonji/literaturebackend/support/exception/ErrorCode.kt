@@ -20,6 +20,7 @@ enum class ErrorCode(
     NOVEL_NOT_FOUND(404, "NOVEL-001", "소설을 찾을 수 없습니다."),
     CURRENT_CHAPTER_NOT_EDITABLE(400, "NOVEL-002", "현재 회차는 현재 수정할 수 없는 상태입니다."),
     CHAPTER_ALREADY_REQUESTED(400, "NOVEL-003", "이미 연재 신청 중인 챕터가 존재합니다."),
+    CHAPTER_NOT_FOUND(404, "NOVEL-004", "챕터를 찾을 수 없습니다."),
 
     // Auth 관련 에러
     UNAUTHORIZED(401, "AUTH-000", "로그인 후 서비스 이용이 가능합니다."),

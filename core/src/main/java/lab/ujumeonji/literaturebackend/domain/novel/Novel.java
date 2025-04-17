@@ -231,4 +231,17 @@ public class Novel extends BaseEntity<UUID> {
         this.characters.addAll(newCharacters);
         return newCharacters;
     }
+
+    public boolean updateChapter(@Nonnull ChapterId chapterId, @Nullable String title, @Nonnull LocalDateTime now) {
+        Optional<Chapter> chapter = this.chapters.stream()
+                .filter(c -> c.getIdValue().equals(chapterId))
+                .findFirst();
+
+        if (chapter.isPresent()) {
+            chapter.get().update(title, now);
+            return true;
+        }
+
+        return false;
+    }
 }

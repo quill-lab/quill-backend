@@ -35,6 +35,7 @@ class NovelRoomApiController(
     private val findChapterTextsUseCase: FindChapterTextsUseCase,
     private val createChapterUseCase: CreateChapterUseCase,
     private val upsertNovelCharactersUseCase: UpsertNovelCharactersUseCase,
+    private val updateChapterUseCase: UpdateChapterUseCase
 ) {
 
     @Operation(summary = "소설 공방 수정", description = "소설 공방을 수정합니다.")
@@ -422,6 +423,31 @@ class NovelRoomApiController(
                         id = character.id
                     )
                 }
+            )
+        )
+    }
+
+    @Operation(summary = "챕터 수정", description = "소설 공방의 특정 챕터 정보를 수정합니다.")
+    @PatchMapping("/{novelRoomId}/chapters/{chapterId}")
+    fun updateChapter(
+        @RequiredAuth accountId: String,
+        @PathVariable @ValidUUID novelRoomId: String,
+        @PathVariable @ValidUUID chapterId: String,
+        @Valid @RequestBody request: UpdateChapterRequest
+    ): ResponseEntity<UpdateChapterResponse> {
+        val result = updateChapterUseCase.execute(
+            request = UpdateChapterUseCase.Request(
+                accountId = accountId,
+                contributorGroupId = novelRoomId,
+                chapterId = chapterId,
+                title = request.title,
+            ),
+            executedAt = LocalDateTime.now()
+        )
+
+        return ResponseEntity.ok(
+            UpdateChapterResponse(
+                id = result.id
             )
         )
     }

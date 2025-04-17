@@ -8,6 +8,7 @@ import lab.ujumeonji.literaturebackend.domain.account.AccountId;
 import lab.ujumeonji.literaturebackend.domain.common.BaseEntity;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
+import org.springframework.lang.Nullable;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -131,5 +132,13 @@ public class Chapter extends BaseEntity<UUID> {
 
     Integer getChapterNumber() {
         return chapterNumber;
+    }
+
+    void update(@Nullable String title, @Nonnull LocalDateTime now) {
+        if (this.status != ChapterStatus.REQUESTED) {
+            return;
+        }
+        this.title = title;
+        setUpdatedAt(now);
     }
 }
