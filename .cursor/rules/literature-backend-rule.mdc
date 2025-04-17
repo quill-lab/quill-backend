@@ -1,0 +1,48 @@
+---
+description: 
+globs: 
+alwaysApply: true
+---
+    // Language & Style
+    "Prioritize Kotlin for new features and modules. When modifying existing Java files in the `core` module, maintain Java unless a significant refactor justifies migration.",
+    "Follow standard Kotlin and Java coding conventions and formatting.",
+    "Prefer immutable data structures (`val`, data classes, immutable collections) where possible, especially in Kotlin.",
+    "Utilize Kotlin's null safety features (`?`, `let`, `?:`) correctly. Avoid non-null assertions (`!!`) unless strictly necessary and justified.",
+    "Write clean, readable code. Avoid redundant comments; comment only non-obvious logic or add TODOs/FIXMEs.",
+
+    // Architecture & Structure
+    "Maintain the established layered architecture: `core` (Domain Entities/Interfaces), `application` (Use Cases/Services), `api`/`graphql` (API Controllers/Resolvers/DTOs), `lib` (Shared Utilities).",
+    "Place domain entities and repository interfaces in the `core` module.",
+    "Implement Use Cases in the `application` module, following the existing pattern (e.g., `*UseCase` suffix, Request/Response inner classes).",
+    "Implement REST controllers and related DTOs in the `api` module.",
+    "Implement GraphQL data fetchers, schema-related code, and DTOs in the `graphql` module.",
+    "Ensure code is placed in the correct module based on its responsibility.",
+    "Adhere to Domain-Driven Design (DDD) Aggregate principles. Define clear Aggregate boundaries, each with a designated Aggregate Root entity. All operations (creation, modification, retrieval of internal state) involving entities within an Aggregate must be channeled exclusively through methods exposed on the Aggregate Root. To enforce encapsulation, child entities within an Aggregate should have restricted visibility (e.g., package-private for Java classes in `core`, internal or private visibility for Kotlin classes) preventing direct instantiation or modification from outside the Aggregate Root. Ensure Repositories are defined only for Aggregate Roots.",
+
+    // Frameworks & Libraries
+    "Leverage Spring Boot conventions for configuration, dependency injection (always prefer constructor injection), and component scanning (`@Component`, `@Service`, `@Repository`, `@Configuration`).",
+    "Use Spring Data JPA for database interactions. Define repository interfaces in `core` and implementations potentially elsewhere if needed (though typically handled by Spring Data itself).",
+    "Apply JPA annotations correctly in `core` entities. Ensure relationships (`@OneToMany`, `@ManyToOne`, etc.) are defined with appropriate fetch types (prefer LAZY) and cascade options.",
+    "Respect and maintain the existing soft-delete implementation using `@SQLDelete` and `@Where` annotations on entities.",
+    "When working with `orphanRemoval=true` on collections, ensure the child entity also has soft-delete annotations if physical deletion is not intended.",
+    "For the `graphql` module, follow DGS Framework conventions (`@DgsComponent`, `@DgsQuery`, `@DgsMutation`, `DgsDataFetchingEnvironment`).",
+    "For the `api` module, use Spring Web annotations (`@RestController`, `@RequestMapping`, etc.) and Swagger annotations (`@Operation`, `@Tag`) for documentation.",
+    "Use the Spring AI `ChatClient` for LLM interactions as implemented.",
+
+    // Error Handling & Validation
+    "Use the existing `BusinessException` and `ErrorCode` system for handling domain and application errors. Do not throw generic exceptions.",
+    "Apply Jakarta Bean Validation annotations (`@Valid`, `@NotNull`, `@Size`, etc.) on DTOs for input validation.",
+
+    // Naming Conventions
+    "Follow standard Kotlin/Java naming conventions (PascalCase for classes/interfaces, camelCase for functions/variables).",
+    "Suffix Use Case classes with `UseCase` (e.g., `CreateNovelRoomUseCase`).",
+    "Suffix API/GraphQL DTOs with `Request`, `Response`, or `Data` where appropriate (e.g., `CreateChapterRequest`, `NovelCharacterData`).",
+
+    // Build & Dependencies
+    "Manage dependencies through the respective module's `build.gradle.kts` file.",
+    "Ensure code compiles and passes tests within the Gradle multi-module build system.",
+    "Use the Spring AI BOM for managing Spring AI dependency versions.",
+
+    // Testing
+    "Write unit tests for Use Cases and Domain logic.",
+    "Write integration tests for API/GraphQL endpoints where necessary (place tests in the respective `api` or `graphql` module)."
