@@ -7,7 +7,7 @@ import lab.ujumeonji.literaturebackend.domain.contributor.ContributorService
 import lab.ujumeonji.literaturebackend.domain.novel.ChapterId
 import lab.ujumeonji.literaturebackend.domain.novel.NovelService
 import lab.ujumeonji.literaturebackend.support.exception.BusinessException
-import lab.ujumeonji.literaturebackend.support.exception.ErrorCode
+import lab.ujumeonji.literaturebackend.support.exception.ErrorCode // Ensure ErrorCode is imported
 import lab.ujumeonji.literaturebackend.usecase.UseCase
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
@@ -31,6 +31,10 @@ class WriteChapterTextUseCase(
 
         if (!contributorGroup.isParticipating(accountId)) {
             throw BusinessException(ErrorCode.NO_PERMISSION_TO_UPDATE)
+        }
+
+        if (!contributorGroup.isCurrentWriter(accountId)) {
+            throw BusinessException(ErrorCode.NOT_YOUR_TURN_TO_WRITE)
         }
 
         val novel = novelService.findNovel(contributorGroup.novelId)
