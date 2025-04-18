@@ -4,6 +4,8 @@ import com.github.f4b6a3.uuid.UuidCreator;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.EnumType;
 import lab.ujumeonji.literaturebackend.domain.account.AccountId;
 import lab.ujumeonji.literaturebackend.domain.common.BaseEntity;
 import lab.ujumeonji.literaturebackend.domain.contributor.ContributorGroupId;
@@ -34,6 +36,9 @@ public class ContributorGroupRecruitment extends BaseEntity<UUID> {
 
     private UUID authorId;
 
+    @Enumerated(EnumType.STRING)
+    private ContributorGroupRecruitmentStatus status;
+
     protected ContributorGroupRecruitment() {
     }
 
@@ -53,6 +58,7 @@ public class ContributorGroupRecruitment extends BaseEntity<UUID> {
         this.title = title;
         this.content = content;
         this.link = link;
+        this.status = ContributorGroupRecruitmentStatus.RECRUITING;
         setCreatedAt(createdAt);
         setUpdatedAt(updatedAt);
         setDeletedAt(deletedAt);
@@ -84,5 +90,9 @@ public class ContributorGroupRecruitment extends BaseEntity<UUID> {
 
     public ContributorGroupRecruitmentId getIdValue() {
         return ContributorGroupRecruitmentId.from(this.id);
+    }
+
+    public ContributorGroupRecruitmentStatus getStatus() {
+        return status;
     }
 }
