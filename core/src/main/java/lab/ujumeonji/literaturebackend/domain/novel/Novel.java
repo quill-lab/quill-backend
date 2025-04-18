@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lab.ujumeonji.literaturebackend.domain.account.AccountId;
 import lab.ujumeonji.literaturebackend.domain.common.BaseEntity;
+import lab.ujumeonji.literaturebackend.domain.contributor.ContributorId;
 import lab.ujumeonji.literaturebackend.domain.novel.command.AddCharacterCommand;
 import lab.ujumeonji.literaturebackend.domain.novel.command.UpdateNovelCommand;
 import lab.ujumeonji.literaturebackend.domain.novel.command.UpsertCharactersCommand;
@@ -207,7 +208,7 @@ public class Novel extends BaseEntity<UUID> {
                 .orElse(Collections.emptyList());
     }
 
-    public Optional<Chapter> createEmptyChapter(@Nonnull List<Contributor> orderedContributors,
+    public Optional<Chapter> createEmptyChapter(@Nonnull List<ContributorId> orderedContributorIds,
             @Nonnull LocalDateTime now) {
         boolean hasRequestedChapter = this.chapters.stream()
                 .anyMatch(chapter -> chapter.getStatus() == ChapterStatus.REQUESTED);
@@ -219,15 +220,14 @@ public class Novel extends BaseEntity<UUID> {
         Chapter chapter = Chapter.createEmpty(this, now);
         this.chapters.add(chapter);
 
-        // Create ChapterAuthor links
-        orderedContributors.forEach(contributor -> {
-            boolean isFirstWriter = contributor.getWritingOrder() == 0;
+        orderedContributorIds.forEach(contributorId -> {
+            boolean isFirstWriter = orderedContributorIds.indexOf(contributorId) == 0;
             ChapterAuthor chapterAuthor = ChapterAuthor.create(
-                    chapter, // Link to the new chapter
-                    contributor, // Link to the contributor from the group
-                    isFirstWriter, // Set initial writer status
+                    chapter,
+                    contributorId,
+                    isFirstWriter,
                     now);
-            chapter.addChapterAuthor(chapterAuthor); // Add the link to the chapter
+            chapter.addChapterAuthor(chapterAuthor);
         });
 
         return Optional.of(chapter);

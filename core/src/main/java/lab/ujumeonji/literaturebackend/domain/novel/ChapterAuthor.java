@@ -2,8 +2,10 @@ package lab.ujumeonji.literaturebackend.domain.novel;
 
 import com.github.f4b6a3.uuid.UuidCreator;
 import jakarta.persistence.*;
-import lab.ujumeonji.literaturebackend.domain.common.BaseEntityWithoutUpdate;
-import lab.ujumeonji.literaturebackend.domain.contributor.Contributor;
+import lab.ujumeonji.literaturebackend.domain.common.BaseEntity;
+import lab.ujumeonji.literaturebackend.domain.contributor.ContributorId;
+import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.Where;
 import org.jetbrains.annotations.NotNull;
 
 import java.time.LocalDateTime;
@@ -11,7 +13,9 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "chapter_authors")
-public class ChapterAuthor extends BaseEntityWithoutUpdate<UUID> {
+@SQLDelete(sql = "update chapter_authors set deleted_at = current_timestamp where id = ?")
+@Where(clause = "deleted_at IS NULL")
+public class ChapterAuthor extends BaseEntity<UUID> {
 
     @Id
     private UUID id;
@@ -20,9 +24,8 @@ public class ChapterAuthor extends BaseEntityWithoutUpdate<UUID> {
     @JoinColumn(name = "chapter_id", nullable = false, foreignKey = @ForeignKey(name = "fk_chapter_author_chapter"))
     private Chapter chapter;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "contributor_id", nullable = false, foreignKey = @ForeignKey(name = "fk_chapter_author_contributor"))
-    private Contributor contributor;
+    @Column(name = "contributor_id", nullable = false)
+    private UUID contributorId;
 
     @Column(nullable = false)
     private boolean isCurrentWriter;
@@ -32,22 +35,26 @@ public class ChapterAuthor extends BaseEntityWithoutUpdate<UUID> {
 
     ChapterAuthor(
             @NotNull Chapter chapter,
-            @NotNull Contributor contributor,
+            @NotNull ContributorId contributorId,
             boolean isCurrentWriter,
-            @NotNull LocalDateTime createdAt) {
+            @NotNull LocalDateTime createdAt,
+            @NotNull LocalDateTime updatedAt,
+            LocalDateTime deletedAt) {
         this.id = UuidCreator.getTimeOrderedEpoch();
         this.chapter = chapter;
-        this.contributor = contributor;
+        this.contributorId = contributorId.getId();
         this.isCurrentWriter = isCurrentWriter;
         setCreatedAt(createdAt);
+        setUpdatedAt(updatedAt);
+        setDeletedAt(deletedAt);
     }
 
     public static ChapterAuthor create(
             @NotNull Chapter chapter,
-            @NotNull Contributor contributor,
+            @NotNull ContributorId contributorId,
             boolean isCurrentWriter,
             @NotNull LocalDateTime now) {
-        return new ChapterAuthor(chapter, contributor, isCurrentWriter, now);
+        return new ChapterAuthor(chapter, contributorId, isCurrentWriter, now, now, null);
     }
 
     @Override
@@ -55,19 +62,19 @@ public class ChapterAuthor extends BaseEntityWithoutUpdate<UUID> {
         return id;
     }
 
-    public Chapter getChapter() {
-        return chapter;
+    public ChapterAuthorId getIdValue() {
+        return ChapterAuthorId.from(this.id);
     }
 
-    public Contributor getContributor() {
-        return contributor;
-    }
-
-    public boolean isCurrentWriter() {
+    boolean isCurrentWriter() {
         return isCurrentWriter;
     }
 
-    void setCurrentWriter(boolean currentWriter) {
-        isCurrentWriter = currentWriter;
+    void markAsCurrentWriter() {
+        this.isCurrentWriter = true;
+    }
+
+    void unmarkAsCurrentWriter() {
+        this.isCurrentWriter = false;
     }
 }
