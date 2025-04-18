@@ -30,9 +30,6 @@ public class Contributor extends BaseEntity<UUID> {
     @Column
     private Integer writingOrder;
 
-    @Column
-    private boolean isCurrentWriter;
-
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "contributor_group_id", nullable = false, foreignKey = @ForeignKey(name = "fk_contributor_contributor_group"))
     private ContributorGroup contributorGroup;
@@ -50,7 +47,6 @@ public class Contributor extends BaseEntity<UUID> {
         this.contributorGroup = contributorGroup;
         this.role = role;
         this.writingOrder = writingOrder;
-        this.isCurrentWriter = false;
         setCreatedAt(createdAt);
         setUpdatedAt(updatedAt);
         setDeletedAt(deletedAt);
@@ -84,23 +80,11 @@ public class Contributor extends BaseEntity<UUID> {
         return getDeletedAt() != null;
     }
 
-    boolean isCurrentWriter() {
-        return isCurrentWriter;
-    }
-
-    void updateWritingOrder(Integer writingOrder) {
-        this.writingOrder = writingOrder;
-    }
-
     ContributorId getIdValue() {
         return ContributorId.from(this.id);
     }
 
-    void setCurrentWriter() {
-        this.isCurrentWriter = true;
-    }
-
-    void unsetCurrentWriter() {
-        this.isCurrentWriter = false;
+    void updateWritingOrder(Integer writingOrder) {
+        this.writingOrder = writingOrder;
     }
 }

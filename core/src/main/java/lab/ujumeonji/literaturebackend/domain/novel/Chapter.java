@@ -12,9 +12,15 @@ import org.springframework.lang.Nullable;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+
+// Import for the new relationship
+import lab.ujumeonji.literaturebackend.domain.contributor.ChapterContributor;
+import lab.ujumeonji.literaturebackend.domain.novel.ChapterAuthor;
+import lab.ujumeonji.literaturebackend.domain.contributor.Contributor;
 
 @Entity
 @Table(name = "chapters")
@@ -37,6 +43,12 @@ public class Chapter extends BaseEntity<UUID> {
 
     @OneToMany(mappedBy = "chapter", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
     private List<ChapterText> chapterTexts = new ArrayList<>();
+
+    @OneToMany(mappedBy = "chapter", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    private List<Contributor> contributors = new ArrayList<>();
+
+    @OneToMany(mappedBy = "chapter", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
+    private List<ChapterAuthor> chapterAuthors = new ArrayList<>();
 
     @Column
     private LocalDateTime approvedAt;
@@ -69,7 +81,7 @@ public class Chapter extends BaseEntity<UUID> {
     }
 
     static Chapter create(@Nonnull String title, @Nonnull String description, @Nonnull Novel novel,
-                          int chapterNumber, @Nonnull LocalDateTime now) {
+            int chapterNumber, @Nonnull LocalDateTime now) {
         return new Chapter(title, description, novel, chapterNumber, now, now, null);
     }
 
@@ -88,8 +100,8 @@ public class Chapter extends BaseEntity<UUID> {
 
     @NotNull
     public Optional<ChapterText> addChapterText(@Nonnull AccountId accountId,
-                                                @Nonnull String content,
-                                                @Nonnull LocalDateTime now) {
+            @Nonnull String content,
+            @Nonnull LocalDateTime now) {
         if (this.status != ChapterStatus.IN_PROGRESS) {
             return Optional.empty();
         }
@@ -133,6 +145,69 @@ public class Chapter extends BaseEntity<UUID> {
 
     Integer getChapterNumber() {
         return chapterNumber;
+    }
+
+    public List<Contributor> getOrderedContributors() {
+        return this.contributors.stream()
+                .filter(c -> !c.isDeleted())
+                .sorted(Comparator.comparingInt(Contributor::getWritingOrder))
+                .toList();
+    }
+
+    @Nullable
+    public Contributor getCurrentWriter() {
+        return this.contributors.stream()
+                .filter(c -> !c.isDeleted() && c.isCurrentWriter())
+                .findFirst()
+                .orElse(null);
+    }
+
+    void addContributor(Contributor contributor) {
+        this.contributors.add(contributor);
+    }
+
+    public List<ChapterAuthor> getOrderedChapterAuthors() {
+        return this.chapterAuthors.stream()
+                .filter(ca -> ca.getContributor() != null && !ca.getContributor().isDeleted())
+                .sorted(Comparator.comparingInt(ca -> ca.getContributor().getWritingOrder()))
+                .toList();
+    }
+
+    @Nullable
+    public ChapterAuthor getCurrentChapterAuthor() {
+        return this.chapterAuthors.stream()
+                .filter(ChapterAuthor::isCurrentWriter)
+                .findFirst()
+                .orElse(null);
+    }
+
+    void addChapterAuthor(ChapterAuthor chapterAuthor) {
+        this.chapterAuthors.add(chapterAuthor);
+    }
+
+    public void advanceTurn() {
+        List<ChapterAuthor> orderedActiveLinks = getOrderedChapterAuthors();
+        if (orderedActiveLinks.isEmpty()) {
+            return;
+        }
+
+        ChapterAuthor currentLink = getCurrentChapterAuthor();
+
+        if (currentLink == null) {
+            orderedActiveLinks.get(0).setCurrentWriter(true);
+            return;
+        }
+
+        currentLink.setCurrentWriter(false);
+
+        int currentIndex = orderedActiveLinks.indexOf(currentLink);
+        if (currentIndex == -1) {
+            orderedActiveLinks.get(0).setCurrentWriter(true);
+            return;
+        }
+
+        int nextIndex = (currentIndex + 1) % orderedActiveLinks.size();
+        orderedActiveLinks.get(nextIndex).setCurrentWriter(true);
     }
 
     void update(@Nullable String title, @Nonnull LocalDateTime now) {

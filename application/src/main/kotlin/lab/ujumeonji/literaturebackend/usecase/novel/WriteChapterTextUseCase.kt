@@ -33,21 +33,32 @@ class WriteChapterTextUseCase(
             throw BusinessException(ErrorCode.NO_PERMISSION_TO_UPDATE)
         }
 
-        if (!contributorGroup.isCurrentWriter(accountId)) {
-            throw BusinessException(ErrorCode.NOT_YOUR_TURN_TO_WRITE)
-        }
-
         val novel = novelService.findNovel(contributorGroup.novelId)
             ?: throw BusinessException(ErrorCode.NOVEL_NOT_FOUND)
 
+        val chapterId = ChapterId.from(request.chapterId)
+        val chapter = novel.getChapter(chapterId)
+            ?: throw BusinessException(ErrorCode.CHAPTER_NOT_FOUND)
+
+        // Find the ChapterAuthor link for the current user and chapter
+        val currentChapterAuthor = chapter.chapterAuthors.find {
+            it.contributor.accountId == accountId
+        } ?: throw BusinessException(ErrorCode.NO_PERMISSION_TO_UPDATE) // Or a more specific error
+
+        // Check if this user is the designated writer for THIS chapter via the link
+        if (!currentChapterAuthor.isCurrentWriter) {
+             throw BusinessException(ErrorCode.NOT_YOUR_TURN_TO_WRITE)
+        }
+
         val addedChapterText = novel.addChapterText(
             accountId,
-            ChapterId.from(request.chapterId),
+            chapterId,
             request.content,
             executedAt,
         ).orElseThrow { BusinessException(ErrorCode.CURRENT_CHAPTER_NOT_EDITABLE) }
 
-        contributorGroup.advanceTurn()
+        // Advance turn within the specific chapter using the new logic
+        chapter.advanceTurn()
 
         return Response(
             id = addedChapterText.idValue.toString()

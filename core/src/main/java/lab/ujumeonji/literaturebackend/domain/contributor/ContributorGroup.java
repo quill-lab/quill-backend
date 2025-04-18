@@ -50,7 +50,7 @@ public class ContributorGroup extends BaseEntity<UUID> {
     }
 
     ContributorGroup(int maxContributorCount, @Nonnull NovelId novelId, @Nonnull LocalDateTime createdAt,
-                     @Nonnull LocalDateTime updatedAt, LocalDateTime deletedAt) {
+            @Nonnull LocalDateTime updatedAt, LocalDateTime deletedAt) {
         this.id = UuidCreator.getTimeOrderedEpoch();
         this.contributorCount = 0;
         this.maxContributorCount = maxContributorCount;
@@ -66,7 +66,7 @@ public class ContributorGroup extends BaseEntity<UUID> {
     }
 
     static ContributorGroup create(@Nonnull AccountId accountId, int maxContributorCount, @Nonnull NovelId novelId,
-                                   @Nonnull LocalDateTime now) {
+            @Nonnull LocalDateTime now) {
         ContributorGroup createdContributorGroup = new ContributorGroup(maxContributorCount, novelId, now, now, null);
 
         createdContributorGroup.addContributor(accountId, ContributorRole.MAIN, now);
@@ -201,65 +201,5 @@ public class ContributorGroup extends BaseEntity<UUID> {
                 .map(Contributor::getRole)
                 .findFirst()
                 .orElse(null);
-    }
-
-    @Nullable
-    private Contributor getCurrentContributor() {
-        return contributors.stream()
-                .filter(Contributor::isCurrentWriter)
-                .findFirst()
-                .orElse(null);
-    }
-
-    @Nullable
-    public AccountId getActiveContributorAccountId() {
-        Contributor currentContributor = getCurrentContributor();
-        return currentContributor != null ? currentContributor.getAccountId() : null;
-    }
-
-    public boolean isCurrentWriter(@Nonnull AccountId accountId) {
-        Contributor currentContributor = getCurrentContributor();
-        return currentContributor != null && currentContributor.getAccountId().equals(accountId);
-    }
-
-    public void advanceTurn() {
-        Contributor currentContributor = getCurrentContributor();
-        if (currentContributor == null) {
-            contributors.stream()
-                    .filter(c -> !c.isDeleted())
-                    .min(Comparator.comparingInt(Contributor::getWritingOrder))
-                    .ifPresent(Contributor::setCurrentWriter);
-            return;
-        }
-
-        currentContributor.unsetCurrentWriter();
-
-        int nextWritingOrder = (currentContributor.getWritingOrder() + 1) % contributorCount;
-
-        Contributor nextContributor = contributors.stream()
-                .filter(c -> !c.isDeleted() && c.getWritingOrder() == nextWritingOrder)
-                .findFirst()
-                .orElse(null);
-
-        if (nextContributor == null) {
-            int searchOrder = (nextWritingOrder + 1) % contributorCount;
-            while (searchOrder != currentContributor.getWritingOrder()) {
-                int finalSearchOrder = searchOrder;
-                Contributor potentialNext = contributors.stream()
-                        .filter(c -> !c.isDeleted() && c.getWritingOrder() == finalSearchOrder)
-                        .findFirst()
-                        .orElse(null);
-                if (potentialNext != null) {
-                    nextContributor = potentialNext;
-                    break;
-                }
-                searchOrder = (searchOrder + 1) % contributorCount;
-            }
-            if (nextContributor == null) {
-                nextContributor = currentContributor;
-            }
-        }
-
-        nextContributor.setCurrentWriter();
     }
 }

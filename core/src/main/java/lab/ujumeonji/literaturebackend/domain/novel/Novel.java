@@ -9,6 +9,7 @@ import lab.ujumeonji.literaturebackend.domain.common.BaseEntity;
 import lab.ujumeonji.literaturebackend.domain.novel.command.AddCharacterCommand;
 import lab.ujumeonji.literaturebackend.domain.novel.command.UpdateNovelCommand;
 import lab.ujumeonji.literaturebackend.domain.novel.command.UpsertCharactersCommand;
+import lab.ujumeonji.literaturebackend.domain.contributor.Contributor;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 import org.jetbrains.annotations.Nullable;
@@ -58,10 +59,10 @@ public class Novel extends BaseEntity<UUID> {
     }
 
     Novel(String title, String description, String coverImage, List<String> tags, String synopsis,
-          NovelCategory category,
-          LocalDateTime createdAt,
-          LocalDateTime updatedAt,
-          LocalDateTime deletedAt) {
+            NovelCategory category,
+            LocalDateTime createdAt,
+            LocalDateTime updatedAt,
+            LocalDateTime deletedAt) {
         this.id = UuidCreator.getTimeOrderedEpoch();
         this.title = title;
         this.description = description;
@@ -78,8 +79,8 @@ public class Novel extends BaseEntity<UUID> {
     }
 
     static Novel create(String title, String description, NovelCategory category, String coverImage, List<String> tags,
-                        String synopsis,
-                        LocalDateTime now) {
+            String synopsis,
+            LocalDateTime now) {
         return new Novel(title, description, coverImage, tags, synopsis, category, now, now, null);
     }
 
@@ -186,8 +187,8 @@ public class Novel extends BaseEntity<UUID> {
 
     @Nonnull
     public Optional<ChapterText> addChapterText(@Nonnull AccountId accountId, @Nonnull ChapterId chapterId,
-                                                @Nonnull String content,
-                                                @Nonnull LocalDateTime now) {
+            @Nonnull String content,
+            @Nonnull LocalDateTime now) {
         return this.chapters.stream()
                 .filter(c -> c.getIdValue().equals(chapterId))
                 .findFirst()
@@ -206,7 +207,8 @@ public class Novel extends BaseEntity<UUID> {
                 .orElse(Collections.emptyList());
     }
 
-    public Optional<Chapter> createEmptyChapter(@Nonnull LocalDateTime now) {
+    public Optional<Chapter> createEmptyChapter(@Nonnull List<Contributor> orderedContributors,
+            @Nonnull LocalDateTime now) {
         boolean hasRequestedChapter = this.chapters.stream()
                 .anyMatch(chapter -> chapter.getStatus() == ChapterStatus.REQUESTED);
 
@@ -216,11 +218,23 @@ public class Novel extends BaseEntity<UUID> {
 
         Chapter chapter = Chapter.createEmpty(this, now);
         this.chapters.add(chapter);
+
+        // Create ChapterAuthor links
+        orderedContributors.forEach(contributor -> {
+            boolean isFirstWriter = contributor.getWritingOrder() == 0;
+            ChapterAuthor chapterAuthor = ChapterAuthor.create(
+                    chapter, // Link to the new chapter
+                    contributor, // Link to the contributor from the group
+                    isFirstWriter, // Set initial writer status
+                    now);
+            chapter.addChapterAuthor(chapterAuthor); // Add the link to the chapter
+        });
+
         return Optional.of(chapter);
     }
 
     public List<Character> replaceCharacters(@Nonnull List<UpsertCharactersCommand> commands,
-                                             @Nonnull AccountId updatedBy, @Nonnull LocalDateTime now) {
+            @Nonnull AccountId updatedBy, @Nonnull LocalDateTime now) {
         // Remove existing characters
         this.characters.clear();
 
