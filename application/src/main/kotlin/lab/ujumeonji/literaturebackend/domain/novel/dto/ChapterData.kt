@@ -6,7 +6,7 @@ import java.time.LocalDateTime
 
 data class ChapterData(
     val id: ChapterId,
-    val title: String,
+    val title: String?,
     val description: String?,
     val chapterNumber: Int,
     val status: ChapterStatus,

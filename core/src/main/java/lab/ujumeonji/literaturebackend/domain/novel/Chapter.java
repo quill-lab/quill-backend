@@ -110,6 +110,7 @@ public class Chapter extends BaseEntity<UUID> {
         return this.chapterTexts;
     }
 
+    @Nullable
     String getTitle() {
         return title;
     }
