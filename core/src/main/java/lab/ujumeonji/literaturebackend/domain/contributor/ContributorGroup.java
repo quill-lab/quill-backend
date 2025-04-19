@@ -12,8 +12,8 @@ import org.jetbrains.annotations.Nullable;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 @Entity
@@ -50,7 +50,7 @@ public class ContributorGroup extends BaseEntity<UUID> {
     }
 
     ContributorGroup(int maxContributorCount, @Nonnull NovelId novelId, @Nonnull LocalDateTime createdAt,
-            @Nonnull LocalDateTime updatedAt, LocalDateTime deletedAt) {
+                     @Nonnull LocalDateTime updatedAt, LocalDateTime deletedAt) {
         this.id = UuidCreator.getTimeOrderedEpoch();
         this.contributorCount = 0;
         this.maxContributorCount = maxContributorCount;
@@ -66,7 +66,7 @@ public class ContributorGroup extends BaseEntity<UUID> {
     }
 
     static ContributorGroup create(@Nonnull AccountId accountId, int maxContributorCount, @Nonnull NovelId novelId,
-            @Nonnull LocalDateTime now) {
+                                   @Nonnull LocalDateTime now) {
         ContributorGroup createdContributorGroup = new ContributorGroup(maxContributorCount, novelId, now, now, null);
 
         createdContributorGroup.addContributor(accountId, ContributorRole.MAIN, now);
@@ -102,9 +102,14 @@ public class ContributorGroup extends BaseEntity<UUID> {
         }
 
         Contributor contributor = Contributor.create(accountId, this, role, contributorCount, now);
-        contributor.setCurrentWriter();
         contributors.add(contributor);
         contributorCount++;
+    }
+
+    public Optional<Contributor> findContributorByAccountId(AccountId accountId) {
+        return contributors.stream()
+                .filter(contributor -> contributor.getAccountId().equals(accountId))
+                .findFirst();
     }
 
     @Override

@@ -64,6 +64,10 @@ public class Contributor extends BaseEntity<UUID> {
         return id;
     }
 
+    public ContributorId getValueId() {
+        return ContributorId.from(id);
+    }
+
     public AccountId getAccountId() {
         return AccountId.from(accountId);
     }
