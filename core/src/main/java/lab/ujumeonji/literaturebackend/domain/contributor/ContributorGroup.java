@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "contributor_groups")
@@ -138,8 +139,8 @@ public class ContributorGroup extends BaseEntity<UUID> {
         return completedAt;
     }
 
-    public List<Contributor> getContributors() {
-        return contributors;
+    public List<ContributorInfo> getContributors() {
+        return contributors.stream().map(ContributorInfo::from).collect(Collectors.toList());
     }
 
     public boolean hasManagePermission(@Nonnull AccountId accountId) {
