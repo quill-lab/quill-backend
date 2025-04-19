@@ -8,6 +8,7 @@ import lab.ujumeonji.literaturebackend.domain.account.AccountId;
 import lab.ujumeonji.literaturebackend.domain.common.BaseEntity;
 import lab.ujumeonji.literaturebackend.domain.contributor.Contributor;
 import lab.ujumeonji.literaturebackend.domain.contributor.ContributorId;
+import lab.ujumeonji.literaturebackend.domain.contributor.ContributorInfo;
 import lab.ujumeonji.literaturebackend.domain.novel.command.AddCharacterCommand;
 import lab.ujumeonji.literaturebackend.domain.novel.command.UpdateNovelCommand;
 import lab.ujumeonji.literaturebackend.domain.novel.command.UpsertCharactersCommand;
@@ -248,18 +249,14 @@ public class Novel extends BaseEntity<UUID> {
 
     @Nonnull
     public Optional<ChapterText> writeToChapter(
-            @Nonnull Contributor contributor,
+            @Nonnull ContributorInfo contributor,
             @Nonnull ChapterId chapterId,
             @Nonnull String content,
             @Nonnull LocalDateTime now) {
-        Optional<Chapter> chapter = this.chapters.stream()
+        Optional<Chapter> chapterOpt = this.chapters.stream()
                 .filter(c -> c.getIdValue().equals(chapterId))
                 .findFirst();
 
-        if (chapter.isPresent()) {
-            return chapter.get().addChapterText(contributor, content, now);
-        }
-
-        return Optional.empty();
+        return chapterOpt.flatMap(chapter -> chapter.addChapterText(contributor, content, now));
     }
 }

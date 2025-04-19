@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lab.ujumeonji.literaturebackend.domain.common.BaseEntity;
 import lab.ujumeonji.literaturebackend.domain.contributor.Contributor;
+import lab.ujumeonji.literaturebackend.domain.contributor.ContributorInfo;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 import org.springframework.lang.Nullable;
@@ -90,7 +91,7 @@ public class Chapter extends BaseEntity<UUID> {
     }
 
     @NotNull
-    public Optional<ChapterText> addChapterText(@Nonnull Contributor contributor,
+    public Optional<ChapterText> addChapterText(@Nonnull ContributorInfo contributor,
                                                 @Nonnull String content,
                                                 @Nonnull LocalDateTime now) {
         if (this.status != ChapterStatus.IN_PROGRESS) {
@@ -100,7 +101,7 @@ public class Chapter extends BaseEntity<UUID> {
         ChapterText createdChapterText = ChapterText.create(
                 this,
                 contributor.getAccountId(),
-                contributor.getValueId(),
+                contributor.getContributorId(),
                 content, now);
 
         this.chapterTexts.add(

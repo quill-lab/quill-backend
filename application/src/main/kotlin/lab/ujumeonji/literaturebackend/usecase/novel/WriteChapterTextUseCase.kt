@@ -36,14 +36,14 @@ class WriteChapterTextUseCase(
         val novel = novelService.findNovel(contributorGroup.novelId)
             ?: throw BusinessException(ErrorCode.NOVEL_NOT_FOUND)
 
-        val contributor = contributorGroup.findContributorByAccountId(accountId)
+        val contributorInfo = contributorGroup.findContributorInfoByAccountId(accountId)
 
-        if (contributor.isEmpty) {
+        if (contributorInfo.isEmpty) {
             throw BusinessException(ErrorCode.CONTRIBUTOR_NOT_FOUND)
         }
 
         val addedChapterText = novel.writeToChapter(
-            contributor.get(),
+            contributorInfo.get(),
             ChapterId.from(request.chapterId),
             request.content,
             executedAt
