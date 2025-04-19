@@ -7,11 +7,12 @@ import lab.ujumeonji.literaturebackend.domain.novel.NovelId
 import lab.ujumeonji.literaturebackend.domain.novel.NovelService
 import lab.ujumeonji.literaturebackend.domain.novel.command.CreateNovelCommand
 import lab.ujumeonji.literaturebackend.domain.novel.command.NovelCategoryEnum
+import lab.ujumeonji.literaturebackend.support.exception.BusinessException
+import lab.ujumeonji.literaturebackend.support.exception.ErrorCode
 import lab.ujumeonji.literaturebackend.usecase.UseCase
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
-import java.util.Comparator
 
 @Component
 @Transactional
@@ -33,23 +34,15 @@ class CreateNovelRoomUseCase(
 
         val contributorGroup = createContributorGroup(request, novel.idValue, executedAt)
 
-        // Get ordered contributors from the newly created group
         val orderedContributors = contributorGroup.contributors
-            .filter { !it.isDeleted }
             .sortedBy { it.writingOrder }
             .toList()
 
-        // Check if contributors list is valid (should contain at least the creator)
         if (orderedContributors.isEmpty()) {
-             // This should ideally not happen if group creation ensures owner is added
-            throw IllegalStateException("Contributor group created without any contributors.")
+            throw BusinessException(ErrorCode.CONTRIBUTOR_GROUP_EMPTY)
         }
 
-        novel.createEmptyChapter(executedAt)
-        // Pass the ordered contributors
         novel.createEmptyChapter(orderedContributors, executedAt)
-
-        val contributorGroup = createContributorGroup(request, novel.idValue, executedAt)
 
         return Response("${contributorGroup.idValue}")
     }

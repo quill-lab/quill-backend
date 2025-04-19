@@ -28,7 +28,7 @@ class FindNovelRoomParticipantsUseCase(
         }
 
         val contributors = contributorGroup.contributors
-            .sortedBy { it.writingOrder ?: Int.MAX_VALUE }
+            .sortedBy { it.writingOrder }
         val accountIds = contributors.map { it.accountId }
         val accounts = accountService.findByIds(accountIds).associateBy { it.idValue }
 

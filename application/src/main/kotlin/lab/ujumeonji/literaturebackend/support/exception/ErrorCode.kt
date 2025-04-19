@@ -12,6 +12,7 @@ enum class ErrorCode(
     NO_PERMISSION_TO_VIEW(403, "CONTRIBUTOR-004", "조회 권한이 없습니다."),
     CONTRIBUTOR_NOT_FOUND(404, "CONTRIBUTOR-005", "기여자를 찾을 수 없습니다."),
     NOT_YOUR_TURN_TO_WRITE(403, "CONTRIBUTOR-006", "현재 글 작성 순서가 아닙니다."),
+    CONTRIBUTOR_GROUP_EMPTY(400, "CONTRIBUTOR-007", "기여자 그룹에 참여자가 없습니다."),
 
     // Account 관련 에러
     ACCOUNT_NOT_FOUND(404, "ACCOUNT-001", "계정을 찾을 수 없습니다."),

@@ -30,9 +30,7 @@ class CreateChapterUseCase(
         val novel = novelService.findNovel(contributorGroup.novelId)
             ?: throw BusinessException(ErrorCode.NOVEL_NOT_FOUND)
 
-        // Get ordered contributors from the group
         val orderedContributors = contributorGroup.contributors
-            .filter { !it.isDeleted }
             .sortedBy { it.writingOrder }
             .toList()
 
