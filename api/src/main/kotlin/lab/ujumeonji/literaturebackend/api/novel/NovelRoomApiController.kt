@@ -94,12 +94,6 @@ class NovelRoomApiController(
                 role = result.role,
                 contributorCount = result.contributorCount,
                 maxContributorCount = result.maxContributorCount,
-                author = result.author?.let {
-                    ViewNovelRoomResponse.Author(
-                        id = it.id,
-                        name = it.name
-                    )
-                },
                 status = result.status,
                 tags = result.tags
             )

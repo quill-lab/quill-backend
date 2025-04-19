@@ -17,17 +17,12 @@ data class JoinedNovelRoomsResponse(
         val role: String,
         val contributorCount: Int,
         val maxContributorCount: Int,
-        val author: Author?,
         val status: String,
     ) {
+
         data class Category(
             val name: String,
             val alias: String,
-        )
-
-        data class Author(
-            val id: String,
-            val name: String,
         )
     }
 }

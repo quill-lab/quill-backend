@@ -36,10 +36,6 @@ class ViewJoinedNovelRoomUseCase(
         val novel = novelService.findNovel(contributorGroup.novelId)
             ?: throw BusinessException(ErrorCode.NOVEL_NOT_FOUND)
 
-        val currentAuthorAccountId = contributorGroup.activeContributorAccountId
-
-        val currentAuthor = currentAuthorAccountId?.let { accountService.findById(it) }
-
         return Response(
             id = contributorGroup.idValue.toString(),
             category = Response.Category(
@@ -56,12 +52,6 @@ class ViewJoinedNovelRoomUseCase(
             ),
             contributorCount = contributorGroup.contributorCount,
             maxContributorCount = contributorGroup.maxContributorCount,
-            author = currentAuthor?.let {
-                Response.Author(
-                    id = it.idValue.toString(),
-                    name = it.name
-                )
-            },
             status = ContributorGroupStatusEnum.fromContributorGroupStatus(contributorGroup.status),
             tags = novel.tagNames
         )
@@ -83,7 +73,6 @@ class ViewJoinedNovelRoomUseCase(
         val role: ContributorRoleEnum,
         val contributorCount: Int,
         val maxContributorCount: Int,
-        val author: Author?,
         val status: ContributorGroupStatusEnum,
         val tags: List<String>
     ) {
@@ -91,11 +80,6 @@ class ViewJoinedNovelRoomUseCase(
         data class Category(
             val name: String,
             val alias: String,
-        )
-
-        data class Author(
-            val id: String,
-            val name: String,
         )
     }
 }

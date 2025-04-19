@@ -1,27 +1,47 @@
 package lab.ujumeonji.literaturebackend.domain.novel;
 
-import jakarta.persistence.Embeddable;
-import lombok.AccessLevel;
-import lombok.EqualsAndHashCode;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.Serializable;
 import java.util.UUID;
 
-@Getter
-@Embeddable
-@EqualsAndHashCode
-@NoArgsConstructor(access = AccessLevel.PROTECTED)
-public class ChapterAuthorId implements Serializable {
-    private UUID id;
+public class ChapterAuthorId {
 
-    private ChapterAuthorId(@NotNull UUID id) {
+    private final UUID id;
+
+    public ChapterAuthorId(UUID id) {
         this.id = id;
     }
 
-    public static ChapterAuthorId from(@NotNull UUID id) {
+    @NotNull
+    public static ChapterAuthorId from(UUID id) {
         return new ChapterAuthorId(id);
+    }
+
+    @NotNull
+    public static ChapterAuthorId from(String id) {
+        return new ChapterAuthorId(UUID.fromString(id));
+    }
+
+    public UUID getId() {
+        return id;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (!(o instanceof ChapterAuthorId chapterAuthorId))
+            return false;
+        return id.equals(chapterAuthorId.id);
+    }
+
+    @Override
+    public int hashCode() {
+        return id.hashCode();
+    }
+
+    @Override
+    public String toString() {
+        return id.toString();
     }
 }

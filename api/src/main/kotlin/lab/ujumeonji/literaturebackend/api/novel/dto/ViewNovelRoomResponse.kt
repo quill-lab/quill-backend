@@ -15,17 +15,12 @@ data class ViewNovelRoomResponse(
     val role: ContributorRoleEnum,
     val contributorCount: Int,
     val maxContributorCount: Int,
-    val author: Author?,
     val status: ContributorGroupStatusEnum,
     val tags: List<String>,
 ) {
+
     data class Category(
         val name: String,
         val alias: String,
-    )
-
-    data class Author(
-        val id: String,
-        val name: String,
     )
 }

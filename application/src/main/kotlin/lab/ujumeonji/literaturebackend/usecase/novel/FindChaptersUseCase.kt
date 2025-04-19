@@ -78,7 +78,7 @@ class FindChaptersUseCase(
         data class ChapterItem(
             val id: String,
             val episode: Int,
-            val title: String,
+            val title: String?,
             val editedAt: LocalDateTime,
             val status: ChapterStatusEnum,
             val approvedAt: LocalDateTime?,

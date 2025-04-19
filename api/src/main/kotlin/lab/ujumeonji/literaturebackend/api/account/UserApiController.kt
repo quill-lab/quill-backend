@@ -55,12 +55,6 @@ class UserApiController(
                         role = item.role,
                         contributorCount = item.contributorCount,
                         maxContributorCount = item.maxContributorCount,
-                        author = item.currentAuthor?.let {
-                            JoinedNovelRoomsResponse.ResponseItem.Author(
-                                id = it.id,
-                                name = it.name
-                            )
-                        },
                         status = item.status
                     )
                 },
