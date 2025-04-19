@@ -6,11 +6,11 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lab.ujumeonji.literaturebackend.domain.account.AccountId;
 import lab.ujumeonji.literaturebackend.domain.common.BaseEntity;
+import lab.ujumeonji.literaturebackend.domain.contributor.Contributor;
 import lab.ujumeonji.literaturebackend.domain.contributor.ContributorId;
 import lab.ujumeonji.literaturebackend.domain.novel.command.AddCharacterCommand;
 import lab.ujumeonji.literaturebackend.domain.novel.command.UpdateNovelCommand;
 import lab.ujumeonji.literaturebackend.domain.novel.command.UpsertCharactersCommand;
-import lab.ujumeonji.literaturebackend.domain.contributor.Contributor;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 import org.jetbrains.annotations.Nullable;
@@ -187,19 +187,6 @@ public class Novel extends BaseEntity<UUID> {
     }
 
     @Nonnull
-    public Optional<ChapterText> addChapterText(@Nonnull AccountId accountId, @Nonnull ChapterId chapterId,
-            @Nonnull String content,
-            @Nonnull LocalDateTime now) {
-        return this.chapters.stream()
-                .filter(c -> c.getIdValue().equals(chapterId))
-                .findFirst()
-                .flatMap(chapter -> chapter.addChapterText(
-                        accountId,
-                        content,
-                        now));
-    }
-
-    @Nonnull
     public List<ChapterText> findChapterTexts(@Nonnull ChapterId chapterId) {
         return this.chapters.stream()
                 .filter(c -> c.getIdValue().equals(chapterId))
@@ -257,5 +244,22 @@ public class Novel extends BaseEntity<UUID> {
         }
 
         return false;
+    }
+
+    @Nonnull
+    public Optional<ChapterText> writeToChapter(
+            @Nonnull Contributor contributor,
+            @Nonnull ChapterId chapterId,
+            @Nonnull String content,
+            @Nonnull LocalDateTime now) {
+        Optional<Chapter> chapter = this.chapters.stream()
+                .filter(c -> c.getIdValue().equals(chapterId))
+                .findFirst();
+
+        if (chapter.isPresent()) {
+            return chapter.get().addChapterText(contributor, content, now);
+        }
+
+        return Optional.empty();
     }
 }

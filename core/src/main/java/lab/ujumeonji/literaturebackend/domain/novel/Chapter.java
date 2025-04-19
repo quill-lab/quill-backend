@@ -4,8 +4,8 @@ import com.github.f4b6a3.uuid.UuidCreator;
 import jakarta.annotation.Nonnull;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
-import lab.ujumeonji.literaturebackend.domain.account.AccountId;
 import lab.ujumeonji.literaturebackend.domain.common.BaseEntity;
+import lab.ujumeonji.literaturebackend.domain.contributor.Contributor;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 import org.springframework.lang.Nullable;
@@ -90,7 +90,7 @@ public class Chapter extends BaseEntity<UUID> {
     }
 
     @NotNull
-    public Optional<ChapterText> addChapterText(@Nonnull AccountId accountId,
+    public Optional<ChapterText> addChapterText(@Nonnull Contributor contributor,
                                                 @Nonnull String content,
                                                 @Nonnull LocalDateTime now) {
         if (this.status != ChapterStatus.IN_PROGRESS) {
@@ -99,11 +99,14 @@ public class Chapter extends BaseEntity<UUID> {
 
         ChapterText createdChapterText = ChapterText.create(
                 this,
-                accountId,
+                contributor.getAccountId(),
+                contributor.getValueId(),
                 content, now);
 
         this.chapterTexts.add(
                 createdChapterText);
+
+        advanceTurn();
 
         return Optional.of(createdChapterText);
     }
@@ -176,5 +179,9 @@ public class Chapter extends BaseEntity<UUID> {
 
     void addChapterAuthor(ChapterAuthor author) {
         this.chapterAuthors.add(author);
+    }
+
+    List<ChapterAuthor> getChapterAuthors() {
+        return this.chapterAuthors;
     }
 }
