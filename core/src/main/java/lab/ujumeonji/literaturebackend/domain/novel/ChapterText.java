@@ -38,8 +38,8 @@ public class ChapterText extends BaseEntity<UUID> {
     }
 
     ChapterText(Chapter chapter, AccountId accountId, ContributorId contributorId, String content,
-            LocalDateTime createdAt, LocalDateTime updatedAt,
-            LocalDateTime deletedAt) {
+                LocalDateTime createdAt, LocalDateTime updatedAt,
+                LocalDateTime deletedAt) {
         this.id = UuidCreator.getTimeOrderedEpoch();
         this.chapter = chapter;
         this.content = content;
@@ -52,8 +52,8 @@ public class ChapterText extends BaseEntity<UUID> {
     }
 
     static ChapterText create(@NotNull Chapter chapter, @NotNull AccountId accountId,
-            @NotNull ContributorId contributorId, @NotNull String content,
-            @NotNull LocalDateTime now) {
+                              @NotNull ContributorId contributorId, @NotNull String content,
+                              @NotNull LocalDateTime now) {
         return new ChapterText(chapter, accountId, contributorId, content, now, now, null);
     }
 

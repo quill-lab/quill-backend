@@ -4,6 +4,7 @@ import lab.ujumeonji.literaturebackend.domain.account.AccountId
 import lab.ujumeonji.literaturebackend.domain.contributor.ContributorGroupId
 import lab.ujumeonji.literaturebackend.domain.contributor.ContributorService
 import lab.ujumeonji.literaturebackend.domain.novel.NovelService
+import lab.ujumeonji.literaturebackend.domain.novel.command.UpsertCharactersCommand
 import lab.ujumeonji.literaturebackend.domain.novel.command.UpsertNovelCharacterCommand
 import lab.ujumeonji.literaturebackend.domain.novel.dto.NovelCharacterData
 import lab.ujumeonji.literaturebackend.support.exception.BusinessException
@@ -12,7 +13,6 @@ import lab.ujumeonji.literaturebackend.usecase.UseCase
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
-import lab.ujumeonji.literaturebackend.domain.novel.command.UpsertCharactersCommand
 
 @Component
 @Transactional
