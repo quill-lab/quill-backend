@@ -5,7 +5,6 @@ import jakarta.annotation.Nonnull;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lab.ujumeonji.literaturebackend.domain.common.BaseEntity;
-import lab.ujumeonji.literaturebackend.domain.contributor.Contributor;
 import lab.ujumeonji.literaturebackend.domain.contributor.ContributorInfo;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
@@ -55,30 +54,32 @@ public class Chapter extends BaseEntity<UUID> {
     protected Chapter() {
     }
 
-    Chapter(String title, String description, Novel novel, Integer chapterNumber,
+    Chapter(String title, String description, Novel novel, Integer chapterNumber, List<ContributorInfo> contributors,
             LocalDateTime createdAt, LocalDateTime updatedAt, LocalDateTime deletedAt) {
         this.id = UuidCreator.getTimeOrderedEpoch();
         this.title = title;
         this.description = description;
         this.novel = novel;
         this.chapterNumber = chapterNumber;
+        this.chapterAuthors = contributors.stream()
+                .map(contributor -> ChapterAuthor.create(this, contributor.getContributorId(),
+                        contributor.getAccountId(),
+                        contributors.indexOf(contributor) == 0,
+                        createdAt))
+                .toList();
         this.status = ChapterStatus.DRAFT;
+
         setCreatedAt(createdAt);
         setUpdatedAt(updatedAt);
         setDeletedAt(deletedAt);
     }
 
-    Chapter(Novel novel, LocalDateTime now) {
-        this(null, null, novel, null, now, now, null);
+    Chapter(Novel novel, List<ContributorInfo> contributors, LocalDateTime now) {
+        this(null, null, novel, null, contributors, now, now, null);
     }
 
-    static Chapter create(@Nonnull String title, @Nonnull String description, @Nonnull Novel novel,
-                          int chapterNumber, @Nonnull LocalDateTime now) {
-        return new Chapter(title, description, novel, chapterNumber, now, now, null);
-    }
-
-    static Chapter createEmpty(@Nonnull Novel novel, @Nonnull LocalDateTime now) {
-        return new Chapter(novel, now);
+    static Chapter createEmpty(@Nonnull Novel novel, @Nonnull List<ContributorInfo> contributors, @Nonnull LocalDateTime now) {
+        return new Chapter(novel, contributors, now);
     }
 
     @Override
@@ -95,6 +96,12 @@ public class Chapter extends BaseEntity<UUID> {
                                                 @Nonnull String content,
                                                 @Nonnull LocalDateTime now) {
         if (this.status != ChapterStatus.IN_PROGRESS) {
+            return Optional.empty();
+        }
+
+        if (!getCurrentChapterAuthor()
+                .map(chapterAuthor -> chapterAuthor.getContributorId().equals(contributor.getContributorId()))
+                .orElse(false)) {
             return Optional.empty();
         }
 

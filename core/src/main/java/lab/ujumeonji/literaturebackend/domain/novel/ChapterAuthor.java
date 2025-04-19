@@ -2,6 +2,7 @@ package lab.ujumeonji.literaturebackend.domain.novel;
 
 import com.github.f4b6a3.uuid.UuidCreator;
 import jakarta.persistence.*;
+import lab.ujumeonji.literaturebackend.domain.account.AccountId;
 import lab.ujumeonji.literaturebackend.domain.common.BaseEntity;
 import lab.ujumeonji.literaturebackend.domain.contributor.ContributorId;
 import org.hibernate.annotations.SQLDelete;
@@ -27,6 +28,9 @@ public class ChapterAuthor extends BaseEntity<UUID> {
     @Column(name = "contributor_id", nullable = false)
     private UUID contributorId;
 
+    @Column(name = "account_id", nullable = false)
+    private UUID accountId;
+
     @Column(nullable = false)
     private boolean isCurrentWriter;
 
@@ -36,6 +40,7 @@ public class ChapterAuthor extends BaseEntity<UUID> {
     ChapterAuthor(
             @NotNull Chapter chapter,
             @NotNull ContributorId contributorId,
+            @NotNull AccountId accountId,
             boolean isCurrentWriter,
             @NotNull LocalDateTime createdAt,
             @NotNull LocalDateTime updatedAt,
@@ -43,6 +48,7 @@ public class ChapterAuthor extends BaseEntity<UUID> {
         this.id = UuidCreator.getTimeOrderedEpoch();
         this.chapter = chapter;
         this.contributorId = contributorId.getId();
+        this.accountId = accountId.getId();
         this.isCurrentWriter = isCurrentWriter;
         setCreatedAt(createdAt);
         setUpdatedAt(updatedAt);
@@ -52,9 +58,10 @@ public class ChapterAuthor extends BaseEntity<UUID> {
     public static ChapterAuthor create(
             @NotNull Chapter chapter,
             @NotNull ContributorId contributorId,
+            @NotNull AccountId accountId,
             boolean isCurrentWriter,
             @NotNull LocalDateTime now) {
-        return new ChapterAuthor(chapter, contributorId, isCurrentWriter, now, now, null);
+        return new ChapterAuthor(chapter, contributorId, accountId, isCurrentWriter, now, now, null);
     }
 
     @Override
@@ -62,8 +69,12 @@ public class ChapterAuthor extends BaseEntity<UUID> {
         return id;
     }
 
-    public ChapterAuthorId getIdValue() {
+    ChapterAuthorId getIdValue() {
         return ChapterAuthorId.from(this.id);
+    }
+
+    ContributorId getContributorId() {
+        return ContributorId.from(this.contributorId);
     }
 
     boolean isCurrentWriter() {

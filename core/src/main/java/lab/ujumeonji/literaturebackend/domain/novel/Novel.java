@@ -6,8 +6,6 @@ import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lab.ujumeonji.literaturebackend.domain.account.AccountId;
 import lab.ujumeonji.literaturebackend.domain.common.BaseEntity;
-import lab.ujumeonji.literaturebackend.domain.contributor.Contributor;
-import lab.ujumeonji.literaturebackend.domain.contributor.ContributorId;
 import lab.ujumeonji.literaturebackend.domain.contributor.ContributorInfo;
 import lab.ujumeonji.literaturebackend.domain.novel.command.AddCharacterCommand;
 import lab.ujumeonji.literaturebackend.domain.novel.command.UpdateNovelCommand;
@@ -61,10 +59,10 @@ public class Novel extends BaseEntity<UUID> {
     }
 
     Novel(String title, String description, String coverImage, List<String> tags, String synopsis,
-            NovelCategory category,
-            LocalDateTime createdAt,
-            LocalDateTime updatedAt,
-            LocalDateTime deletedAt) {
+          NovelCategory category,
+          LocalDateTime createdAt,
+          LocalDateTime updatedAt,
+          LocalDateTime deletedAt) {
         this.id = UuidCreator.getTimeOrderedEpoch();
         this.title = title;
         this.description = description;
@@ -81,8 +79,8 @@ public class Novel extends BaseEntity<UUID> {
     }
 
     static Novel create(String title, String description, NovelCategory category, String coverImage, List<String> tags,
-            String synopsis,
-            LocalDateTime now) {
+                        String synopsis,
+                        LocalDateTime now) {
         return new Novel(title, description, coverImage, tags, synopsis, category, now, now, null);
     }
 
@@ -196,8 +194,8 @@ public class Novel extends BaseEntity<UUID> {
                 .orElse(Collections.emptyList());
     }
 
-    public Optional<Chapter> createEmptyChapter(@Nonnull List<ContributorId> orderedContributorIds,
-            @Nonnull LocalDateTime now) {
+    public Optional<Chapter> createEmptyChapter(@Nonnull List<ContributorInfo> orderedContributorIds,
+                                                @Nonnull LocalDateTime now) {
         boolean hasRequestedChapter = this.chapters.stream()
                 .anyMatch(chapter -> chapter.getStatus() == ChapterStatus.REQUESTED);
 
@@ -205,24 +203,14 @@ public class Novel extends BaseEntity<UUID> {
             return Optional.empty();
         }
 
-        Chapter chapter = Chapter.createEmpty(this, now);
+        Chapter chapter = Chapter.createEmpty(this, orderedContributorIds, now);
         this.chapters.add(chapter);
-
-        orderedContributorIds.forEach(contributorId -> {
-            boolean isFirstWriter = orderedContributorIds.indexOf(contributorId) == 0;
-            ChapterAuthor chapterAuthor = ChapterAuthor.create(
-                    chapter,
-                    contributorId,
-                    isFirstWriter,
-                    now);
-            chapter.addChapterAuthor(chapterAuthor);
-        });
 
         return Optional.of(chapter);
     }
 
     public List<Character> replaceCharacters(@Nonnull List<UpsertCharactersCommand> commands,
-            @Nonnull AccountId updatedBy, @Nonnull LocalDateTime now) {
+                                             @Nonnull AccountId updatedBy, @Nonnull LocalDateTime now) {
         // Remove existing characters
         this.characters.clear();
 
