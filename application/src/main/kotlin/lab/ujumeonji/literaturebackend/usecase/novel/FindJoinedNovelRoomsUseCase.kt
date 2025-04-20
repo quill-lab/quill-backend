@@ -23,50 +23,57 @@ class FindJoinedNovelRoomsUseCase(
     private val contributorService: ContributorService,
     private val novelService: NovelService,
 ) : UseCase<FindJoinedNovelRoomsUseCase.Request, FindJoinedNovelRoomsUseCase.Response> {
-
-    override fun execute(request: Request, executedAt: LocalDateTime): Response {
+    override fun execute(
+        request: Request,
+        executedAt: LocalDateTime,
+    ): Response {
         val accountId = AccountId.from(request.accountId)
-        val command = FindContributorGroupsCommand(
-            page = request.page,
-            size = request.size,
-            sort = request.sort
-        )
+        val command =
+            FindContributorGroupsCommand(
+                page = request.page,
+                size = request.size,
+                sort = request.sort,
+            )
 
         val page: Page<ContributorGroup> = contributorService.findContributorGroups(accountId, command)
         val contributorGroups = page.content
 
-        val me = accountService.findById(accountId)
-            ?: throw BusinessException(ErrorCode.ACCOUNT_NOT_FOUND)
+        val me =
+            accountService.findById(accountId)
+                ?: throw BusinessException(ErrorCode.ACCOUNT_NOT_FOUND)
 
-        val novels = novelService.findNovels(contributorGroups.map { it.novelId })
-            .associateBy { it.idValue }
+        val novels =
+            novelService.findNovels(contributorGroups.map { it.novelId })
+                .associateBy { it.idValue }
 
-        val result = contributorGroups.mapNotNull { contributorGroup ->
-            novels[contributorGroup.novelId]?.let { novel ->
-                with(contributorGroup) {
-                    Response.ResponseItem(
-                        id = idValue.toString(),
-                        category = Response.ResponseItem.Category(
-                            name = novel.category.name,
-                            alias = novel.category.alias
-                        ),
-                        title = novel.title,
-                        createdAt = createdAt,
-                        completedAt = completedAt,
-                        role = (getCollaboratorRole(me.idValue) ?: ContributorRole.COLLABORATOR).name,
-                        contributorCount = contributorCount,
-                        maxContributorCount = maxContributorCount,
-                        status = status.name
-                    )
+        val result =
+            contributorGroups.mapNotNull { contributorGroup ->
+                novels[contributorGroup.novelId]?.let { novel ->
+                    with(contributorGroup) {
+                        Response.ResponseItem(
+                            id = idValue.toString(),
+                            category =
+                                Response.ResponseItem.Category(
+                                    name = novel.category.name,
+                                    alias = novel.category.alias,
+                                ),
+                            title = novel.title,
+                            createdAt = createdAt,
+                            completedAt = completedAt,
+                            role = (getCollaboratorRole(me.idValue) ?: ContributorRole.COLLABORATOR).name,
+                            contributorCount = contributorCount,
+                            maxContributorCount = maxContributorCount,
+                            status = status.name,
+                        )
+                    }
                 }
             }
-        }
 
         return Response(
             result = result,
             totalCount = page.totalElements,
             size = request.size,
-            page = request.page
+            page = request.page,
         )
     }
 

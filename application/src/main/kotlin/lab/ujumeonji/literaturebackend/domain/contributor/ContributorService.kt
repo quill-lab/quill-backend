@@ -19,41 +19,43 @@ import java.time.LocalDateTime
 class ContributorService(
     private val contributorGroupRepository: ContributorGroupRepository,
     private val contributorRepository: ContributorRepository,
-    private val contributorViewRepository: ContributorViewRepository
+    private val contributorViewRepository: ContributorViewRepository,
 ) {
-
     fun findContributorRequestHistories(
         accountId: AccountId,
-        command: FindContributorRequestHistoriesCommand
+        command: FindContributorRequestHistoriesCommand,
     ): Page<ContributorRequestHistory> {
-        val pageable = PageRequest.of(
-            command.page,
-            command.size,
-            Sort.by(Sort.Direction.DESC, "createdAt")
-        )
+        val pageable =
+            PageRequest.of(
+                command.page,
+                command.size,
+                Sort.by(Sort.Direction.DESC, "createdAt"),
+            )
         return contributorViewRepository.findContributorRequestsByAccountId(accountId.id, pageable)
     }
 
     fun findContributorGroups(
         accountId: AccountId,
-        command: FindContributorGroupsCommand
+        command: FindContributorGroupsCommand,
     ): Page<ContributorGroup> {
-        val sortDirection = when (command.sort) {
-            NovelRoomSortTypeEnum.LATEST -> Sort.Direction.DESC
-            NovelRoomSortTypeEnum.OLDEST -> Sort.Direction.ASC
-        }
-        val pageable = PageRequest.of(
-            command.page,
-            command.size,
-            Sort.by(sortDirection, "createdAt")
-        )
+        val sortDirection =
+            when (command.sort) {
+                NovelRoomSortTypeEnum.LATEST -> Sort.Direction.DESC
+                NovelRoomSortTypeEnum.OLDEST -> Sort.Direction.ASC
+            }
+        val pageable =
+            PageRequest.of(
+                command.page,
+                command.size,
+                Sort.by(sortDirection, "createdAt"),
+            )
         return contributorGroupRepository.findByAccountId(accountId.id, pageable)
     }
 
     @Transactional
     fun createContributorGroup(
         command: CreateContributorGroupCommand,
-        now: LocalDateTime = LocalDateTime.now()
+        now: LocalDateTime = LocalDateTime.now(),
     ): ContributorGroup =
         this.contributorGroupRepository.save(
             ContributorGroup.create(
@@ -61,15 +63,12 @@ class ContributorService(
                 command.maxContributorCount,
                 command.novelId,
                 now,
-            )
+            ),
         )
 
-    fun findGroupById(id: ContributorGroupId): ContributorGroup? =
-        contributorGroupRepository.findById(id.id).orElse(null)
+    fun findGroupById(id: ContributorGroupId): ContributorGroup? = contributorGroupRepository.findById(id.id).orElse(null)
 
-    fun findGroupByNovelId(id: NovelId): ContributorGroup? =
-        contributorGroupRepository.findByNovelId(id.id).orElse(null)
+    fun findGroupByNovelId(id: NovelId): ContributorGroup? = contributorGroupRepository.findByNovelId(id.id).orElse(null)
 
-    fun hasOwnContributorGroup(accountId: AccountId): Boolean =
-        contributorRepository.findAllByAccountIdAndRole(accountId.id).isNotEmpty()
+    fun hasOwnContributorGroup(accountId: AccountId): Boolean = contributorRepository.findAllByAccountIdAndRole(accountId.id).isNotEmpty()
 }

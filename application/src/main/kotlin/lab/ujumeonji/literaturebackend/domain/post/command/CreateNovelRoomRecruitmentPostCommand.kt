@@ -8,5 +8,5 @@ data class CreateNovelRoomRecruitmentPostCommand(
     val content: String,
     val link: String,
     val authorId: AccountId,
-    val contributorGroupId: ContributorGroupId
+    val contributorGroupId: ContributorGroupId,
 )

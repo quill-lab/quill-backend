@@ -12,7 +12,6 @@ class AccountService(
     private val accountRepository: AccountRepository,
     private val passwordEncoder: PasswordEncoder,
 ) {
-
     fun findByEmail(email: String): Account? = accountRepository.findByEmail(email)
 
     fun findByName(email: String): Account? = accountRepository.findByName(email)
@@ -21,26 +20,36 @@ class AccountService(
 
     fun findByIds(ids: List<AccountId>): List<Account> = accountRepository.findAllById(ids.map { it.id }).toList()
 
-    fun checkPassword(id: AccountId, password: String): Boolean {
+    fun checkPassword(
+        id: AccountId,
+        password: String,
+    ): Boolean {
         val account = findById(id) ?: return false
         return account.checkPassword(password, passwordEncoder)
     }
 
     @Transactional
-    fun updatePassword(id: AccountId, password: String) {
+    fun updatePassword(
+        id: AccountId,
+        password: String,
+    ) {
         val account = findById(id) ?: return
         account.updatePassword(password, passwordEncoder)
         accountRepository.save(account)
     }
 
     @Transactional
-    fun create(command: CreateAccountCommand, now: LocalDateTime): Account {
-        val account = Account.create(
-            command.email,
-            command.nickname,
-            passwordEncoder.encode(command.password),
-            now
-        )
+    fun create(
+        command: CreateAccountCommand,
+        now: LocalDateTime,
+    ): Account {
+        val account =
+            Account.create(
+                command.email,
+                command.nickname,
+                passwordEncoder.encode(command.password),
+                now,
+            )
 
         return accountRepository.save(account)
     }

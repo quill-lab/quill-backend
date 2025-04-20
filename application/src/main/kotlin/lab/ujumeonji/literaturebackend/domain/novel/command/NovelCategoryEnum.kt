@@ -9,8 +9,7 @@ enum class NovelCategoryEnum(val alias: String) {
     FUSION("퓨전"),
     ACTION_MARTIAL_ARTS("액션/무협"),
     SPORTS_SCHOOL("스포츠/학원"),
-    HORROR_MYSTERY("공포/미스터리")
-
+    HORROR_MYSTERY("공포/미스터리"),
     ;
 
     fun toNovelCategory(): lab.ujumeonji.literaturebackend.domain.novel.NovelCategory {

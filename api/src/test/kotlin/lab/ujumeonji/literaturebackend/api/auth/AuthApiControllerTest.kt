@@ -14,17 +14,17 @@ class AuthApiControllerTest(
     mockMvc: MockMvc,
     objectMapper: ObjectMapper,
 ) : ControllerTest(
-    mockMvc = mockMvc,
-    objectMapper = objectMapper,
-) {
-
+        mockMvc = mockMvc,
+        objectMapper = objectMapper,
+    ) {
     init {
         given("사용자가 회원 정보를 입력 후") {
-            val request = SignUpBodyRequest(
-                email = "test@example.com",
-                password = "Password!@#\$1",
-                name = "testuser"
-            )
+            val request =
+                SignUpBodyRequest(
+                    email = "test@example.com",
+                    password = "Password!@#\$1",
+                    name = "testuser",
+                )
 
             `when`("회원 가입을 요청하면") {
                 val response = performPost("/api/v1/auth/signup", request)
@@ -38,18 +38,20 @@ class AuthApiControllerTest(
         }
 
         given("사용자가 이미 가입된 회원 정보가 존재하고") {
-            val initialRequest = SignUpBodyRequest(
-                email = "test@example.com",
-                password = "Password!@#\$1",
-                name = "testuser"
-            )
+            val initialRequest =
+                SignUpBodyRequest(
+                    email = "test@example.com",
+                    password = "Password!@#\$1",
+                    name = "testuser",
+                )
             performPost("/api/v1/auth/signup", initialRequest)
 
-            val duplicateRequest = SignUpBodyRequest(
-                email = initialRequest.email,
-                password = "anotherpa!@#\$1",
-                name = "another"
-            )
+            val duplicateRequest =
+                SignUpBodyRequest(
+                    email = initialRequest.email,
+                    password = "anotherpa!@#\$1",
+                    name = "another",
+                )
 
             `when`("중복된 이메일로 회원 가입을 요청하면") {
                 val duplicateResponse = performPost("/api/v1/auth/signup", duplicateRequest)
@@ -63,17 +65,19 @@ class AuthApiControllerTest(
         }
 
         given("사용자가 로그인 정보를 입력하고") {
-            val signUpRequest = SignUpBodyRequest(
-                email = "test@example.com",
-                password = "Password!@#\$1",
-                name = "testuser"
-            )
+            val signUpRequest =
+                SignUpBodyRequest(
+                    email = "test@example.com",
+                    password = "Password!@#\$1",
+                    name = "testuser",
+                )
             performPost("/api/v1/auth/signup", signUpRequest)
 
-            val signInRequest = SignInBodyRequest(
-                email = "test@example.com",
-                password = "Password!@#\$1"
-            )
+            val signInRequest =
+                SignInBodyRequest(
+                    email = "test@example.com",
+                    password = "Password!@#\$1",
+                )
 
             `when`("로그인을 요청하면") {
                 val response = performPost("/api/v1/auth/signin", signInRequest)
@@ -87,10 +91,11 @@ class AuthApiControllerTest(
         }
 
         given("사용자가 잘못된 로그인 정보를 입력하고") {
-            val signInRequest = SignInBodyRequest(
-                email = "wrong@example.com",
-                password = "Wrong!@#\$1"
-            )
+            val signInRequest =
+                SignInBodyRequest(
+                    email = "wrong@example.com",
+                    password = "Wrong!@#\$1",
+                )
 
             `when`("로그인을 요청하면") {
                 val response = performPost("/api/v1/auth/signin", signInRequest)
@@ -104,16 +109,18 @@ class AuthApiControllerTest(
         }
 
         given("사용자가 임시 비밀번호를 요청하고") {
-            val signUpRequest = SignUpBodyRequest(
-                email = "test@example.com",
-                password = "Password!@#\$1",
-                name = "testuser"
-            )
+            val signUpRequest =
+                SignUpBodyRequest(
+                    email = "test@example.com",
+                    password = "Password!@#\$1",
+                    name = "testuser",
+                )
             performPost("/api/v1/auth/signup", signUpRequest)
 
-            val temporaryPasswordRequest = TemporaryPasswordRequest(
-                email = "test@example.com"
-            )
+            val temporaryPasswordRequest =
+                TemporaryPasswordRequest(
+                    email = "test@example.com",
+                )
 
             `when`("등록된 이메일로 임시 비밀번호를 요청하면") {
                 val response = performPost("/api/v1/auth/password/temporary", temporaryPasswordRequest)
@@ -124,9 +131,10 @@ class AuthApiControllerTest(
             }
 
             `when`("등록되지 않은 이메일로 임시 비밀번호를 요청하면") {
-                val invalidRequest = TemporaryPasswordRequest(
-                    email = "nonexistent@example.com"
-                )
+                val invalidRequest =
+                    TemporaryPasswordRequest(
+                        email = "nonexistent@example.com",
+                    )
                 val response = performPost("/api/v1/auth/password/temporary", invalidRequest)
 
                 then("계정을 찾을 수 없다는 응답이 반환된다") {

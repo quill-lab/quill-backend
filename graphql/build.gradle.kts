@@ -41,9 +41,10 @@ jib {
     container {
         jvmFlags = listOf("-Xms1024m", "-Xmx1024m")
         ports = listOf("8081")
-        environment = mapOf(
-            "SPRING_PROFILES_ACTIVE" to "prod"
-        )
+        environment =
+            mapOf(
+                "SPRING_PROFILES_ACTIVE" to "prod",
+            )
         creationTime.set("USE_CURRENT_TIMESTAMP")
     }
 }
@@ -51,10 +52,11 @@ jib {
 tasks.withType<com.netflix.graphql.dgs.codegen.gradle.GenerateJavaTask> {
     generateClient = true
     packageName = "lab.ujumeonji.literaturebackend.graphql.generated"
-    typeMapping = mutableMapOf(
-        "DateTime" to "java.time.LocalDateTime",
-        "UUID" to "java.util.UUID"
-    )
+    typeMapping =
+        mutableMapOf(
+            "DateTime" to "java.time.LocalDateTime",
+            "UUID" to "java.util.UUID",
+        )
 }
 
 tasks.getByName<Jar>("jar") {

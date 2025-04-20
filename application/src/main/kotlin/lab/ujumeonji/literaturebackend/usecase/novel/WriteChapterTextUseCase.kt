@@ -20,14 +20,17 @@ class WriteChapterTextUseCase(
     private val accountService: AccountService,
     private val contributorService: ContributorService,
 ) : UseCase<WriteChapterTextUseCase.Request, WriteChapterTextUseCase.Response> {
-
-    override fun execute(request: Request, executedAt: LocalDateTime): Response {
+    override fun execute(
+        request: Request,
+        executedAt: LocalDateTime,
+    ): Response {
         val accountId = AccountId.from(request.accountId)
         accountService.findById(accountId)
             ?: throw BusinessException(ErrorCode.ACCOUNT_NOT_FOUND)
 
-        val contributorGroup = contributorService.findGroupById(ContributorGroupId.from(request.contributorGroupId))
-            ?: throw BusinessException(ErrorCode.CONTRIBUTOR_GROUP_NOT_FOUND)
+        val contributorGroup =
+            contributorService.findGroupById(ContributorGroupId.from(request.contributorGroupId))
+                ?: throw BusinessException(ErrorCode.CONTRIBUTOR_GROUP_NOT_FOUND)
 
         if (!contributorGroup.isParticipating(accountId)) {
             throw BusinessException(ErrorCode.NO_PERMISSION_TO_UPDATE)
@@ -39,22 +42,24 @@ class WriteChapterTextUseCase(
             throw BusinessException(ErrorCode.CONTRIBUTOR_NOT_FOUND)
         }
 
-        val novel = novelService.findNovel(contributorGroup.novelId)
-            ?: throw BusinessException(ErrorCode.NOVEL_NOT_FOUND)
+        val novel =
+            novelService.findNovel(contributorGroup.novelId)
+                ?: throw BusinessException(ErrorCode.NOVEL_NOT_FOUND)
 
-        val addedChapterText = novel.writeToChapter(
-            contributorInfo.get(),
-            ChapterId.from(request.chapterId),
-            request.content,
-            executedAt
-        )
+        val addedChapterText =
+            novel.writeToChapter(
+                contributorInfo.get(),
+                ChapterId.from(request.chapterId),
+                request.content,
+                executedAt,
+            )
 
         if (addedChapterText.isEmpty) {
             throw BusinessException(ErrorCode.CHAPTER_NOT_FOUND)
         }
 
         return Response(
-            id = addedChapterText.get().idValue.toString()
+            id = addedChapterText.get().idValue.toString(),
         )
     }
 
@@ -62,10 +67,10 @@ class WriteChapterTextUseCase(
         val accountId: String,
         val contributorGroupId: String,
         val chapterId: String,
-        val content: String
+        val content: String,
     )
 
     data class Response(
-        val id: String
+        val id: String,
     )
 }

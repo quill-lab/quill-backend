@@ -16,10 +16,13 @@ class RequestTemporaryPasswordUseCase(
     private val accountService: AccountService,
     private val mailPort: MailPort,
 ) : UseCase<RequestTemporaryPasswordUseCase.Request, RequestTemporaryPasswordUseCase.Response> {
-
-    override fun execute(request: Request, executedAt: LocalDateTime): Response {
-        val account = accountService.findByEmail(request.email)
-            ?: throw BusinessException(ErrorCode.EMAIL_NOT_FOUND)
+    override fun execute(
+        request: Request,
+        executedAt: LocalDateTime,
+    ): Response {
+        val account =
+            accountService.findByEmail(request.email)
+                ?: throw BusinessException(ErrorCode.EMAIL_NOT_FOUND)
 
         val temporaryPassword = generateTemporaryPassword()
         accountService.updatePassword(account.idValue, temporaryPassword)

@@ -11,17 +11,20 @@ import org.springframework.stereotype.Component
 
 @Component
 class RequiredGraphQLAuthArgumentResolver(
-    private val authContext: AuthContext
+    private val authContext: AuthContext,
 ) : ArgumentResolver {
-
     override fun supportsParameter(parameter: MethodParameter): Boolean =
         parameter.hasParameterAnnotation(RequiredGraphQLAuth::class.java) && parameter.parameterType == String::class.java
 
-    override fun resolveArgument(parameter: MethodParameter, dfe: DataFetchingEnvironment): String? = when {
-        parameter.hasParameterAnnotation(RequiredGraphQLAuth::class.java) &&
+    override fun resolveArgument(
+        parameter: MethodParameter,
+        dfe: DataFetchingEnvironment,
+    ): String? =
+        when {
+            parameter.hasParameterAnnotation(RequiredGraphQLAuth::class.java) &&
                 parameter.parameterType == String::class.java ->
-            authContext.accountId ?: throw BusinessException(ErrorCode.UNAUTHORIZED)
+                authContext.accountId ?: throw BusinessException(ErrorCode.UNAUTHORIZED)
 
-        else -> authContext.accountId
-    }
+            else -> authContext.accountId
+        }
 }

@@ -16,14 +16,17 @@ import java.time.LocalDateTime
 class UpdateParticipantOrderUseCase(
     private val contributorService: ContributorService,
 ) : UseCase<UpdateParticipantOrderUseCase.Request, UpdateParticipantOrderUseCase.Response> {
-
-    override fun execute(request: Request, executedAt: LocalDateTime): Response {
+    override fun execute(
+        request: Request,
+        executedAt: LocalDateTime,
+    ): Response {
         val accountId = AccountId.from(request.accountId)
         val contributorId = ContributorId.from(request.contributorId)
         val novelRoomId = ContributorGroupId.from(request.novelRoomId)
 
-        val contributorGroup = contributorService.findGroupById(novelRoomId)
-            ?: throw BusinessException(ErrorCode.CONTRIBUTOR_GROUP_NOT_FOUND)
+        val contributorGroup =
+            contributorService.findGroupById(novelRoomId)
+                ?: throw BusinessException(ErrorCode.CONTRIBUTOR_GROUP_NOT_FOUND)
 
         if (!contributorGroup.hasManagePermission(accountId)) {
             throw BusinessException(ErrorCode.NO_PERMISSION_TO_UPDATE)

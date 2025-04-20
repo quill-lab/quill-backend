@@ -55,9 +55,10 @@ jib {
     container {
         jvmFlags = listOf("-Xms1024m", "-Xmx1024m")
         ports = listOf("8080")
-        environment = mapOf(
-            "SPRING_PROFILES_ACTIVE" to "prod"
-        )
+        environment =
+            mapOf(
+                "SPRING_PROFILES_ACTIVE" to "prod",
+            )
         creationTime.set("USE_CURRENT_TIMESTAMP")
     }
 }

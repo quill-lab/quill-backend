@@ -16,8 +16,10 @@ class SignInUseCase(
     private val accountService: AccountService,
     private val tokenManager: TokenManager,
 ) : UseCase<SignInUseCase.Request, SignInUseCase.Response> {
-
-    override fun execute(request: Request, executedAt: LocalDateTime): Response {
+    override fun execute(
+        request: Request,
+        executedAt: LocalDateTime,
+    ): Response {
         val account = findAccount(request.email)
         validatePassword(account, request.password)
         val token = createAuthToken(account, executedAt)
@@ -28,27 +30,34 @@ class SignInUseCase(
         accountService.findByEmail(email)
             ?: throw BusinessException(ErrorCode.INVALID_CREDENTIALS)
 
-    private fun validatePassword(account: Account, password: String) {
+    private fun validatePassword(
+        account: Account,
+        password: String,
+    ) {
         if (!accountService.checkPassword(account.idValue, password)) {
             throw BusinessException(ErrorCode.INVALID_CREDENTIALS)
         }
     }
 
-    private fun createAuthToken(account: Account, now: LocalDateTime): String =
+    private fun createAuthToken(
+        account: Account,
+        now: LocalDateTime,
+    ): String =
         tokenManager.createToken(
-            payload = mapOf(
-                "id" to account.idValue.toString(),
-                "email" to account.email,
-            ),
-            issuedAt = now
+            payload =
+                mapOf(
+                    "id" to account.idValue.toString(),
+                    "email" to account.email,
+                ),
+            issuedAt = now,
         )
 
     data class Request(
         val email: String,
-        val password: String
+        val password: String,
     )
 
     data class Response(
-        val token: String
+        val token: String,
     )
 }

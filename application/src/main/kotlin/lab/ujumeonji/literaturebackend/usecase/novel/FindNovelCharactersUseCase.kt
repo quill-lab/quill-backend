@@ -18,13 +18,17 @@ class FindNovelCharactersUseCase(
     private val contributorService: ContributorService,
     private val accountService: AccountService,
 ) : UseCase<FindNovelCharactersUseCase.Request, List<FindNovelCharactersUseCase.Response>> {
+    override fun execute(
+        request: Request,
+        executedAt: LocalDateTime,
+    ): List<Response> {
+        val contributor =
+            contributorService.findGroupById(ContributorGroupId.from(request.novelRoomId))
+                ?: throw BusinessException(ErrorCode.CONTRIBUTOR_GROUP_NOT_FOUND)
 
-    override fun execute(request: Request, executedAt: LocalDateTime): List<Response> {
-        val contributor = contributorService.findGroupById(ContributorGroupId.from(request.novelRoomId))
-            ?: throw BusinessException(ErrorCode.CONTRIBUTOR_GROUP_NOT_FOUND)
-
-        val novel = novelService.findNovel(contributor.novelId)
-            ?: throw BusinessException(ErrorCode.NOVEL_NOT_FOUND)
+        val novel =
+            novelService.findNovel(contributor.novelId)
+                ?: throw BusinessException(ErrorCode.NOVEL_NOT_FOUND)
 
         val accountIds = novel.characters.mapNotNull { it.lastUpdatedBy }
         val accountMap = accountService.findByIds(accountIds).associateBy { it.idValue }
@@ -36,14 +40,15 @@ class FindNovelCharactersUseCase(
                 description = character.description,
                 profileImage = character.profileImage,
                 updatedAt = character.updatedAt,
-                updatedBy = character.lastUpdatedBy?.let { accountId ->
-                    accountMap[accountId]?.let { account ->
-                        Response.LastCharacterUpdatedBy(
-                            id = account.idValue.toString(),
-                            name = account.name,
-                        )
-                    }
-                },
+                updatedBy =
+                    character.lastUpdatedBy?.let { accountId ->
+                        accountMap[accountId]?.let { account ->
+                            Response.LastCharacterUpdatedBy(
+                                id = account.idValue.toString(),
+                                name = account.name,
+                            )
+                        }
+                    },
             )
         }
     }
@@ -60,7 +65,6 @@ class FindNovelCharactersUseCase(
         val updatedAt: LocalDateTime?,
         val updatedBy: LastCharacterUpdatedBy?,
     ) {
-
         data class LastCharacterUpdatedBy(
             val id: String,
             val name: String,

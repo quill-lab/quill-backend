@@ -17,20 +17,24 @@ class SignUpUseCase(
     private val accountService: AccountService,
     private val mailPort: MailPort,
 ) : UseCase<SignUpUseCase.Request, SignUpUseCase.Response> {
-
-    override fun execute(request: Request, executedAt: LocalDateTime): Response {
+    override fun execute(
+        request: Request,
+        executedAt: LocalDateTime,
+    ): Response {
         accountService.findByEmail(request.email)?.let {
             throw BusinessException(ErrorCode.DUPLICATE_EMAIL)
         }
 
-        val account = accountService.create(
-            command = CreateAccountCommand(
-                email = request.email,
-                password = request.password,
-                nickname = request.name
-            ),
-            now = executedAt
-        )
+        val account =
+            accountService.create(
+                command =
+                    CreateAccountCommand(
+                        email = request.email,
+                        password = request.password,
+                        nickname = request.name,
+                    ),
+                now = executedAt,
+            )
 
         sendWelcomeEmail(request.email)
 
@@ -39,7 +43,8 @@ class SignUpUseCase(
 
     private fun sendWelcomeEmail(email: String) {
         val subject = "Welcome to Literature Backend!"
-        val htmlContent = """
+        val htmlContent =
+            """
             <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto;">
                 <h2>Welcome to Literature Backend!</h2>
                 <p>We're thrilled to have you on board!</p>
@@ -50,7 +55,7 @@ class SignUpUseCase(
                 <hr>
                 <p style="color: #666; font-size: 12px;">This email is sent automatically and does not accept replies.</p>
             </div>
-        """.trimIndent()
+            """.trimIndent()
 
         CompletableFuture.runAsync {
             try {
@@ -64,7 +69,7 @@ class SignUpUseCase(
     data class Request(
         val email: String,
         val password: String,
-        val name: String
+        val name: String,
     )
 
     data class Response(

@@ -6,17 +6,16 @@ import org.springframework.data.repository.query.Param
 import java.util.*
 
 interface ContributorRepository : CrudRepository<Contributor, UUID> {
-
     @Query(
         """
         SELECT c FROM Contributor c
         WHERE c.accountId = :accountId
         AND c.role = :#{#role}
         ORDER BY c.createdAt DESC
-    """
+    """,
     )
     fun findAllByAccountIdAndRole(
         @Param("accountId") accountId: UUID,
-        @Param("role") role: ContributorRole = ContributorRole.MAIN
+        @Param("role") role: ContributorRole = ContributorRole.MAIN,
     ): List<Contributor>
 }

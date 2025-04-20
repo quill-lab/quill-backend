@@ -10,18 +10,19 @@ import org.springframework.context.annotation.Configuration
 
 @Configuration(proxyBeanMethods = false)
 class OpenApiConfig {
-
     @Bean
     fun openAPI(): OpenAPI {
-        val securityScheme = SecurityScheme()
-            .type(SecurityScheme.Type.HTTP)
-            .scheme("bearer")
-            .bearerFormat("JWT")
-            .`in`(SecurityScheme.In.HEADER)
-            .name("Authorization")
+        val securityScheme =
+            SecurityScheme()
+                .type(SecurityScheme.Type.HTTP)
+                .scheme("bearer")
+                .bearerFormat("JWT")
+                .`in`(SecurityScheme.In.HEADER)
+                .name("Authorization")
 
-        val securityRequirement = SecurityRequirement()
-            .addList("bearerAuth")
+        val securityRequirement =
+            SecurityRequirement()
+                .addList("bearerAuth")
 
         return OpenAPI()
             .components(Components().addSecuritySchemes("bearerAuth", securityScheme))
@@ -30,7 +31,7 @@ class OpenApiConfig {
                 Info()
                     .title("작가의 정원 API")
                     .description("작가의 정원 API 명세서입니다.")
-                    .version("1.0.0")
+                    .version("1.0.0"),
             )
     }
 }

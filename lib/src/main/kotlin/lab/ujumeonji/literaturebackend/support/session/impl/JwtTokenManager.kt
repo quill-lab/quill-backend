@@ -11,9 +11,11 @@ class JwtTokenManager(
     private val secret: String,
     private val accessTokenValidity: Long,
 ) : TokenManager {
-
-    override fun createToken(payload: Map<String, *>, issuedAt: LocalDateTime): String =
-        with(issuedAt.toInstant(ZoneOffset.UTC)) {
+    override fun createToken(
+        payload: Map<String, *>,
+        issuedAt: LocalDateTime
+    ): String {
+        return with(issuedAt.toInstant(ZoneOffset.UTC)) {
             val now = Date.from(this)
             val expirationDate = Date(now.time + accessTokenValidity)
 
@@ -24,11 +26,13 @@ class JwtTokenManager(
                 .claims(payload)
                 .compact()
         }
+    }
 
-    override fun verifyToken(token: String): Map<String, *> =
-        Jwts.parser()
+    override fun verifyToken(token: String): Map<String, *> {
+        return Jwts.parser()
             .verifyWith(Keys.hmacShaKeyFor(secret.toByteArray()))
             .build()
             .parseSignedClaims(token)
             .payload
+    }
 }

@@ -2,8 +2,7 @@ package lab.ujumeonji.literaturebackend.domain.contributor.command
 
 enum class ContributorRoleEnum(val alias: String) {
     MAIN("대표 작가"),
-    COLLABORATOR("참여 작가")
-
+    COLLABORATOR("참여 작가"),
     ;
 
     fun toContributorRole(): lab.ujumeonji.literaturebackend.domain.contributor.ContributorRole {

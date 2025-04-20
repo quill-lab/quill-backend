@@ -4,9 +4,8 @@ import lab.ujumeonji.literaturebackend.domain.post.command.CreateNovelRoomRecrui
 import java.time.LocalDateTime
 
 interface ContributorGroupRecruitmentService {
-
     fun createNovelRecruitmentPost(
         command: CreateNovelRoomRecruitmentPostCommand,
-        now: LocalDateTime
+        now: LocalDateTime,
     ): ContributorGroupRecruitment
 }

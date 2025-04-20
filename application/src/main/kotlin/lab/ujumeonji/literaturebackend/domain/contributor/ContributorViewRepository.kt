@@ -13,10 +13,12 @@ import java.util.*
 
 @Repository
 class ContributorViewRepository(
-    private val entityManager: EntityManager
+    private val entityManager: EntityManager,
 ) {
-
-    fun findContributorRequestsByAccountId(accountId: UUID, pageable: Pageable): Page<ContributorRequestHistory> {
+    fun findContributorRequestsByAccountId(
+        accountId: UUID,
+        pageable: Pageable,
+    ): Page<ContributorRequestHistory> {
         val criteriaBuilder = entityManager.criteriaBuilder
         val criteriaQuery = criteriaBuilder.createQuery(ContributorRequestHistory::class.java)
         val root = criteriaQuery.from(ContributorRequest::class.java)
@@ -44,8 +46,8 @@ class ContributorViewRepository(
                 root.get<ContributorRequestStatus>("status"),
                 root.get<LocalDateTime>("createdAt"),
                 root.get<LocalDateTime>("approvedAt"),
-                contributorGroup.get<LocalDateTime>("deletedAt")
-            )
+                contributorGroup.get<LocalDateTime>("deletedAt"),
+            ),
         )
 
         criteriaQuery.where(
@@ -54,12 +56,12 @@ class ContributorViewRepository(
                 criteriaBuilder.equal(novel.get<UUID>("id"), contributorGroup.get<UUID>("novelId")),
                 criteriaBuilder.isNull(root.get<LocalDateTime>("deletedAt")),
                 criteriaBuilder.isNull(contributorGroup.get<LocalDateTime>("deletedAt")),
-                criteriaBuilder.isNull(novel.get<LocalDateTime>("deletedAt"))
-            )
+                criteriaBuilder.isNull(novel.get<LocalDateTime>("deletedAt")),
+            ),
         )
 
         criteriaQuery.orderBy(
-            criteriaBuilder.desc(root.get<LocalDateTime>("createdAt"))
+            criteriaBuilder.desc(root.get<LocalDateTime>("createdAt")),
         )
 
         val countQuery = criteriaBuilder.createQuery(Long::class.java)
@@ -75,8 +77,8 @@ class ContributorViewRepository(
                 criteriaBuilder.equal(countNovel.get<UUID>("id"), countContributorGroup.get<UUID>("novelId")),
                 criteriaBuilder.isNull(countRoot.get<LocalDateTime>("deletedAt")),
                 criteriaBuilder.isNull(countContributorGroup.get<LocalDateTime>("deletedAt")),
-                criteriaBuilder.isNull(countNovel.get<LocalDateTime>("deletedAt"))
-            )
+                criteriaBuilder.isNull(countNovel.get<LocalDateTime>("deletedAt")),
+            ),
         )
         val totalCount = entityManager.createQuery(countQuery).singleResult
 

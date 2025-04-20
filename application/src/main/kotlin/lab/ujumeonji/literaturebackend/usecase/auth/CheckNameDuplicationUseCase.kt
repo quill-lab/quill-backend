@@ -10,19 +10,21 @@ import java.util.*
 @Component
 @Transactional(readOnly = true)
 class CheckNameDuplicationUseCase(
-    private val accountRepository: AccountService
+    private val accountRepository: AccountService,
 ) : UseCase<CheckNameDuplicationUseCase.Request, CheckNameDuplicationUseCase.Response> {
-
-    override fun execute(request: Request, executedAt: LocalDateTime): Response {
+    override fun execute(
+        request: Request,
+        executedAt: LocalDateTime,
+    ): Response {
         val account = accountRepository.findByName(request.name)
         return Response(isDuplicated = Objects.isNull(account))
     }
 
     data class Request(
-        val name: String
+        val name: String,
     )
 
     data class Response(
-        val isDuplicated: Boolean
+        val isDuplicated: Boolean,
     )
 }

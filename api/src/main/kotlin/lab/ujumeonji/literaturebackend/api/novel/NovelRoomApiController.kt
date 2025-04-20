@@ -35,33 +35,34 @@ class NovelRoomApiController(
     private val findChapterTextsUseCase: FindChapterTextsUseCase,
     private val createChapterUseCase: CreateChapterUseCase,
     private val upsertNovelCharactersUseCase: UpsertNovelCharactersUseCase,
-    private val updateChapterUseCase: UpdateChapterUseCase
+    private val updateChapterUseCase: UpdateChapterUseCase,
 ) {
-
     @Operation(summary = "소설 공방 수정", description = "소설 공방을 수정합니다.")
     @PatchMapping("/{novelRoomId}")
     fun updateNovelRoom(
         @RequiredAuth accountId: String,
         @PathVariable @ValidUUID novelRoomId: String,
-        @Valid @RequestBody request: UpdateNovelRequest
+        @Valid @RequestBody request: UpdateNovelRequest,
     ): ResponseEntity<UpdateNovelResponse> {
-        val result = updateNovelUseCase.execute(
-            request = UpdateNovelUseCase.Request(
-                accountId = accountId,
-                contributorGroupId = novelRoomId,
-                title = request.title,
-                description = request.description,
-                category = request.category,
-                tags = request.tags,
-                synopsis = request.synopsis,
-            ),
-            executedAt = LocalDateTime.now()
-        )
+        val result =
+            updateNovelUseCase.execute(
+                request =
+                    UpdateNovelUseCase.Request(
+                        accountId = accountId,
+                        contributorGroupId = novelRoomId,
+                        title = request.title,
+                        description = request.description,
+                        category = request.category,
+                        tags = request.tags,
+                        synopsis = request.synopsis,
+                    ),
+                executedAt = LocalDateTime.now(),
+            )
 
         return ResponseEntity.ok(
             UpdateNovelResponse(
                 id = result.id,
-            )
+            ),
         )
     }
 
@@ -71,21 +72,24 @@ class NovelRoomApiController(
         @RequiredAuth accountId: String,
         @PathVariable @ValidUUID novelRoomId: String,
     ): ResponseEntity<ViewNovelRoomResponse> {
-        val result = viewJoinedNovelRoomUseCase.execute(
-            request = ViewJoinedNovelRoomUseCase.Request(
-                accountId = accountId,
-                contributorGroupId = novelRoomId
-            ),
-            executedAt = LocalDateTime.now()
-        )
+        val result =
+            viewJoinedNovelRoomUseCase.execute(
+                request =
+                    ViewJoinedNovelRoomUseCase.Request(
+                        accountId = accountId,
+                        contributorGroupId = novelRoomId,
+                    ),
+                executedAt = LocalDateTime.now(),
+            )
 
         return ResponseEntity.ok(
             ViewNovelRoomResponse(
                 id = result.id,
-                category = ViewNovelRoomResponse.Category(
-                    name = result.category.name,
-                    alias = result.category.alias
-                ),
+                category =
+                    ViewNovelRoomResponse.Category(
+                        name = result.category.name,
+                        alias = result.category.alias,
+                    ),
                 title = result.title,
                 description = result.description,
                 synopsis = result.synopsis,
@@ -95,8 +99,8 @@ class NovelRoomApiController(
                 contributorCount = result.contributorCount,
                 maxContributorCount = result.maxContributorCount,
                 status = result.status,
-                tags = result.tags
-            )
+                tags = result.tags,
+            ),
         )
     }
 
@@ -104,21 +108,23 @@ class NovelRoomApiController(
     @PostMapping
     fun createNovelRoom(
         @RequiredAuth accountId: String,
-        @Valid @RequestBody request: CreateNovelRoomBodyRequest
+        @Valid @RequestBody request: CreateNovelRoomBodyRequest,
     ): ResponseEntity<CreateNovelRoomResponse> {
-        val result = createNovelRoomUseCase.execute(
-            request = CreateNovelRoomUseCase.Request(
-                creatorId = accountId,
-                title = request.title,
-                description = request.description,
-                category = request.category,
-                maxContributorCount = request.maxContributors,
-                novelCoverImage = request.coverImage,
-                synopsis = request.synopsis,
-                tags = request.tags,
-            ),
-            executedAt = LocalDateTime.now()
-        )
+        val result =
+            createNovelRoomUseCase.execute(
+                request =
+                    CreateNovelRoomUseCase.Request(
+                        creatorId = accountId,
+                        title = request.title,
+                        description = request.description,
+                        category = request.category,
+                        maxContributorCount = request.maxContributors,
+                        novelCoverImage = request.coverImage,
+                        synopsis = request.synopsis,
+                        tags = request.tags,
+                    ),
+                executedAt = LocalDateTime.now(),
+            )
 
         return ResponseEntity.status(HttpStatus.CREATED)
             .body(CreateNovelRoomResponse(result.novelRoomId))
@@ -129,12 +135,14 @@ class NovelRoomApiController(
     fun getCharacters(
         @PathVariable @ValidUUID novelRoomId: String,
     ): ResponseEntity<List<NovelCharacterResponse>> {
-        val result = findNovelCharactersUseCase.execute(
-            request = FindNovelCharactersUseCase.Request(
-                novelRoomId = novelRoomId,
-            ),
-            executedAt = LocalDateTime.now()
-        )
+        val result =
+            findNovelCharactersUseCase.execute(
+                request =
+                    FindNovelCharactersUseCase.Request(
+                        novelRoomId = novelRoomId,
+                    ),
+                executedAt = LocalDateTime.now(),
+            )
 
         return ResponseEntity.ok(
             result.map {
@@ -144,14 +152,15 @@ class NovelRoomApiController(
                     description = it.description,
                     profileImage = it.profileImage,
                     updatedAt = it.updatedAt,
-                    updatedBy = it.updatedBy?.let { updatedBy ->
-                        NovelCharacterResponse.LastCharacterUpdatedBy(
-                            id = updatedBy.id,
-                            name = updatedBy.name
-                        )
-                    }
+                    updatedBy =
+                        it.updatedBy?.let { updatedBy ->
+                            NovelCharacterResponse.LastCharacterUpdatedBy(
+                                id = updatedBy.id,
+                                name = updatedBy.name,
+                            )
+                        },
                 )
-            }
+            },
         )
     }
 
@@ -160,22 +169,24 @@ class NovelRoomApiController(
     fun addCharacter(
         @RequiredAuth accountId: String,
         @PathVariable @ValidUUID novelRoomId: String,
-        @Valid @RequestBody request: AddCharacterRequest
+        @Valid @RequestBody request: AddCharacterRequest,
     ): ResponseEntity<AddCharacterResponse> {
-        val result = addNovelCharacterUseCase.execute(
-            request = AddNovelCharacterUseCase.Request(
-                accountId = accountId,
-                contributorGroupId = novelRoomId,
-                name = request.name,
-                description = request.description,
-            ),
-            executedAt = LocalDateTime.now()
-        )
+        val result =
+            addNovelCharacterUseCase.execute(
+                request =
+                    AddNovelCharacterUseCase.Request(
+                        accountId = accountId,
+                        contributorGroupId = novelRoomId,
+                        name = request.name,
+                        description = request.description,
+                    ),
+                executedAt = LocalDateTime.now(),
+            )
 
         return ResponseEntity.status(HttpStatus.CREATED).body(
             AddCharacterResponse(
                 id = result.id,
-            )
+            ),
         )
     }
 
@@ -185,13 +196,15 @@ class NovelRoomApiController(
         @PathVariable @ValidUUID novelRoomId: String,
         @RequiredAuth accountId: String,
     ): ResponseEntity<List<NovelRoomParticipantsResponse>> {
-        val result = findNovelRoomParticipantsUseCase.execute(
-            request = FindNovelRoomParticipantsUseCase.Request(
-                accountId = accountId,
-                novelRoomId = novelRoomId,
-            ),
-            executedAt = LocalDateTime.now()
-        )
+        val result =
+            findNovelRoomParticipantsUseCase.execute(
+                request =
+                    FindNovelRoomParticipantsUseCase.Request(
+                        accountId = accountId,
+                        novelRoomId = novelRoomId,
+                    ),
+                executedAt = LocalDateTime.now(),
+            )
 
         return ResponseEntity.ok(
             result.map { response ->
@@ -202,7 +215,7 @@ class NovelRoomApiController(
                     writingOrder = response.writingOrder,
                     joinedAt = response.joinedAt,
                 )
-            }
+            },
         )
     }
 
@@ -214,20 +227,22 @@ class NovelRoomApiController(
         @Valid @RequestBody request: UpdateParticipantOrderRequest,
         @RequiredAuth accountId: String,
     ): ResponseEntity<UpdateParticipantOrderResponse> {
-        val result = updateParticipantOrderUseCase.execute(
-            request = UpdateParticipantOrderUseCase.Request(
-                accountId = accountId,
-                novelRoomId = novelRoomId,
-                contributorId = participantId,
-                writingOrder = request.writingOrder,
-            ),
-            executedAt = LocalDateTime.now()
-        )
+        val result =
+            updateParticipantOrderUseCase.execute(
+                request =
+                    UpdateParticipantOrderUseCase.Request(
+                        accountId = accountId,
+                        novelRoomId = novelRoomId,
+                        contributorId = participantId,
+                        writingOrder = request.writingOrder,
+                    ),
+                executedAt = LocalDateTime.now(),
+            )
 
         return ResponseEntity.ok(
             UpdateParticipantOrderResponse(
                 id = result.id,
-            )
+            ),
         )
     }
 
@@ -236,23 +251,25 @@ class NovelRoomApiController(
     fun createRecruitment(
         @RequiredAuth accountId: String,
         @PathVariable @ValidUUID novelRoomId: String,
-        @Valid @RequestBody request: CreateNovelRoomRecruitmentRequest
+        @Valid @RequestBody request: CreateNovelRoomRecruitmentRequest,
     ): ResponseEntity<CreateNovelRoomRecruitmentResponse> {
-        val result = createNovelRoomRecruitmentPostUseCase.execute(
-            request = CreateNovelRoomRecruitmentPostUseCase.Request(
-                accountId = accountId,
-                novelRoomId = novelRoomId,
-                title = request.title,
-                content = request.content,
-                link = request.link,
-            ),
-            executedAt = LocalDateTime.now()
-        )
+        val result =
+            createNovelRoomRecruitmentPostUseCase.execute(
+                request =
+                    CreateNovelRoomRecruitmentPostUseCase.Request(
+                        accountId = accountId,
+                        novelRoomId = novelRoomId,
+                        title = request.title,
+                        content = request.content,
+                        link = request.link,
+                    ),
+                executedAt = LocalDateTime.now(),
+            )
 
         return ResponseEntity.status(HttpStatus.CREATED).body(
             CreateNovelRoomRecruitmentResponse(
                 id = result.id,
-            )
+            ),
         )
     }
 
@@ -260,15 +277,17 @@ class NovelRoomApiController(
     @GetMapping("/{novelRoomId}/story-arcs")
     fun findStoryArcs(
         @RequiredAuth accountId: String,
-        @PathVariable @ValidUUID novelRoomId: String
+        @PathVariable @ValidUUID novelRoomId: String,
     ): ResponseEntity<List<StoryArcResponse>> {
-        val result = findNovelStoryArcsUseCase.execute(
-            request = FindNovelStoryArcsUseCase.Request(
-                accountId = accountId,
-                novelRoomId = novelRoomId
-            ),
-            executedAt = LocalDateTime.now()
-        )
+        val result =
+            findNovelStoryArcsUseCase.execute(
+                request =
+                    FindNovelStoryArcsUseCase.Request(
+                        accountId = accountId,
+                        novelRoomId = novelRoomId,
+                    ),
+                executedAt = LocalDateTime.now(),
+            )
 
         return ResponseEntity.ok(
             result.map {
@@ -281,7 +300,7 @@ class NovelRoomApiController(
                     lastChapterNumber = it.lastChapterNumber,
                     lastModifiedAt = it.lastModifiedAt,
                 )
-            }
+            },
         )
     }
 
@@ -291,24 +310,26 @@ class NovelRoomApiController(
         @RequiredAuth accountId: String,
         @PathVariable @ValidUUID novelRoomId: String,
         @PathVariable phase: StoryPhaseEnum,
-        @Valid @RequestBody request: UpdateStoryPhaseRequest
+        @Valid @RequestBody request: UpdateStoryPhaseRequest,
     ): ResponseEntity<UpdateStoryPhaseResponse> {
-        val result = updateStoryPhaseUseCase.execute(
-            request = UpdateStoryPhaseUseCase.Request(
-                accountId = accountId,
-                contributorGroupId = novelRoomId,
-                phase = phase,
-                description = request.description,
-                startChapterNumber = request.startChapterNumber,
-                endChapterNumber = request.endChapterNumber,
-            ),
-            executedAt = LocalDateTime.now()
-        )
+        val result =
+            updateStoryPhaseUseCase.execute(
+                request =
+                    UpdateStoryPhaseUseCase.Request(
+                        accountId = accountId,
+                        contributorGroupId = novelRoomId,
+                        phase = phase,
+                        description = request.description,
+                        startChapterNumber = request.startChapterNumber,
+                        endChapterNumber = request.endChapterNumber,
+                    ),
+                executedAt = LocalDateTime.now(),
+            )
 
         return ResponseEntity.ok(
             UpdateStoryPhaseResponse(
                 id = result.id,
-            )
+            ),
         )
     }
 
@@ -318,22 +339,24 @@ class NovelRoomApiController(
         @RequiredAuth accountId: String,
         @PathVariable @ValidUUID novelRoomId: String,
         @PathVariable @ValidUUID chapterId: String,
-        @Valid @RequestBody request: WriteChapterTextRequest
+        @Valid @RequestBody request: WriteChapterTextRequest,
     ): ResponseEntity<WriteChapterTextResponse> {
-        val result = writeChapterTextUseCase.execute(
-            request = WriteChapterTextUseCase.Request(
-                accountId = accountId,
-                chapterId = chapterId,
-                content = request.content,
-                contributorGroupId = novelRoomId,
-            ),
-            executedAt = LocalDateTime.now()
-        )
+        val result =
+            writeChapterTextUseCase.execute(
+                request =
+                    WriteChapterTextUseCase.Request(
+                        accountId = accountId,
+                        chapterId = chapterId,
+                        content = request.content,
+                        contributorGroupId = novelRoomId,
+                    ),
+                executedAt = LocalDateTime.now(),
+            )
 
         return ResponseEntity.ok(
             WriteChapterTextResponse(
-                id = result.id
-            )
+                id = result.id,
+            ),
         )
     }
 
@@ -342,28 +365,31 @@ class NovelRoomApiController(
     fun findChapterTexts(
         @RequiredAuth accountId: String,
         @PathVariable @ValidUUID novelRoomId: String,
-        @PathVariable @ValidUUID chapterId: String
+        @PathVariable @ValidUUID chapterId: String,
     ): ResponseEntity<GetChapterTextsResponse> {
-        val result = findChapterTextsUseCase.execute(
-            request = FindChapterTextsUseCase.Request(
-                accountId = accountId,
-                contributorGroupId = novelRoomId,
-                chapterId = chapterId,
-            ),
-            executedAt = LocalDateTime.now()
-        )
+        val result =
+            findChapterTextsUseCase.execute(
+                request =
+                    FindChapterTextsUseCase.Request(
+                        accountId = accountId,
+                        contributorGroupId = novelRoomId,
+                        chapterId = chapterId,
+                    ),
+                executedAt = LocalDateTime.now(),
+            )
 
         return ResponseEntity.ok(
             GetChapterTextsResponse(
-                items = result.items.map { chapterText ->
-                    GetChapterTextsResponse.ChapterText(
-                        id = chapterText.id,
-                        content = chapterText.content,
-                        authorName = chapterText.authorName,
-                        createdAt = chapterText.createdAt
-                    )
-                }
-            )
+                items =
+                    result.items.map { chapterText ->
+                        GetChapterTextsResponse.ChapterText(
+                            id = chapterText.id,
+                            content = chapterText.content,
+                            authorName = chapterText.authorName,
+                            createdAt = chapterText.createdAt,
+                        )
+                    },
+            ),
         )
     }
 
@@ -373,18 +399,20 @@ class NovelRoomApiController(
         @RequiredAuth accountId: String,
         @PathVariable @ValidUUID novelRoomId: String,
     ): ResponseEntity<CreateChapterResponse> {
-        val result = createChapterUseCase.execute(
-            request = CreateChapterUseCase.Request(
-                accountId = accountId,
-                contributorGroupId = novelRoomId,
-            ),
-            executedAt = LocalDateTime.now()
-        )
+        val result =
+            createChapterUseCase.execute(
+                request =
+                    CreateChapterUseCase.Request(
+                        accountId = accountId,
+                        contributorGroupId = novelRoomId,
+                    ),
+                executedAt = LocalDateTime.now(),
+            )
 
         return ResponseEntity.status(HttpStatus.CREATED).body(
             CreateChapterResponse(
-                id = result.id
-            )
+                id = result.id,
+            ),
         )
     }
 
@@ -393,31 +421,35 @@ class NovelRoomApiController(
     fun upsertCharacters(
         @RequiredAuth accountId: String,
         @PathVariable @ValidUUID novelRoomId: String,
-        @Valid @RequestBody request: UpsertNovelCharactersRequest
+        @Valid @RequestBody request: UpsertNovelCharactersRequest,
     ): ResponseEntity<UpsertNovelCharactersResponse> {
-        val result = upsertNovelCharactersUseCase.execute(
-            request = UpsertNovelCharactersUseCase.Request(
-                accountId = accountId,
-                contributorGroupId = novelRoomId,
-                characters = request.characters.map { character ->
-                    UpsertNovelCharacterCommand(
-                        id = character.id,
-                        name = character.name,
-                        description = character.description
-                    )
-                }
-            ),
-            executedAt = LocalDateTime.now()
-        )
+        val result =
+            upsertNovelCharactersUseCase.execute(
+                request =
+                    UpsertNovelCharactersUseCase.Request(
+                        accountId = accountId,
+                        contributorGroupId = novelRoomId,
+                        characters =
+                            request.characters.map { character ->
+                                UpsertNovelCharacterCommand(
+                                    id = character.id,
+                                    name = character.name,
+                                    description = character.description,
+                                )
+                            },
+                    ),
+                executedAt = LocalDateTime.now(),
+            )
 
         return ResponseEntity.ok(
             UpsertNovelCharactersResponse(
-                characters = result.characters.map { character ->
-                    UpsertNovelCharactersResponse.CharacterResponse(
-                        id = character.id
-                    )
-                }
-            )
+                characters =
+                    result.characters.map { character ->
+                        UpsertNovelCharactersResponse.CharacterResponse(
+                            id = character.id,
+                        )
+                    },
+            ),
         )
     }
 
@@ -427,22 +459,24 @@ class NovelRoomApiController(
         @RequiredAuth accountId: String,
         @PathVariable @ValidUUID novelRoomId: String,
         @PathVariable @ValidUUID chapterId: String,
-        @Valid @RequestBody request: UpdateChapterRequest
+        @Valid @RequestBody request: UpdateChapterRequest,
     ): ResponseEntity<UpdateChapterResponse> {
-        val result = updateChapterUseCase.execute(
-            request = UpdateChapterUseCase.Request(
-                accountId = accountId,
-                contributorGroupId = novelRoomId,
-                chapterId = chapterId,
-                title = request.title,
-            ),
-            executedAt = LocalDateTime.now()
-        )
+        val result =
+            updateChapterUseCase.execute(
+                request =
+                    UpdateChapterUseCase.Request(
+                        accountId = accountId,
+                        contributorGroupId = novelRoomId,
+                        chapterId = chapterId,
+                        title = request.title,
+                    ),
+                executedAt = LocalDateTime.now(),
+            )
 
         return ResponseEntity.ok(
             UpdateChapterResponse(
-                id = result.id
-            )
+                id = result.id,
+            ),
         )
     }
 }

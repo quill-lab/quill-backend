@@ -16,9 +16,11 @@ class NovelService(
     private val novelRepository: NovelRepository,
     private val chapterRepository: ChapterRepository,
 ) {
-
     @Transactional
-    fun createNovel(command: CreateNovelCommand, now: LocalDateTime = LocalDateTime.now()): Novel =
+    fun createNovel(
+        command: CreateNovelCommand,
+        now: LocalDateTime = LocalDateTime.now(),
+    ): Novel =
         novelRepository.save(
             Novel.create(
                 command.title,
@@ -28,30 +30,35 @@ class NovelService(
                 command.tags,
                 command.synopsis,
                 now,
-            )
+            ),
         )
 
     fun findNovel(id: NovelId): Novel? = novelRepository.findOneById(id.id)
 
     fun findNovels(ids: List<NovelId>): List<Novel> = novelRepository.findAllById(ids.map { it.id }).toList()
 
-    fun findChaptersByNovelId(novelId: NovelId, offset: Int, limit: Int): PageResponse<ChapterData> {
+    fun findChaptersByNovelId(
+        novelId: NovelId,
+        offset: Int,
+        limit: Int,
+    ): PageResponse<ChapterData> {
         val pageable = PageRequest.of(offset / limit, limit, Sort.by(Sort.Direction.ASC, "chapterNumber"))
         val chaptersPage = chapterRepository.findByNovelId(novelId.id, pageable)
 
-        val chapters = chaptersPage.content.map { chapter ->
-            ChapterData(
-                id = ChapterId.from(chapter.id),
-                title = chapter.title,
-                description = chapter.description,
-                chapterNumber = chapter.chapterNumber,
-                status = chapter.status,
-                currentContributorId = chapter.currentChapterAuthor.getOrNull()?.contributorId,
-                approvedAt = chapter.approvedAt,
-                createdAt = chapter.createdAt,
-                updatedAt = chapter.updatedAt,
-            )
-        }
+        val chapters =
+            chaptersPage.content.map { chapter ->
+                ChapterData(
+                    id = ChapterId.from(chapter.id),
+                    title = chapter.title,
+                    description = chapter.description,
+                    chapterNumber = chapter.chapterNumber,
+                    status = chapter.status,
+                    currentContributorId = chapter.currentChapterAuthor.getOrNull()?.contributorId,
+                    approvedAt = chapter.approvedAt,
+                    createdAt = chapter.createdAt,
+                    updatedAt = chapter.updatedAt,
+                )
+            }
 
         return PageResponse(
             items = chapters,
@@ -59,7 +66,7 @@ class NovelService(
             offset = offset,
             limit = limit,
             hasNext = chaptersPage.hasNext(),
-            hasPrevious = chaptersPage.hasPrevious()
+            hasPrevious = chaptersPage.hasPrevious(),
         )
     }
 }

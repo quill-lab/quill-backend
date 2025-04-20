@@ -6,14 +6,17 @@ import java.util.*
 import java.util.regex.Pattern
 
 class UUIDValidator : ConstraintValidator<ValidUUID, String> {
-
     companion object {
-        private val UUID_PATTERN = Pattern.compile(
-            "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$"
-        )
+        private val UUID_PATTERN =
+            Pattern.compile(
+                "^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$",
+            )
     }
 
-    override fun isValid(value: String?, context: ConstraintValidatorContext): Boolean {
+    override fun isValid(
+        value: String?,
+        context: ConstraintValidatorContext,
+    ): Boolean {
         if (value == null) {
             return false
         }

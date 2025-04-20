@@ -8,16 +8,12 @@ import java.time.LocalDateTime
 data class NovelRoomParticipantsResponse(
     @Schema(description = "참여자 ID")
     val id: String,
-
     @Schema(description = "참여자 닉네임")
     val nickname: String,
-
     @Schema(description = "참여자 역할")
     val role: ContributorRoleEnum,
-
     @Schema(description = "집필 순서")
     val writingOrder: Int?,
-
     @Schema(description = "참여일시")
     val joinedAt: LocalDateTime,
 )

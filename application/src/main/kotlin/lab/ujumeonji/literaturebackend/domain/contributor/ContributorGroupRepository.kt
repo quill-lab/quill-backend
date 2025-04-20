@@ -8,7 +8,6 @@ import org.springframework.data.repository.query.Param
 import java.util.*
 
 interface ContributorGroupRepository : CrudRepository<ContributorGroup, UUID> {
-
     @Query(
         """
         SELECT DISTINCT cg FROM ContributorGroup cg
@@ -16,16 +15,21 @@ interface ContributorGroupRepository : CrudRepository<ContributorGroup, UUID> {
         WHERE c.accountId = :accountId
         AND c.deletedAt IS NULL
         AND cg.deletedAt IS NULL
-        """
+        """,
     )
-    fun findByAccountId(@Param("accountId") accountId: UUID, pageable: Pageable): Page<ContributorGroup>
+    fun findByAccountId(
+        @Param("accountId") accountId: UUID,
+        pageable: Pageable,
+    ): Page<ContributorGroup>
 
     @Query(
         """
         SELECT cg FROM ContributorGroup cg
         WHERE cg.novelId = :novelId
         AND cg.deletedAt IS NULL
-        """
+        """,
     )
-    fun findByNovelId(@Param("novelId") novelId: UUID): Optional<ContributorGroup>
+    fun findByNovelId(
+        @Param("novelId") novelId: UUID,
+    ): Optional<ContributorGroup>
 }

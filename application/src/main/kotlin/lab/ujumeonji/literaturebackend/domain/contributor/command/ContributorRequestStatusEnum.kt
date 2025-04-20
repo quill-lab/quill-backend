@@ -6,7 +6,8 @@ enum class ContributorRequestStatusEnum {
     REQUESTED,
     APPROVED,
     CANCELLED,
-    REJECTED;
+    REJECTED,
+    ;
 
     companion object {
         fun fromContributorRequestStatus(status: ContributorRequestStatus): ContributorRequestStatusEnum {

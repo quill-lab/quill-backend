@@ -6,7 +6,8 @@ enum class ChapterStatusEnum {
     REQUESTED,
     APPROVED,
     CANCELLED,
-    REJECTED;
+    REJECTED,
+    ;
 
     fun toChapterStatus(): lab.ujumeonji.literaturebackend.domain.novel.ChapterStatus {
         return when (this) {

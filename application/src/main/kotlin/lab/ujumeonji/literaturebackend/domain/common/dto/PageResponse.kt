@@ -6,5 +6,5 @@ data class PageResponse<T>(
     val offset: Int,
     val limit: Int,
     val hasNext: Boolean,
-    val hasPrevious: Boolean
+    val hasPrevious: Boolean,
 )

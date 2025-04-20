@@ -11,9 +11,8 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 @Configuration(proxyBeanMethods = false)
 class WebConfig(
     private val authArgumentResolver: AuthArgumentResolver,
-    private val authInterceptor: AuthInterceptor
+    private val authInterceptor: AuthInterceptor,
 ) : WebMvcConfigurer {
-
     override fun addArgumentResolvers(resolvers: MutableList<HandlerMethodArgumentResolver>) {
         resolvers.add(authArgumentResolver)
     }

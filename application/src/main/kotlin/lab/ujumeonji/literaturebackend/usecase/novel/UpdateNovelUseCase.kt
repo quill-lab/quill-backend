@@ -21,21 +21,25 @@ class UpdateNovelUseCase(
     private val contributorService: ContributorService,
     private val novelService: NovelService,
 ) : UseCase<UpdateNovelUseCase.Request, UpdateNovelUseCase.Response> {
-
-    override fun execute(request: Request, executedAt: LocalDateTime): Response {
+    override fun execute(
+        request: Request,
+        executedAt: LocalDateTime,
+    ): Response {
         val accountId = AccountId.from(request.accountId)
         accountService.findById(accountId)
             ?: throw BusinessException(ErrorCode.ACCOUNT_NOT_FOUND)
 
-        val contributorGroup = contributorService.findGroupById(ContributorGroupId.from(request.contributorGroupId))
-            ?: throw BusinessException(ErrorCode.CONTRIBUTOR_GROUP_NOT_FOUND)
+        val contributorGroup =
+            contributorService.findGroupById(ContributorGroupId.from(request.contributorGroupId))
+                ?: throw BusinessException(ErrorCode.CONTRIBUTOR_GROUP_NOT_FOUND)
 
         if (!contributorGroup.hasManagePermission(accountId)) {
             throw BusinessException(ErrorCode.NO_PERMISSION_TO_UPDATE)
         }
 
-        val novel = novelService.findNovel(contributorGroup.novelId)
-            ?: throw BusinessException(ErrorCode.NOVEL_NOT_FOUND)
+        val novel =
+            novelService.findNovel(contributorGroup.novelId)
+                ?: throw BusinessException(ErrorCode.NOVEL_NOT_FOUND)
 
         novel.update(
             UpdateNovelCommand(
@@ -45,7 +49,7 @@ class UpdateNovelUseCase(
                 tags = request.tags,
                 synopsis = request.synopsis,
             ),
-            executedAt
+            executedAt,
         )
 
         return Response(contributorGroup.idValue.toString())

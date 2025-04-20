@@ -7,7 +7,6 @@ import graphql.schema.idl.RuntimeWiring
 
 @DgsComponent
 class GraphQLConfig {
-
     @DgsRuntimeWiring
     fun addScalars(builder: RuntimeWiring.Builder): RuntimeWiring.Builder {
         return builder

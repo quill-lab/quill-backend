@@ -8,26 +8,27 @@ import org.springframework.web.bind.annotation.RestControllerAdvice
 
 @RestControllerAdvice
 class GlobalExceptionHandler {
-
     @ExceptionHandler(BusinessException::class)
     fun handleBusinessException(e: BusinessException): ResponseEntity<ErrorResponse> {
         val errorCode = e.errorCode
-        val errorResponse = ErrorResponse(
-            status = errorCode.status,
-            code = errorCode.code,
-            message = errorCode.message
-        )
+        val errorResponse =
+            ErrorResponse(
+                status = errorCode.status,
+                code = errorCode.code,
+                message = errorCode.message,
+            )
 
         return ResponseEntity(errorResponse, HttpStatus.valueOf(errorCode.status))
     }
 
     @ExceptionHandler(ConstraintViolationException::class)
     fun handleConstraintViolationException(ex: ConstraintViolationException): ResponseEntity<ErrorResponse> {
-        val errorResponse = ErrorResponse(
-            status = HttpStatus.BAD_REQUEST.value(),
-            code = ErrorCode.BAD_REQUEST.code,
-            message = "Validation error: ${ex.message}"
-        )
+        val errorResponse =
+            ErrorResponse(
+                status = HttpStatus.BAD_REQUEST.value(),
+                code = ErrorCode.BAD_REQUEST.code,
+                message = "Validation error: ${ex.message}",
+            )
 
         return ResponseEntity(errorResponse, HttpStatus.BAD_REQUEST)
     }

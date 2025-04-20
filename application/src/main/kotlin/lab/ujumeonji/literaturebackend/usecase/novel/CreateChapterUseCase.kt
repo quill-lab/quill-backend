@@ -17,21 +17,26 @@ class CreateChapterUseCase(
     private val contributorService: ContributorService,
     private val novelService: NovelService,
 ) : UseCase<CreateChapterUseCase.Request, CreateChapterUseCase.Response> {
-
-    override fun execute(request: Request, executedAt: LocalDateTime): Response {
-        val contributorGroup = contributorService.findGroupById(ContributorGroupId.from(request.contributorGroupId))
-            ?: throw BusinessException(ErrorCode.CONTRIBUTOR_GROUP_NOT_FOUND)
+    override fun execute(
+        request: Request,
+        executedAt: LocalDateTime,
+    ): Response {
+        val contributorGroup =
+            contributorService.findGroupById(ContributorGroupId.from(request.contributorGroupId))
+                ?: throw BusinessException(ErrorCode.CONTRIBUTOR_GROUP_NOT_FOUND)
 
         if (!contributorGroup.hasManagePermission(AccountId.from(request.accountId))) {
             throw BusinessException(ErrorCode.NO_PERMISSION_TO_UPDATE)
         }
 
-        val novel = novelService.findNovel(contributorGroup.novelId)
-            ?: throw BusinessException(ErrorCode.NOVEL_NOT_FOUND)
+        val novel =
+            novelService.findNovel(contributorGroup.novelId)
+                ?: throw BusinessException(ErrorCode.NOVEL_NOT_FOUND)
 
-        val orderedContributors = contributorGroup.contributors
-            .sortedBy { it.writingOrder }
-            .toList()
+        val orderedContributors =
+            contributorGroup.contributors
+                .sortedBy { it.writingOrder }
+                .toList()
 
         if (orderedContributors.isEmpty()) {
             throw BusinessException(ErrorCode.CONTRIBUTOR_GROUP_EMPTY) // Need appropriate error code
@@ -52,6 +57,6 @@ class CreateChapterUseCase(
     )
 
     data class Response(
-        val id: String
+        val id: String,
     )
 }

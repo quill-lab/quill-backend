@@ -20,8 +20,10 @@ class CreateNovelRoomUseCase(
     private val contributorService: ContributorService,
     private val novelService: NovelService,
 ) : UseCase<CreateNovelRoomUseCase.Request, CreateNovelRoomUseCase.Response> {
-
-    override fun execute(request: Request, executedAt: LocalDateTime): Response {
+    override fun execute(
+        request: Request,
+        executedAt: LocalDateTime,
+    ): Response {
         val accountId = AccountId.from(request.creatorId)
         // TODO: Temporarily commented out to allow test data creation
         // This check prevents users from creating multiple contributor groups
@@ -34,9 +36,10 @@ class CreateNovelRoomUseCase(
 
         val contributorGroup = createContributorGroup(request, novel.idValue, executedAt)
 
-        val orderedContributors = contributorGroup.contributors
-            .sortedBy { it.writingOrder }
-            .toList()
+        val orderedContributors =
+            contributorGroup.contributors
+                .sortedBy { it.writingOrder }
+                .toList()
 
         if (orderedContributors.isEmpty()) {
             throw BusinessException(ErrorCode.CONTRIBUTOR_GROUP_EMPTY)
@@ -47,28 +50,36 @@ class CreateNovelRoomUseCase(
         return Response("${contributorGroup.idValue}")
     }
 
-    private fun createNovel(request: Request, executedAt: LocalDateTime) = novelService.createNovel(
-        command = CreateNovelCommand(
-            title = request.title,
-            description = request.description,
-            category = request.category.toNovelCategory(),
-            coverImage = request.novelCoverImage,
-            synopsis = request.synopsis,
-            tags = request.tags,
-        ),
-        now = executedAt
+    private fun createNovel(
+        request: Request,
+        executedAt: LocalDateTime,
+    ) = novelService.createNovel(
+        command =
+            CreateNovelCommand(
+                title = request.title,
+                description = request.description,
+                category = request.category.toNovelCategory(),
+                coverImage = request.novelCoverImage,
+                synopsis = request.synopsis,
+                tags = request.tags,
+            ),
+        now = executedAt,
     )
 
-    private fun createContributorGroup(request: Request, novelId: NovelId, executedAt: LocalDateTime) =
-        contributorService.createContributorGroup(
-            command = CreateContributorGroupCommand(
+    private fun createContributorGroup(
+        request: Request,
+        novelId: NovelId,
+        executedAt: LocalDateTime,
+    ) = contributorService.createContributorGroup(
+        command =
+            CreateContributorGroupCommand(
                 novelId = novelId,
                 ownerId = AccountId.from(request.creatorId),
                 tags = request.tags,
                 maxContributorCount = request.maxContributorCount,
             ),
-            now = executedAt
-        )
+        now = executedAt,
+    )
 
     data class Request(
         val creatorId: String,
@@ -82,6 +93,6 @@ class CreateNovelRoomUseCase(
     )
 
     data class Response(
-        val novelRoomId: String
+        val novelRoomId: String,
     )
 }

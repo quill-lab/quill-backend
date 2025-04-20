@@ -19,7 +19,6 @@ data class JoinedNovelRoomsResponse(
         val maxContributorCount: Int,
         val status: String,
     ) {
-
         data class Category(
             val name: String,
             val alias: String,

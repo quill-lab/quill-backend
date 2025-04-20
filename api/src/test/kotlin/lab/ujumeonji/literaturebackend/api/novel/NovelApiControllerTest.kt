@@ -10,10 +10,9 @@ class NovelApiControllerTest(
     mockMvc: MockMvc,
     objectMapper: ObjectMapper,
 ) : ControllerTest(
-    mockMvc = mockMvc,
-    objectMapper = objectMapper,
-) {
-
+        mockMvc = mockMvc,
+        objectMapper = objectMapper,
+    ) {
     init {
         given("소설 카테고리 목록이 존재하고") {
             `when`("소설 카테고리 목록 조회를 요청하면") {

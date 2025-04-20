@@ -18,25 +18,30 @@ class AddNovelCharacterUseCase(
     private val novelService: NovelService,
     private val contributorService: ContributorService,
 ) : UseCase<AddNovelCharacterUseCase.Request, AddNovelCharacterUseCase.Response> {
-
-    override fun execute(request: Request, executedAt: LocalDateTime): Response {
-        val contributorGroup = contributorService.findGroupById(ContributorGroupId.from(request.contributorGroupId))
-            ?: throw BusinessException(ErrorCode.CONTRIBUTOR_GROUP_NOT_FOUND)
+    override fun execute(
+        request: Request,
+        executedAt: LocalDateTime,
+    ): Response {
+        val contributorGroup =
+            contributorService.findGroupById(ContributorGroupId.from(request.contributorGroupId))
+                ?: throw BusinessException(ErrorCode.CONTRIBUTOR_GROUP_NOT_FOUND)
 
         if (!contributorGroup.hasManagePermission(AccountId.from(request.accountId))) {
             throw BusinessException(ErrorCode.NO_PERMISSION_TO_UPDATE)
         }
 
-        val novel = novelService.findNovel(contributorGroup.novelId)
-            ?: throw BusinessException(ErrorCode.NOVEL_NOT_FOUND)
+        val novel =
+            novelService.findNovel(contributorGroup.novelId)
+                ?: throw BusinessException(ErrorCode.NOVEL_NOT_FOUND)
 
-        val addedCharacterId = novel.addCharacter(
-            AddCharacterCommand(
-                name = request.name,
-                description = request.description,
-            ),
-            executedAt
-        )
+        val addedCharacterId =
+            novel.addCharacter(
+                AddCharacterCommand(
+                    name = request.name,
+                    description = request.description,
+                ),
+                executedAt,
+            )
 
         return Response(
             id = "$addedCharacterId",

@@ -21,7 +21,6 @@ abstract class ControllerTest(
     private val mockMvc: MockMvc,
     val objectMapper: ObjectMapper,
 ) : BehaviorSpec() {
-
     protected val mailPort: MailPort = mockk<MailPort>()
 
     override fun extensions() = listOf(SpringExtension)
@@ -32,38 +31,52 @@ abstract class ControllerTest(
         return objectMapper.writeValueAsString(obj)
     }
 
-    protected fun fromJson(json: String, clazz: Class<*>): Any {
+    protected fun fromJson(
+        json: String,
+        clazz: Class<*>,
+    ): Any {
         return objectMapper.readValue(json, clazz)
     }
 
-    protected fun performGet(url: String) = mockMvc.perform(
-        MockMvcRequestBuilders.get(url)
-            .accept(MediaType.APPLICATION_JSON)
-    ).andDo(MockMvcResultHandlers.print())
+    protected fun performGet(url: String) =
+        mockMvc.perform(
+            MockMvcRequestBuilders.get(url)
+                .accept(MediaType.APPLICATION_JSON),
+        ).andDo(MockMvcResultHandlers.print())
 
-    fun performPost(url: String, body: Any? = null) = mockMvc.perform(
+    fun performPost(
+        url: String,
+        body: Any? = null,
+    ) = mockMvc.perform(
         MockMvcRequestBuilders.post(url)
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
-            .content(toJson(body))
+            .content(toJson(body)),
     ).andDo(MockMvcResultHandlers.print())
 
-    protected fun performPut(url: String, body: Any) = mockMvc.perform(
+    protected fun performPut(
+        url: String,
+        body: Any,
+    ) = mockMvc.perform(
         MockMvcRequestBuilders.put(url)
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
-            .content(toJson(body))
+            .content(toJson(body)),
     ).andDo(MockMvcResultHandlers.print())
 
-    protected fun performDelete(url: String) = mockMvc.perform(
-        MockMvcRequestBuilders.delete(url)
-            .accept(MediaType.APPLICATION_JSON)
-    ).andDo(MockMvcResultHandlers.print())
+    protected fun performDelete(url: String) =
+        mockMvc.perform(
+            MockMvcRequestBuilders.delete(url)
+                .accept(MediaType.APPLICATION_JSON),
+        ).andDo(MockMvcResultHandlers.print())
 
-    fun performPatch(url: String, body: Any) = mockMvc.perform(
+    fun performPatch(
+        url: String,
+        body: Any,
+    ) = mockMvc.perform(
         MockMvcRequestBuilders.patch(url)
             .contentType(MediaType.APPLICATION_JSON)
             .accept(MediaType.APPLICATION_JSON)
-            .content(toJson(body))
+            .content(toJson(body)),
     ).andDo(MockMvcResultHandlers.print())
 }

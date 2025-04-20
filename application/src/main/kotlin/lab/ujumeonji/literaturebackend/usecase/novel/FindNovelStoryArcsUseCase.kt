@@ -20,9 +20,11 @@ class FindNovelStoryArcsUseCase(
     private val novelService: NovelService,
     private val contributorService: ContributorService,
 ) : UseCase<FindNovelStoryArcsUseCase.Request, List<FindNovelStoryArcsUseCase.Response>> {
-
     @Transactional(readOnly = true)
-    override fun execute(request: Request, executedAt: LocalDateTime): List<Response> {
+    override fun execute(
+        request: Request,
+        executedAt: LocalDateTime,
+    ): List<Response> {
         val contributorGroup = findContributorGroup(request.novelRoomId)
         validateParticipantAccess(contributorGroup, request.accountId)
         val novel = findNovel(contributorGroup.novelId)
@@ -44,7 +46,10 @@ class FindNovelStoryArcsUseCase(
         contributorService.findGroupById(ContributorGroupId.from(novelRoomId))
             ?: throw BusinessException(ErrorCode.CONTRIBUTOR_GROUP_NOT_FOUND)
 
-    private fun validateParticipantAccess(contributorGroup: ContributorGroup, accountId: String) {
+    private fun validateParticipantAccess(
+        contributorGroup: ContributorGroup,
+        accountId: String,
+    ) {
         if (!contributorGroup.isParticipating(AccountId.from(accountId))) {
             throw BusinessException(ErrorCode.NO_PERMISSION_TO_VIEW)
         }
@@ -66,6 +71,6 @@ class FindNovelStoryArcsUseCase(
 
     data class Request(
         val accountId: String,
-        val novelRoomId: String
+        val novelRoomId: String,
     )
 }

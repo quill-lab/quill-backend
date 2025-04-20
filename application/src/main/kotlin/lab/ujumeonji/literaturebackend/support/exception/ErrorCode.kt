@@ -3,7 +3,7 @@ package lab.ujumeonji.literaturebackend.support.exception
 enum class ErrorCode(
     val status: Int,
     val code: String,
-    val message: String
+    val message: String,
 ) {
     // Contributor 관련 에러
     DUPLICATE_CONTRIBUTOR_GROUP(400, "CONTRIBUTOR-001", "이미 기여자 그룹을 가지고 있는 사용자입니다."),

@@ -28,40 +28,44 @@ class UserApiController(
     @GetMapping("/me/novel-rooms")
     fun getJoinedNovelRooms(
         @RequiredAuth accountId: String,
-        @Valid request: JoinedNovelRoomsQueryRequest
+        @Valid request: JoinedNovelRoomsQueryRequest,
     ): ResponseEntity<JoinedNovelRoomsResponse> {
-        val result = findJoinedNovelRoomsUseCase.execute(
-            request = FindJoinedNovelRoomsUseCase.Request(
-                accountId = accountId,
-                page = request.page,
-                size = request.size,
-                sort = NovelRoomSortTypeEnum.from(request.sort),
-            ),
-            executedAt = LocalDateTime.now()
-        )
+        val result =
+            findJoinedNovelRoomsUseCase.execute(
+                request =
+                    FindJoinedNovelRoomsUseCase.Request(
+                        accountId = accountId,
+                        page = request.page,
+                        size = request.size,
+                        sort = NovelRoomSortTypeEnum.from(request.sort),
+                    ),
+                executedAt = LocalDateTime.now(),
+            )
 
         return ResponseEntity.ok(
             JoinedNovelRoomsResponse(
-                items = result.result.map { item ->
-                    JoinedNovelRoomsResponse.ResponseItem(
-                        id = item.id,
-                        category = JoinedNovelRoomsResponse.ResponseItem.Category(
-                            name = item.category.name,
-                            alias = item.category.alias
-                        ),
-                        title = item.title,
-                        createdAt = item.createdAt,
-                        completedAt = item.completedAt,
-                        role = item.role,
-                        contributorCount = item.contributorCount,
-                        maxContributorCount = item.maxContributorCount,
-                        status = item.status
-                    )
-                },
+                items =
+                    result.result.map { item ->
+                        JoinedNovelRoomsResponse.ResponseItem(
+                            id = item.id,
+                            category =
+                                JoinedNovelRoomsResponse.ResponseItem.Category(
+                                    name = item.category.name,
+                                    alias = item.category.alias,
+                                ),
+                            title = item.title,
+                            createdAt = item.createdAt,
+                            completedAt = item.completedAt,
+                            role = item.role,
+                            contributorCount = item.contributorCount,
+                            maxContributorCount = item.maxContributorCount,
+                            status = item.status,
+                        )
+                    },
                 totalCount = result.totalCount,
                 size = result.size,
-                page = result.page
-            )
+                page = result.page,
+            ),
         )
     }
 
@@ -69,33 +73,36 @@ class UserApiController(
     @GetMapping("/me/contributor-requests")
     fun getContributorRequestHistories(
         @RequiredAuth accountId: String,
-        @Valid request: ContributorRequestsQueryRequest
+        @Valid request: ContributorRequestsQueryRequest,
     ): ResponseEntity<ContributorRequestsResponse> {
-        val result = findContributorRequestsUseCase.execute(
-            request = FindContributorRequestsUseCase.Request(
-                accountId = accountId,
-                page = request.page,
-                size = request.size,
-            ),
-            executedAt = LocalDateTime.now()
-        )
+        val result =
+            findContributorRequestsUseCase.execute(
+                request =
+                    FindContributorRequestsUseCase.Request(
+                        accountId = accountId,
+                        page = request.page,
+                        size = request.size,
+                    ),
+                executedAt = LocalDateTime.now(),
+            )
 
         return ResponseEntity.ok(
             ContributorRequestsResponse(
-                items = result.result.map { item ->
-                    ContributorRequestsResponse.ResponseItem(
-                        id = item.id,
-                        title = item.title,
-                        requestedAt = item.requestedAt,
-                        joinedAt = item.joinedAt,
-                        leftAt = item.leftAt,
-                        status = item.status.name,
-                    )
-                },
+                items =
+                    result.result.map { item ->
+                        ContributorRequestsResponse.ResponseItem(
+                            id = item.id,
+                            title = item.title,
+                            requestedAt = item.requestedAt,
+                            joinedAt = item.joinedAt,
+                            leftAt = item.leftAt,
+                            status = item.status.name,
+                        )
+                    },
                 totalCount = result.totalCount,
                 size = result.size,
-                page = result.page
-            )
+                page = result.page,
+            ),
         )
     }
 }

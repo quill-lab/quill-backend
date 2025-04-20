@@ -6,22 +6,23 @@ import org.springframework.stereotype.Service
 import java.time.LocalDateTime
 
 @Service
-class PostService @Autowired constructor(
-    private val contributorGroupRecruitmentRepository: ContributorGroupRecruitmentRepository,
-) : ContributorGroupRecruitmentService {
-
-    override fun createNovelRecruitmentPost(
-        command: CreateNovelRoomRecruitmentPostCommand,
-        now: LocalDateTime
-    ): ContributorGroupRecruitment =
-        contributorGroupRecruitmentRepository.save(
-            ContributorGroupRecruitment.create(
-                command.contributorGroupId,
-                command.authorId,
-                command.title,
-                command.content,
-                command.link,
-                now,
+class PostService
+    @Autowired
+    constructor(
+        private val contributorGroupRecruitmentRepository: ContributorGroupRecruitmentRepository,
+    ) : ContributorGroupRecruitmentService {
+        override fun createNovelRecruitmentPost(
+            command: CreateNovelRoomRecruitmentPostCommand,
+            now: LocalDateTime,
+        ): ContributorGroupRecruitment =
+            contributorGroupRecruitmentRepository.save(
+                ContributorGroupRecruitment.create(
+                    command.contributorGroupId,
+                    command.authorId,
+                    command.title,
+                    command.content,
+                    command.link,
+                    now,
+                ),
             )
-        )
-}
+    }

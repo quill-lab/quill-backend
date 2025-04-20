@@ -10,7 +10,6 @@ data class NovelCharacterResponse(
     val updatedAt: LocalDateTime?,
     val updatedBy: LastCharacterUpdatedBy?,
 ) {
-
     data class LastCharacterUpdatedBy(
         val id: String,
         val name: String,

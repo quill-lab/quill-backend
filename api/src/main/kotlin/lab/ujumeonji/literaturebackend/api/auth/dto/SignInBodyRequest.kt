@@ -7,7 +7,6 @@ data class SignInBodyRequest(
     @field:Email(message = "Invalid email format")
     @field:NotBlank(message = "Email is mandatory")
     val email: String,
-
     @field:NotBlank(message = "Password is mandatory")
-    val password: String
+    val password: String,
 )

@@ -13,7 +13,6 @@ import org.springframework.web.bind.annotation.RestController
 @RestController
 @RequestMapping("/api/v1/novels")
 class NovelApiController {
-
     @Operation(summary = "소설 카테고리 목록 조회", description = "소설 카테고리 목록을 조회합니다.")
     @GetMapping("/categories")
     fun getCategories(): ResponseEntity<List<NovelCategoriesResponse>> =
@@ -21,8 +20,8 @@ class NovelApiController {
             NovelCategoryEnum.entries.map { category ->
                 NovelCategoriesResponse(
                     name = category.name,
-                    alias = category.alias
+                    alias = category.alias,
                 )
-            }
+            },
         )
 }

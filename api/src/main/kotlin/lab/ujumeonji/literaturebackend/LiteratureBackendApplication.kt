@@ -8,4 +8,4 @@ class LiteratureBackendApplication
 
 fun main(args: Array<String>) {
     runApplication<LiteratureBackendApplication>(*args)
-} 
+}

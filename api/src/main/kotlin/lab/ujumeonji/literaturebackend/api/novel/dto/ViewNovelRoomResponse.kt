@@ -18,7 +18,6 @@ data class ViewNovelRoomResponse(
     val status: ContributorGroupStatusEnum,
     val tags: List<String>,
 ) {
-
     data class Category(
         val name: String,
         val alias: String,

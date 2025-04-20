@@ -18,17 +18,21 @@ class FindNovelRoomParticipantsUseCase(
     private val accountService: AccountService,
     private val contributorService: ContributorService,
 ) : UseCase<FindNovelRoomParticipantsUseCase.Request, List<FindNovelRoomParticipantsUseCase.Response>> {
-
-    override fun execute(request: Request, executedAt: LocalDateTime): List<Response> {
-        val contributorGroup = contributorService.findGroupById(ContributorGroupId.from(request.novelRoomId))
-            ?: throw BusinessException(ErrorCode.CONTRIBUTOR_GROUP_NOT_FOUND)
+    override fun execute(
+        request: Request,
+        executedAt: LocalDateTime,
+    ): List<Response> {
+        val contributorGroup =
+            contributorService.findGroupById(ContributorGroupId.from(request.novelRoomId))
+                ?: throw BusinessException(ErrorCode.CONTRIBUTOR_GROUP_NOT_FOUND)
 
         if (!contributorGroup.isParticipating(AccountId.from(request.accountId))) {
             throw BusinessException(ErrorCode.NO_PERMISSION_TO_VIEW)
         }
 
-        val contributors = contributorGroup.contributors
-            .sortedBy { it.writingOrder }
+        val contributors =
+            contributorGroup.contributors
+                .sortedBy { it.writingOrder }
         val accountIds = contributors.map { it.accountId }
         val accounts = accountService.findByIds(accountIds).associateBy { it.idValue }
 

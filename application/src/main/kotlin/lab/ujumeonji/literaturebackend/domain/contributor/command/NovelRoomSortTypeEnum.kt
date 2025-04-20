@@ -2,7 +2,8 @@ package lab.ujumeonji.literaturebackend.domain.contributor.command
 
 enum class NovelRoomSortTypeEnum {
     LATEST,
-    OLDEST;
+    OLDEST,
+    ;
 
     companion object {
         fun from(value: String?): NovelRoomSortTypeEnum {

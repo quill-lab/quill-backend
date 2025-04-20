@@ -14,29 +14,33 @@ import java.time.LocalDateTime
 class FindContributorRequestsUseCase(
     private val contributorService: ContributorService,
 ) : UseCase<FindContributorRequestsUseCase.Request, FindContributorRequestsUseCase.Response> {
-
-    override fun execute(request: Request, executedAt: LocalDateTime): Response {
-        val command = FindContributorRequestHistoriesCommand(
-            page = request.page,
-            size = request.size
-        )
+    override fun execute(
+        request: Request,
+        executedAt: LocalDateTime,
+    ): Response {
+        val command =
+            FindContributorRequestHistoriesCommand(
+                page = request.page,
+                size = request.size,
+            )
 
         val page = contributorService.findContributorRequestHistories(AccountId.from(request.accountId), command)
 
         return Response(
-            result = page.content.map { history ->
-                Response.ResponseItem(
-                    id = history.id.toString(),
-                    title = history.title,
-                    status = ContributorRequestStatusEnum.fromContributorRequestStatus(history.status),
-                    requestedAt = history.requestedAt,
-                    joinedAt = history.joinedAt,
-                    leftAt = history.leftAt
-                )
-            },
+            result =
+                page.content.map { history ->
+                    Response.ResponseItem(
+                        id = history.id.toString(),
+                        title = history.title,
+                        status = ContributorRequestStatusEnum.fromContributorRequestStatus(history.status),
+                        requestedAt = history.requestedAt,
+                        joinedAt = history.joinedAt,
+                        leftAt = history.leftAt,
+                    )
+                },
             totalCount = page.totalElements,
             size = request.size,
-            page = request.page
+            page = request.page,
         )
     }
 

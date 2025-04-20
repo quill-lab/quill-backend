@@ -4,5 +4,5 @@ import jakarta.validation.constraints.NotBlank
 
 data class SignInResponse(
     @field:NotBlank(message = "Token is mandatory")
-    val token: String
+    val token: String,
 )

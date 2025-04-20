@@ -4,10 +4,13 @@ enum class ContributorGroupStatusEnum {
     PREPARING,
     ACTIVE,
     COMPLETED,
-    DELETED;
+    DELETED,
+    ;
 
     companion object {
-        fun fromContributorGroupStatus(status: lab.ujumeonji.literaturebackend.domain.contributor.ContributorGroupStatus): ContributorGroupStatusEnum {
+        fun fromContributorGroupStatus(
+            status: lab.ujumeonji.literaturebackend.domain.contributor.ContributorGroupStatus,
+        ): ContributorGroupStatusEnum {
             return valueOf(status.name)
         }
     }

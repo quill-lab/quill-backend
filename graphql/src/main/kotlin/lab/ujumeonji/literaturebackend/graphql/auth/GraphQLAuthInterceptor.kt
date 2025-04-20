@@ -12,21 +12,21 @@ class GraphQLAuthInterceptor(
     private val tokenManager: TokenManager,
     private val authContext: AuthContext,
 ) : WebGraphQlInterceptor {
-
     override fun intercept(
         request: WebGraphQlRequest,
-        chain: WebGraphQlInterceptor.Chain
-    ): Mono<WebGraphQlResponse> = request.headers
-        .getFirst("Authorization")
-        ?.takeIf { it.startsWith("Bearer ") }
-        ?.let { authHeader ->
-            runCatching {
-                authHeader.removePrefix("Bearer ")
-                    .let { token -> tokenManager.verifyToken(token) }
-                    .let { claims -> claims["id"]?.toString() }
-                    ?.also { userId -> authContext.accountId = userId }
+        chain: WebGraphQlInterceptor.Chain,
+    ): Mono<WebGraphQlResponse> =
+        request.headers
+            .getFirst("Authorization")
+            ?.takeIf { it.startsWith("Bearer ") }
+            ?.let { authHeader ->
+                runCatching {
+                    authHeader.removePrefix("Bearer ")
+                        .let { token -> tokenManager.verifyToken(token) }
+                        .let { claims -> claims["id"]?.toString() }
+                        ?.also { userId -> authContext.accountId = userId }
 
-                chain.next(request)
-            }.getOrElse { chain.next(request) }
-        } ?: chain.next(request)
+                    chain.next(request)
+                }.getOrElse { chain.next(request) }
+            } ?: chain.next(request)
 }

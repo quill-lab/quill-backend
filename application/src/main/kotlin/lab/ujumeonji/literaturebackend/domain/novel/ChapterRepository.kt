@@ -6,6 +6,8 @@ import org.springframework.data.repository.CrudRepository
 import java.util.*
 
 interface ChapterRepository : CrudRepository<Chapter, UUID> {
-
-    fun findByNovelId(novelId: UUID, pageable: Pageable): Page<Chapter>
+    fun findByNovelId(
+        novelId: UUID,
+        pageable: Pageable,
+    ): Page<Chapter>
 }

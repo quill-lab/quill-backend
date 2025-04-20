@@ -18,18 +18,23 @@ import java.time.LocalDateTime
 class FindChaptersUseCase(
     private val novelService: NovelService,
     private val contributorService: ContributorService,
-    private val accountService: AccountService
+    private val accountService: AccountService,
 ) : UseCase<FindChaptersUseCase.Request, FindChaptersUseCase.Response> {
+    override fun execute(
+        request: Request,
+        executedAt: LocalDateTime,
+    ): Response {
+        val contributorGroup =
+            contributorService.findGroupById(ContributorGroupId.from(request.contributorGroupId))
+                ?: throw BusinessException(ErrorCode.CONTRIBUTOR_GROUP_NOT_FOUND)
 
-    override fun execute(request: Request, executedAt: LocalDateTime): Response {
-        val contributorGroup = contributorService.findGroupById(ContributorGroupId.from(request.contributorGroupId))
-            ?: throw BusinessException(ErrorCode.CONTRIBUTOR_GROUP_NOT_FOUND)
+        val novel =
+            novelService.findNovel(contributorGroup.novelId)
+                ?: throw BusinessException(ErrorCode.NOVEL_NOT_FOUND)
 
-        val novel = novelService.findNovel(contributorGroup.novelId)
-            ?: throw BusinessException(ErrorCode.NOVEL_NOT_FOUND)
-
-        val group = contributorService.findGroupByNovelId(novel.idValue)
-            ?: throw BusinessException(ErrorCode.CONTRIBUTOR_GROUP_NOT_FOUND)
+        val group =
+            contributorService.findGroupByNovelId(novel.idValue)
+                ?: throw BusinessException(ErrorCode.CONTRIBUTOR_GROUP_NOT_FOUND)
 
         if (!group.isParticipating(AccountId.from(request.accountId))) {
             throw BusinessException(ErrorCode.NO_PERMISSION_TO_VIEW)
@@ -40,38 +45,42 @@ class FindChaptersUseCase(
         val accountIds = contributorGroup.contributors.map { it.accountId }
         val accountMap = accountService.findByIds(accountIds).associateBy { it.idValue }
 
-        val pageResponse = novelService.findChaptersByNovelId(
-            novelId = novel.idValue,
-            offset = request.offset,
-            limit = request.limit
-        )
+        val pageResponse =
+            novelService.findChaptersByNovelId(
+                novelId = novel.idValue,
+                offset = request.offset,
+                limit = request.limit,
+            )
 
         return Response(
-            chapters = pageResponse.items.map { chapter ->
-                Response.ChapterItem(
-                    id = chapter.id.toString(),
-                    episode = chapter.chapterNumber,
-                    title = chapter.title,
-                    editedAt = chapter.updatedAt,
-                    status = ChapterStatusEnum.fromChapterStatus(chapter.status),
-                    approvedAt = chapter.approvedAt,
-                    currentAuthor = chapter.currentContributorId?.let { contributorId ->
-                        val account = accountMap[contributors.find { it.contributorId == contributorId }?.accountId]
-                        Response.ChapterItem.Author(
-                            id = account?.idValue.toString(),
-                            name = account?.name
-                        )
-                    },
-                    metadata = Response.ChapterItem.ChapterMetadata(
-                        viewCount = 0,
-                        commentCount = 0,
-                        likeCount = 0,
+            chapters =
+                pageResponse.items.map { chapter ->
+                    Response.ChapterItem(
+                        id = chapter.id.toString(),
+                        episode = chapter.chapterNumber,
+                        title = chapter.title,
+                        editedAt = chapter.updatedAt,
+                        status = ChapterStatusEnum.fromChapterStatus(chapter.status),
+                        approvedAt = chapter.approvedAt,
+                        currentAuthor =
+                            chapter.currentContributorId?.let { contributorId ->
+                                val account = accountMap[contributors.find { it.contributorId == contributorId }?.accountId]
+                                Response.ChapterItem.Author(
+                                    id = account?.idValue.toString(),
+                                    name = account?.name,
+                                )
+                            },
+                        metadata =
+                            Response.ChapterItem.ChapterMetadata(
+                                viewCount = 0,
+                                commentCount = 0,
+                                likeCount = 0,
+                            ),
                     )
-                )
-            },
+                },
             totalCount = pageResponse.totalCount,
             offset = request.offset,
-            limit = request.limit
+            limit = request.limit,
         )
     }
 
@@ -79,16 +88,15 @@ class FindChaptersUseCase(
         val accountId: String,
         val contributorGroupId: String,
         val offset: Int = 0,
-        val limit: Int = 20
+        val limit: Int = 20,
     )
 
     data class Response(
         val chapters: List<ChapterItem>,
         val totalCount: Int,
         val offset: Int,
-        val limit: Int
+        val limit: Int,
     ) {
-
         data class ChapterItem(
             val id: String,
             val episode: Int,
@@ -99,16 +107,15 @@ class FindChaptersUseCase(
             val currentAuthor: Author?,
             val metadata: ChapterMetadata,
         ) {
-
             data class ChapterMetadata(
                 val viewCount: Int,
                 val commentCount: Int,
-                val likeCount: Int
+                val likeCount: Int,
             )
 
             data class Author(
                 val id: String,
-                val name: String?
+                val name: String?,
             )
         }
     }
