@@ -3,18 +3,16 @@ package lab.ujumeonji.literaturebackend.domain.novel;
 import com.github.f4b6a3.uuid.UuidCreator;
 import jakarta.annotation.Nonnull;
 import jakarta.persistence.*;
-import jakarta.validation.constraints.NotNull;
 import lab.ujumeonji.literaturebackend.domain.common.BaseEntity;
+import lab.ujumeonji.literaturebackend.domain.contributor.ContributorId;
 import lab.ujumeonji.literaturebackend.domain.contributor.ContributorInfo;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 import org.springframework.lang.Nullable;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.IntStream;
 
 @Entity
 @Table(name = "chapters")
@@ -61,10 +59,12 @@ public class Chapter extends BaseEntity<UUID> {
         this.description = description;
         this.novel = novel;
         this.chapterNumber = chapterNumber;
-        this.chapterAuthors = contributors.stream()
-                .map(contributor -> ChapterAuthor.create(this, contributor.getContributorId(),
-                        contributor.getAccountId(),
-                        contributors.indexOf(contributor) == 0,
+        this.chapterAuthors = IntStream.range(0, contributors.size())
+                .mapToObj(index -> ChapterAuthor.create(
+                        this,
+                        contributors.get(index).getContributorId(),
+                        contributors.get(index).getAccountId(),
+                        index == 0,
                         createdAt))
                 .toList();
         this.status = ChapterStatus.DRAFT;
@@ -78,7 +78,8 @@ public class Chapter extends BaseEntity<UUID> {
         this(null, null, novel, null, contributors, now, now, null);
     }
 
-    static Chapter createEmpty(@Nonnull Novel novel, @Nonnull List<ContributorInfo> contributors, @Nonnull LocalDateTime now) {
+    static Chapter createEmpty(@Nonnull Novel novel, @Nonnull List<ContributorInfo> contributors,
+                               @Nonnull LocalDateTime now) {
         return new Chapter(novel, contributors, now);
     }
 
@@ -91,37 +92,13 @@ public class Chapter extends BaseEntity<UUID> {
         return ChapterId.from(this.id);
     }
 
-    @NotNull
-    public Optional<ChapterText> addChapterText(@Nonnull ContributorInfo contributor,
-                                                @Nonnull String content,
-                                                @Nonnull LocalDateTime now) {
-        if (this.status != ChapterStatus.IN_PROGRESS) {
-            return Optional.empty();
-        }
-
-        if (!getCurrentChapterAuthor()
-                .map(chapterAuthor -> chapterAuthor.getContributorId().equals(contributor.getContributorId()))
-                .orElse(false)) {
-            return Optional.empty();
-        }
-
-        ChapterText createdChapterText = ChapterText.create(
-                this,
-                contributor.getAccountId(),
-                contributor.getContributorId(),
-                content, now);
-
-        this.chapterTexts.add(
-                createdChapterText);
-
-        advanceTurn();
-
-        return Optional.of(createdChapterText);
-    }
-
     @Nonnull
     public List<ChapterText> getChapterTexts() {
-        return this.chapterTexts;
+        return Collections.unmodifiableList(this.chapterTexts);
+    }
+
+    List<ChapterAuthor> getChapterAuthors() {
+        return Collections.unmodifiableList(this.chapterAuthors);
     }
 
     @Nullable
@@ -149,13 +126,32 @@ public class Chapter extends BaseEntity<UUID> {
         return chapterNumber;
     }
 
-    Optional<ChapterAuthor> getCurrentChapterAuthor() {
-        return this.chapterAuthors.stream()
-                .filter(ChapterAuthor::isCurrentWriter)
-                .findFirst();
+    @Nonnull
+    public Optional<ChapterText> addChapterText(@Nonnull ContributorInfo contributorInfo,
+                                                @Nonnull String content,
+                                                @Nonnull LocalDateTime now) {
+        if (this.status != ChapterStatus.IN_PROGRESS) {
+            return Optional.empty();
+        }
+
+        if (!isCurrentWriter(contributorInfo.getContributorId())) {
+            return Optional.empty();
+        }
+
+        ChapterText createdChapterText = ChapterText.create(
+                this,
+                contributorInfo.getAccountId(),
+                contributorInfo.getContributorId(),
+                content, now);
+
+        this.chapterTexts.add(createdChapterText);
+
+        advanceTurn(now);
+
+        return Optional.of(createdChapterText);
     }
 
-    public void advanceTurn() {
+    void advanceTurn(LocalDateTime now) {
         List<ChapterAuthor> activeAuthors = this.chapterAuthors.stream()
                 .toList();
 
@@ -163,17 +159,16 @@ public class Chapter extends BaseEntity<UUID> {
             return;
         }
 
-        Optional<ChapterAuthor> currentAuthor = getCurrentChapterAuthor();
+        Optional<ChapterAuthor> currentAuthorOpt = findCurrentAuthor(activeAuthors);
 
-        if (currentAuthor.isEmpty()) {
-            activeAuthors.getFirst().markAsCurrentWriter();
-            return;
-        }
+        int currentIndex = currentAuthorOpt
+                .map(activeAuthors::indexOf)
+                .orElse(-1);
 
-        currentAuthor.get().unmarkAsCurrentWriter();
+        currentAuthorOpt.ifPresent(ChapterAuthor::unmarkAsCurrentWriter);
 
-        int currentIndex = activeAuthors.indexOf(currentAuthor.get());
         int nextIndex = (currentIndex + 1) % activeAuthors.size();
+
         activeAuthors.get(nextIndex).markAsCurrentWriter();
     }
 
@@ -185,11 +180,15 @@ public class Chapter extends BaseEntity<UUID> {
         setUpdatedAt(now);
     }
 
-    void addChapterAuthor(ChapterAuthor author) {
-        this.chapterAuthors.add(author);
+    private Optional<ChapterAuthor> findCurrentAuthor(List<ChapterAuthor> authors) {
+        return authors.stream()
+                .filter(ChapterAuthor::isCurrentWriter)
+                .findFirst();
     }
 
-    List<ChapterAuthor> getChapterAuthors() {
-        return this.chapterAuthors;
+    private boolean isCurrentWriter(ContributorId contributorId) {
+        return findCurrentAuthor(this.chapterAuthors)
+                .map(current -> current.getContributorId().equals(contributorId))
+                .orElse(false);
     }
 }
