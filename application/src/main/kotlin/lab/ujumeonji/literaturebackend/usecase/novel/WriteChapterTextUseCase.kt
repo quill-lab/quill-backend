@@ -33,14 +33,14 @@ class WriteChapterTextUseCase(
             throw BusinessException(ErrorCode.NO_PERMISSION_TO_UPDATE)
         }
 
-        val novel = novelService.findNovel(contributorGroup.novelId)
-            ?: throw BusinessException(ErrorCode.NOVEL_NOT_FOUND)
-
         val contributorInfo = contributorGroup.findContributorInfoByAccountId(accountId)
 
         if (contributorInfo.isEmpty) {
             throw BusinessException(ErrorCode.CONTRIBUTOR_NOT_FOUND)
         }
+
+        val novel = novelService.findNovel(contributorGroup.novelId)
+            ?: throw BusinessException(ErrorCode.NOVEL_NOT_FOUND)
 
         val addedChapterText = novel.writeToChapter(
             contributorInfo.get(),
@@ -49,7 +49,7 @@ class WriteChapterTextUseCase(
             executedAt
         )
 
-        if (addedChapterText.isEmpty()) {
+        if (addedChapterText.isEmpty) {
             throw BusinessException(ErrorCode.CHAPTER_NOT_FOUND)
         }
 
