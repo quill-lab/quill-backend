@@ -76,3 +76,16 @@ style:
     maxLineLength: 120
   NewLineAtEndOfFile:
     active: false 
+
+formatting:
+  active: true
+  autoCorrect: true
+  Indentation:
+    active: true
+    autoCorrect: true
+    indentSize: 4
+  ParameterListWrapping:
+    active: true
+    autoCorrect: true
+    indentSize: 4
+    maxLineLength: 120
