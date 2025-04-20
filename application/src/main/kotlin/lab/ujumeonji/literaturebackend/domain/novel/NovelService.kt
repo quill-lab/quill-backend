@@ -8,6 +8,7 @@ import org.springframework.data.domain.Sort
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
+import kotlin.jvm.optionals.getOrNull
 
 @Service
 @Transactional(readOnly = true)
@@ -45,6 +46,7 @@ class NovelService(
                 description = chapter.description,
                 chapterNumber = chapter.chapterNumber,
                 status = chapter.status,
+                currentContributorId = chapter.currentChapterAuthor.getOrNull()?.contributorId,
                 approvedAt = chapter.approvedAt,
                 createdAt = chapter.createdAt,
                 updatedAt = chapter.updatedAt,

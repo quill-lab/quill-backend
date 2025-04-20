@@ -1,4 +1,4 @@
-package lab.ujumeonji.literaturebackend.graphql.resolver.novel
+package lab.ujumeonji.literaturebackend.graphql.novel
 
 import com.netflix.graphql.dgs.DgsComponent
 import com.netflix.graphql.dgs.DgsQuery
@@ -32,13 +32,13 @@ class ChapterDataFetcher(
             executedAt = LocalDateTime.now()
         )
 
-        val nodes = result.chapters.map { chapter ->
+        val nodes = result.chapters.map { chapterItem ->
             Chapter(
-                id = chapter.id,
-                title = chapter.title,
-                editedAt = chapter.editedAt,
-                episode = chapter.episode,
-                status = when (chapter.status) {
+                id = chapterItem.id,
+                title = chapterItem.title,
+                editedAt = chapterItem.editedAt,
+                episode = chapterItem.episode,
+                status = when (chapterItem.status) {
                     ChapterStatusEnum.DRAFT -> ChapterStatus.DRAFT
                     ChapterStatusEnum.IN_PROGRESS -> ChapterStatus.IN_PROGRESS
                     ChapterStatusEnum.REQUESTED -> ChapterStatus.REQUESTED
@@ -46,7 +46,10 @@ class ChapterDataFetcher(
                     ChapterStatusEnum.CANCELLED -> ChapterStatus.CANCELLED
                     ChapterStatusEnum.REJECTED -> ChapterStatus.REJECTED
                 },
-                approvedAt = chapter.approvedAt,
+                approvedAt = chapterItem.approvedAt,
+                currentAuthor = chapterItem.currentAuthor?.let {
+                    Author(it.id, it.name)
+                },
                 metadata = ChapterMetadata(
                     viewCount = 0,
                     commentCount = 0,

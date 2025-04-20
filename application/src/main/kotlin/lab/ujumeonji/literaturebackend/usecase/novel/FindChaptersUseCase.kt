@@ -1,6 +1,7 @@
 package lab.ujumeonji.literaturebackend.usecase.novel
 
 import lab.ujumeonji.literaturebackend.domain.account.AccountId
+import lab.ujumeonji.literaturebackend.domain.account.AccountService
 import lab.ujumeonji.literaturebackend.domain.contributor.ContributorGroupId
 import lab.ujumeonji.literaturebackend.domain.contributor.ContributorService
 import lab.ujumeonji.literaturebackend.domain.novel.NovelService
@@ -17,6 +18,7 @@ import java.time.LocalDateTime
 class FindChaptersUseCase(
     private val novelService: NovelService,
     private val contributorService: ContributorService,
+    private val accountService: AccountService
 ) : UseCase<FindChaptersUseCase.Request, FindChaptersUseCase.Response> {
 
     override fun execute(request: Request, executedAt: LocalDateTime): Response {
@@ -33,6 +35,11 @@ class FindChaptersUseCase(
             throw BusinessException(ErrorCode.NO_PERMISSION_TO_VIEW)
         }
 
+        val contributors = contributorGroup.contributors
+
+        val accountIds = contributorGroup.contributors.map { it.accountId }
+        val accountMap = accountService.findByIds(accountIds).associateBy { it.idValue }
+
         val pageResponse = novelService.findChaptersByNovelId(
             novelId = novel.idValue,
             offset = request.offset,
@@ -48,6 +55,13 @@ class FindChaptersUseCase(
                     editedAt = chapter.updatedAt,
                     status = ChapterStatusEnum.fromChapterStatus(chapter.status),
                     approvedAt = chapter.approvedAt,
+                    currentAuthor = chapter.currentContributorId?.let { contributorId ->
+                        val account = accountMap[contributors.find { it.contributorId == contributorId }?.accountId]
+                        Response.ChapterItem.Author(
+                            id = account?.idValue.toString(),
+                            name = account?.name
+                        )
+                    },
                     metadata = Response.ChapterItem.ChapterMetadata(
                         viewCount = 0,
                         commentCount = 0,
@@ -82,13 +96,19 @@ class FindChaptersUseCase(
             val editedAt: LocalDateTime,
             val status: ChapterStatusEnum,
             val approvedAt: LocalDateTime?,
-            val metadata: ChapterMetadata
+            val currentAuthor: Author?,
+            val metadata: ChapterMetadata,
         ) {
 
             data class ChapterMetadata(
                 val viewCount: Int,
                 val commentCount: Int,
                 val likeCount: Int
+            )
+
+            data class Author(
+                val id: String,
+                val name: String?
             )
         }
     }
