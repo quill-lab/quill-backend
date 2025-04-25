@@ -29,26 +29,17 @@ class CreateChapterUseCase(
             throw BusinessException(ErrorCode.NO_PERMISSION_TO_UPDATE)
         }
 
+        if (contributorGroup.contributorSize <= 0) {
+            throw BusinessException(ErrorCode.CONTRIBUTOR_GROUP_EMPTY)
+        }
+
         val novel =
             novelService.findNovel(contributorGroup.novelId)
                 ?: throw BusinessException(ErrorCode.NOVEL_NOT_FOUND)
 
-        val orderedContributors =
-            contributorGroup.contributors
-                .sortedBy { it.writingOrder }
-                .toList()
+        val createdChapter = novel.createChapter(contributorGroup.contributors, executedAt)
 
-        if (orderedContributors.isEmpty()) {
-            throw BusinessException(ErrorCode.CONTRIBUTOR_GROUP_EMPTY) // Need appropriate error code
-        }
-
-        val createdEmptyChapter = novel.createEmptyChapter(orderedContributors, executedAt)
-
-        if (createdEmptyChapter.isEmpty) {
-            throw BusinessException(ErrorCode.CHAPTER_ALREADY_REQUESTED)
-        }
-
-        return Response(createdEmptyChapter.orElseThrow().idValue.toString())
+        return Response(createdChapter.idValue.toString())
     }
 
     data class Request(

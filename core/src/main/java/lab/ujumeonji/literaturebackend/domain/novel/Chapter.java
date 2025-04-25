@@ -80,7 +80,10 @@ public class Chapter extends BaseEntity<UUID> {
 
     static Chapter createEmpty(@Nonnull Novel novel, @Nonnull List<ContributorInfo> contributors,
                                @Nonnull LocalDateTime now) {
-        return new Chapter(novel, contributors, now);
+        Chapter chapter = new Chapter(novel, contributors, now);
+        chapter.addDefaultText(contributors.getFirst(), now);
+
+        return chapter;
     }
 
     @Override
@@ -149,6 +152,16 @@ public class Chapter extends BaseEntity<UUID> {
         advanceTurn(now);
 
         return Optional.of(createdChapterText);
+    }
+
+    void addDefaultText(@Nonnull ContributorInfo contributorInfo, @Nonnull LocalDateTime now) {
+        ChapterText createdChapterText = ChapterText.create(
+                this,
+                contributorInfo.getAccountId(),
+                contributorInfo.getContributorId(),
+                "", now);
+
+        this.chapterTexts.add(createdChapterText);
     }
 
     void advanceTurn(LocalDateTime now) {

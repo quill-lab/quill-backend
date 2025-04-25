@@ -45,7 +45,7 @@ class CreateNovelRoomUseCase(
             throw BusinessException(ErrorCode.CONTRIBUTOR_GROUP_EMPTY)
         }
 
-        novel.createEmptyChapter(orderedContributors, executedAt)
+        novel.createChapter(orderedContributors, executedAt)
 
         return Response("${contributorGroup.idValue}")
     }

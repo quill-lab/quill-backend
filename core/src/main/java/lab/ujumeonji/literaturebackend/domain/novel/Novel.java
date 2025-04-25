@@ -194,19 +194,13 @@ public class Novel extends BaseEntity<UUID> {
                 .orElse(Collections.emptyList());
     }
 
-    public Optional<Chapter> createEmptyChapter(@Nonnull List<ContributorInfo> orderedContributorIds,
-                                                @Nonnull LocalDateTime now) {
-        boolean hasRequestedChapter = this.chapters.stream()
-                .anyMatch(chapter -> chapter.getStatus() == ChapterStatus.REQUESTED);
-
-        if (hasRequestedChapter) {
-            return Optional.empty();
-        }
-
+    public Chapter createChapter(@Nonnull List<ContributorInfo> orderedContributorIds,
+                                           @Nonnull LocalDateTime now) {
         Chapter chapter = Chapter.createEmpty(this, orderedContributorIds, now);
+
         this.chapters.add(chapter);
 
-        return Optional.of(chapter);
+        return chapter;
     }
 
     public List<Character> replaceCharacters(@Nonnull List<UpsertCharactersCommand> commands,

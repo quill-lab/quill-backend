@@ -34,6 +34,10 @@ public class ChapterText extends BaseEntity<UUID> {
     @Column(name = "contributor_id", nullable = false)
     private UUID contributorId;
 
+    @Column
+    @Enumerated(EnumType.STRING)
+    private ChapterTextStatus status;
+
     protected ChapterText() {
     }
 
@@ -45,6 +49,7 @@ public class ChapterText extends BaseEntity<UUID> {
         this.content = content;
         this.accountId = accountId.getId();
         this.contributorId = contributorId.getId();
+        this.status = ChapterTextStatus.DRAFT;
 
         setCreatedAt(createdAt);
         setUpdatedAt(updatedAt);

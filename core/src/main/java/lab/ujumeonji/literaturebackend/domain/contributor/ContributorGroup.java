@@ -11,11 +11,7 @@ import org.hibernate.annotations.Where;
 import org.jetbrains.annotations.Nullable;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
-import java.util.stream.Collectors;
+import java.util.*;
 
 @Entity
 @Table(name = "contributor_groups")
@@ -140,7 +136,14 @@ public class ContributorGroup extends BaseEntity<UUID> {
     }
 
     public List<ContributorInfo> getContributors() {
-        return contributors.stream().map(ContributorInfo::from).collect(Collectors.toList());
+        return contributors.stream()
+                .map(ContributorInfo::from)
+                .sorted(Comparator.comparing(ContributorInfo::getWritingOrder))
+                .toList();
+    }
+
+    public int getContributorSize() {
+        return contributors.size();
     }
 
     public boolean hasManagePermission(@Nonnull AccountId accountId) {
