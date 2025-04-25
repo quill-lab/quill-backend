@@ -195,7 +195,7 @@ public class Novel extends BaseEntity<UUID> {
     }
 
     public Chapter createChapter(@Nonnull List<ContributorInfo> orderedContributorIds,
-                                           @Nonnull LocalDateTime now) {
+                                 @Nonnull LocalDateTime now) {
         Chapter chapter = Chapter.createEmpty(this, orderedContributorIds, now);
 
         this.chapters.add(chapter);
@@ -240,5 +240,16 @@ public class Novel extends BaseEntity<UUID> {
                 .findFirst();
 
         return chapterOpt.flatMap(chapter -> chapter.addChapterText(contributor, content, now));
+    }
+
+    @Nonnull
+    public Optional<ChapterText> findDraftChapterText(@Nonnull ChapterId chapterId) {
+        return this.chapters.stream()
+                .filter(chapter -> chapter.getIdValue().equals(chapterId))
+                .findFirst()
+                .flatMap(chapter -> chapter.getChapterTexts().stream()
+                        .filter(text -> text.getStatus() == ChapterTextStatus.DRAFT)
+                        .findFirst()
+                );
     }
 }

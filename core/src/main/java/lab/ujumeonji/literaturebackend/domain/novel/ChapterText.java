@@ -86,4 +86,9 @@ public class ChapterText extends BaseEntity<UUID> {
     public ContributorId getContributorId() {
         return ContributorId.from(this.contributorId);
     }
+
+    @NotNull
+    public ChapterTextStatus getStatus() {
+        return status;
+    }
 }

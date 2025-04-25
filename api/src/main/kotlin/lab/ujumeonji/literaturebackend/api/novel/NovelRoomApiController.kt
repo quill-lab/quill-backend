@@ -36,6 +36,7 @@ class NovelRoomApiController(
     private val createChapterUseCase: CreateChapterUseCase,
     private val upsertNovelCharactersUseCase: UpsertNovelCharactersUseCase,
     private val updateChapterUseCase: UpdateChapterUseCase,
+    private val findDraftChapterTextsUseCase: FindDraftChapterTextsUseCase,
 ) {
     @Operation(summary = "소설 공방 수정", description = "소설 공방을 수정합니다.")
     @PatchMapping("/{novelRoomId}")
@@ -476,6 +477,39 @@ class NovelRoomApiController(
         return ResponseEntity.ok(
             UpdateChapterResponse(
                 id = result.id,
+            ),
+        )
+    }
+
+    @Operation(
+        summary = "챕터 임시 텍스트 목록 조회",
+        description = "특정 챕터의 임시 저장된(DRAFT) 텍스트 목록을 조회합니다. 요청한 사용자가 작성한 임시 텍스트만 조회됩니다.",
+    )
+    @GetMapping("/{novelRoomId}/chapters/{chapterId}/draft-texts")
+    fun findDraftChapterTexts(
+        @RequiredAuth accountId: String,
+        @PathVariable @ValidUUID novelRoomId: String,
+        @PathVariable @ValidUUID chapterId: String,
+    ): ResponseEntity<GetDraftChapterTextsResponse> {
+        val draftText =
+            findDraftChapterTextsUseCase.execute(
+                request =
+                    FindDraftChapterTextsUseCase.Request(
+                        accountId = accountId,
+                        contributorGroupId = novelRoomId,
+                        chapterId = chapterId,
+                    ),
+                executedAt = LocalDateTime.now(),
+            )
+
+        return ResponseEntity.ok(
+            GetDraftChapterTextsResponse(
+                id = draftText.id,
+                content = draftText.content,
+                accountId = draftText.accountId,
+                authorName = draftText.authorName,
+                createdAt = draftText.createdAt,
+                updatedAt = draftText.updatedAt,
             ),
         )
     }

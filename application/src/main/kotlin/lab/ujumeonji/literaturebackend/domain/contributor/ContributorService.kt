@@ -18,7 +18,6 @@ import java.time.LocalDateTime
 @Transactional(readOnly = true)
 class ContributorService(
     private val contributorGroupRepository: ContributorGroupRepository,
-    private val contributorRepository: ContributorRepository,
     private val contributorViewRepository: ContributorViewRepository,
 ) {
     fun findContributorRequestHistories(
@@ -66,9 +65,9 @@ class ContributorService(
             ),
         )
 
-    fun findGroupById(id: ContributorGroupId): ContributorGroup? = contributorGroupRepository.findById(id.id).orElse(null)
+    fun findGroupById(id: ContributorGroupId): ContributorGroup? =
+        contributorGroupRepository.findById(id.id).orElse(null)
 
-    fun findGroupByNovelId(id: NovelId): ContributorGroup? = contributorGroupRepository.findByNovelId(id.id).orElse(null)
-
-    fun hasOwnContributorGroup(accountId: AccountId): Boolean = contributorRepository.findAllByAccountIdAndRole(accountId.id).isNotEmpty()
+    fun findGroupByNovelId(id: NovelId): ContributorGroup? =
+        contributorGroupRepository.findByNovelId(id.id).orElse(null)
 }
