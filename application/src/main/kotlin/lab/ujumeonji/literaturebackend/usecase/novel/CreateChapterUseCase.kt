@@ -29,7 +29,7 @@ class CreateChapterUseCase(
             throw BusinessException(ErrorCode.NO_PERMISSION_TO_UPDATE)
         }
 
-        if (contributorGroup.contributorSize <= 0) {
+        if (!contributorGroup.hasContributors()) {
             throw BusinessException(ErrorCode.CONTRIBUTOR_GROUP_EMPTY)
         }
 

@@ -36,16 +36,11 @@ class CreateNovelRoomUseCase(
 
         val contributorGroup = createContributorGroup(request, novel.idValue, executedAt)
 
-        val orderedContributors =
-            contributorGroup.contributors
-                .sortedBy { it.writingOrder }
-                .toList()
-
-        if (orderedContributors.isEmpty()) {
+        if (!contributorGroup.hasContributors()) {
             throw BusinessException(ErrorCode.CONTRIBUTOR_GROUP_EMPTY)
         }
 
-        novel.createChapter(orderedContributors, executedAt)
+        novel.createChapter(contributorGroup.contributors, executedAt)
 
         return Response("${contributorGroup.idValue}")
     }
