@@ -3,6 +3,7 @@ package lab.ujumeonji.literaturebackend.domain.novel;
 import com.github.f4b6a3.uuid.UuidCreator;
 import jakarta.annotation.Nonnull;
 import jakarta.persistence.*;
+import lab.ujumeonji.literaturebackend.domain.account.AccountId;
 import lab.ujumeonji.literaturebackend.domain.common.BaseEntity;
 import lab.ujumeonji.literaturebackend.domain.contributor.ContributorId;
 import lab.ujumeonji.literaturebackend.domain.contributor.ContributorInfo;
@@ -82,7 +83,9 @@ public class Chapter extends BaseEntity<UUID> {
     static Chapter createEmpty(@Nonnull Novel novel, @Nonnull List<ContributorInfo> contributors,
                                @Nonnull LocalDateTime now) {
         Chapter chapter = new Chapter(novel, contributors, now);
-        chapter.addDefaultText(contributors.getFirst(), now);
+
+        ContributorInfo contributor = contributors.getFirst();
+        chapter.addDefaultText(contributor.getAccountId(), contributor.getContributorId(), now);
 
         return chapter;
     }
@@ -114,10 +117,6 @@ public class Chapter extends BaseEntity<UUID> {
         return description;
     }
 
-    Novel getNovel() {
-        return novel;
-    }
-
     LocalDateTime getApprovedAt() {
         return approvedAt;
     }
@@ -130,42 +129,17 @@ public class Chapter extends BaseEntity<UUID> {
         return chapterNumber;
     }
 
-    @Nonnull
-    public Optional<ChapterText> addChapterText(@Nonnull ContributorInfo contributorInfo,
-                                                @Nonnull String content,
-                                                @Nonnull LocalDateTime now) {
-        if (this.status != ChapterStatus.IN_PROGRESS) {
-            return Optional.empty();
-        }
-
-        if (!isCurrentWriter(contributorInfo.getContributorId())) {
-            return Optional.empty();
-        }
-
+    void addDefaultText(@Nonnull AccountId accountId, @Nonnull ContributorId contributorId, @Nonnull LocalDateTime now) {
         ChapterText createdChapterText = ChapterText.create(
                 this,
-                contributorInfo.getAccountId(),
-                contributorInfo.getContributorId(),
-                content, now);
-
-        this.chapterTexts.add(createdChapterText);
-
-        advanceTurn();
-
-        return Optional.of(createdChapterText);
-    }
-
-    void addDefaultText(@Nonnull ContributorInfo contributorInfo, @Nonnull LocalDateTime now) {
-        ChapterText createdChapterText = ChapterText.create(
-                this,
-                contributorInfo.getAccountId(),
-                contributorInfo.getContributorId(),
+                accountId,
+                contributorId,
                 "", now);
 
         this.chapterTexts.add(createdChapterText);
     }
 
-    void advanceTurn() {
+    void advanceTurn(LocalDateTime now) {
         List<ChapterAuthor> activeAuthors = this.chapterAuthors.stream()
                 .sorted(Comparator.comparingInt(ChapterAuthor::getWritingOrder))
                 .toList();
@@ -183,8 +157,11 @@ public class Chapter extends BaseEntity<UUID> {
         currentAuthorOpt.ifPresent(ChapterAuthor::unmarkAsCurrentWriter);
 
         int nextIndex = (currentIndex + 1) % activeAuthors.size();
+        ChapterAuthor nextAuthor = activeAuthors.get(nextIndex);
 
-        activeAuthors.get(nextIndex).markAsCurrentWriter();
+        nextAuthor.markAsCurrentWriter();
+
+        addDefaultText(nextAuthor.getAccountId(), nextAuthor.getContributorId(), now);
     }
 
     void update(@Nullable String title, @Nonnull LocalDateTime now) {

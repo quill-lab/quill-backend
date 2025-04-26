@@ -84,6 +84,10 @@ public class ChapterAuthor extends BaseEntity<UUID> {
         return ContributorId.from(this.contributorId);
     }
 
+    AccountId getAccountId() {
+        return AccountId.from(this.accountId);
+    }
+
     boolean isCurrentWriter() {
         return isCurrentWriter;
     }

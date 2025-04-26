@@ -230,19 +230,6 @@ public class Novel extends BaseEntity<UUID> {
     }
 
     @Nonnull
-    public Optional<ChapterText> writeToChapter(
-            @Nonnull ContributorInfo contributor,
-            @Nonnull ChapterId chapterId,
-            @Nonnull String content,
-            @Nonnull LocalDateTime now) {
-        Optional<Chapter> chapterOpt = this.chapters.stream()
-                .filter(c -> c.getIdValue().equals(chapterId))
-                .findFirst();
-
-        return chapterOpt.flatMap(chapter -> chapter.addChapterText(contributor, content, now));
-    }
-
-    @Nonnull
     public Optional<ChapterText> findDraftChapterText(@Nonnull ChapterId chapterId) {
         return this.chapters.stream()
                 .filter(chapter -> chapter.getIdValue().equals(chapterId))
@@ -303,7 +290,7 @@ public class Novel extends BaseEntity<UUID> {
             return false;
         }
 
-        chapter.advanceTurn();
+        chapter.advanceTurn(now);
 
         return true;
     }

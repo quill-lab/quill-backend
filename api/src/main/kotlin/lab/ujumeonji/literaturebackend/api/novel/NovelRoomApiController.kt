@@ -34,7 +34,6 @@ class NovelRoomApiController(
     private val createNovelRoomRecruitmentPostUseCase: CreateNovelRoomRecruitmentPostUseCase,
     private val findNovelStoryArcsUseCase: FindNovelStoryArcsUseCase,
     private val updateStoryPhaseUseCase: UpdateStoryPhaseUseCase,
-    private val writeChapterTextUseCase: WriteChapterTextUseCase,
     private val findChapterTextsUseCase: FindChapterTextsUseCase,
     private val createChapterUseCase: CreateChapterUseCase,
     private val upsertNovelCharactersUseCase: UpsertNovelCharactersUseCase,
@@ -342,33 +341,6 @@ class NovelRoomApiController(
         )
     }
 
-    @Operation(summary = "챕터 텍스트 작성", description = "특정 챕터에 텍스트를 작성합니다.")
-    @PostMapping("/{novelRoomId}/chapters/{chapterId}/texts")
-    fun createChapterText(
-        @RequiredAuth accountId: String,
-        @PathVariable @ValidUUID novelRoomId: String,
-        @PathVariable @ValidUUID chapterId: String,
-        @Valid @RequestBody request: WriteChapterTextRequest,
-    ): ResponseEntity<WriteChapterTextResponse> {
-        val result =
-            writeChapterTextUseCase.execute(
-                request =
-                    WriteChapterTextUseCase.Request(
-                        accountId = accountId,
-                        chapterId = chapterId,
-                        content = request.content,
-                        contributorGroupId = novelRoomId,
-                    ),
-                executedAt = LocalDateTime.now(),
-            )
-
-        return ResponseEntity.ok(
-            WriteChapterTextResponse(
-                id = result.id,
-            ),
-        )
-    }
-
     @Operation(summary = "챕터 텍스트 목록 조회", description = "특정 챕터의 텍스트 목록을 조회합니다.")
     @GetMapping("/{novelRoomId}/chapters/{chapterId}/texts")
     fun findChapterTexts(
@@ -614,7 +586,7 @@ class NovelRoomApiController(
 
     @Operation(
         summary = "챕터 텍스트 확정 및 다음 작가로 넘기기",
-        description = "현재 순서의 작가가 작성 중인 챕터 텍스트를 확정하고, 다음 순서의 작가로 넘깁니다."
+        description = "현재 순서의 작가가 작성 중인 챕터 텍스트를 확정하고, 다음 순서의 작가로 넘깁니다.",
     )
     @PostMapping("/{novelRoomId}/chapters/{chapterId}/finalize")
     fun finalizeChapterText(
