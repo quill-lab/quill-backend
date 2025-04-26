@@ -8,6 +8,8 @@ import lab.ujumeonji.literaturebackend.domain.novel.command.StoryPhaseEnum
 import lab.ujumeonji.literaturebackend.domain.novel.command.UpsertNovelCharacterCommand
 import lab.ujumeonji.literaturebackend.support.auth.RequiredAuth
 import lab.ujumeonji.literaturebackend.support.validation.ValidUUID
+import lab.ujumeonji.literaturebackend.usecase.contributor.ApproveJoinRequestUseCase
+import lab.ujumeonji.literaturebackend.usecase.contributor.RejectJoinRequestUseCase
 import lab.ujumeonji.literaturebackend.usecase.novel.*
 import lab.ujumeonji.literaturebackend.usecase.post.CreateNovelRoomRecruitmentPostUseCase
 import org.springframework.http.HttpStatus
@@ -38,6 +40,7 @@ class NovelRoomApiController(
     private val updateChapterUseCase: UpdateChapterUseCase,
     private val findDraftChapterTextsUseCase: FindDraftChapterTextsUseCase,
     private val approveJoinRequestUseCase: ApproveJoinRequestUseCase,
+    private val rejectJoinRequestUseCase: RejectJoinRequestUseCase,
 ) {
     @Operation(summary = "소설 공방 수정", description = "소설 공방을 수정합니다.")
     @PatchMapping("/{novelRoomId}")
@@ -525,6 +528,26 @@ class NovelRoomApiController(
         approveJoinRequestUseCase.execute(
             request =
                 ApproveJoinRequestUseCase.Request(
+                    adminAccountId = accountId,
+                    novelRoomId = novelRoomId,
+                    requesterAccountId = requesterId,
+                ),
+            executedAt = LocalDateTime.now(),
+        )
+
+        return ResponseEntity.noContent().build()
+    }
+
+    @Operation(summary = "소설 공방 참여 신청 거부", description = "소설 공방 관리자가 작가 참여 신청을 거부합니다.")
+    @PostMapping("/{novelRoomId}/join-requests/{requesterId}/reject")
+    fun rejectJoinRequest(
+        @RequiredAuth accountId: String,
+        @PathVariable @ValidUUID novelRoomId: String,
+        @PathVariable @ValidUUID requesterId: String,
+    ): ResponseEntity<Void> {
+        rejectJoinRequestUseCase.execute(
+            request =
+                RejectJoinRequestUseCase.Request(
                     adminAccountId = accountId,
                     novelRoomId = novelRoomId,
                     requesterAccountId = requesterId,

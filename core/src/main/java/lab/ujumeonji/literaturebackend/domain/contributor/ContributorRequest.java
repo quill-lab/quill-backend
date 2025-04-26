@@ -34,6 +34,9 @@ public class ContributorRequest extends BaseEntity<UUID> {
     @Column
     private LocalDateTime approvedAt;
 
+    @Column
+    private LocalDateTime rejectedAt;
+
     protected ContributorRequest() {
     }
 
@@ -74,5 +77,13 @@ public class ContributorRequest extends BaseEntity<UUID> {
         }
         this.status = ContributorRequestStatus.APPROVED;
         this.approvedAt = approvedAt;
+    }
+
+    public void reject(LocalDateTime rejectedAt) {
+        if (this.status != ContributorRequestStatus.REQUESTED) {
+            return;
+        }
+        this.status = ContributorRequestStatus.REJECTED;
+        this.rejectedAt = rejectedAt;
     }
 }
