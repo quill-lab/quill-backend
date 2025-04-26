@@ -47,7 +47,7 @@ public class ContributorGroup extends BaseEntity<UUID> {
     }
 
     ContributorGroup(int maxContributorCount, @Nonnull NovelId novelId, @Nonnull LocalDateTime createdAt,
-            @Nonnull LocalDateTime updatedAt, LocalDateTime deletedAt) {
+                     @Nonnull LocalDateTime updatedAt, LocalDateTime deletedAt) {
         this.id = UuidCreator.getTimeOrderedEpoch();
         this.contributorCount = 0;
         this.maxContributorCount = maxContributorCount;
@@ -63,7 +63,7 @@ public class ContributorGroup extends BaseEntity<UUID> {
     }
 
     static ContributorGroup create(@Nonnull AccountId accountId, int maxContributorCount, @Nonnull NovelId novelId,
-            @Nonnull LocalDateTime now) {
+                                   @Nonnull LocalDateTime now) {
         ContributorGroup createdContributorGroup = new ContributorGroup(maxContributorCount, novelId, now, now, null);
 
         createdContributorGroup.addContributor(accountId, ContributorRole.MAIN, now);
@@ -211,5 +211,29 @@ public class ContributorGroup extends BaseEntity<UUID> {
                 .map(Contributor::getRole)
                 .findFirst()
                 .orElse(null);
+    }
+
+    public boolean approveJoinRequest(@Nonnull AccountId adminAccountId, @Nonnull AccountId requesterAccountId, @Nonnull LocalDateTime now) {
+        if (!hasManagePermission(adminAccountId)) {
+            return false;
+        }
+
+        Optional<ContributorRequest> request = contributorRequests.stream()
+                .filter(r -> r.getAccountId().equals(requesterAccountId.getId()) &&
+                        r.getStatus() == ContributorRequestStatus.REQUESTED &&
+                        r.getDeletedAt() == null)
+                .findFirst();
+
+        if (request.isEmpty()) {
+            return false;
+        }
+
+        request.get().approve(now);
+
+        if (!isParticipating(requesterAccountId)) {
+            addContributor(requesterAccountId, ContributorRole.COLLABORATOR, now);
+        }
+
+        return true;
     }
 }

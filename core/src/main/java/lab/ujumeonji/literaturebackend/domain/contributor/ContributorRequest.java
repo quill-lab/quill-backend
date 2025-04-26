@@ -59,4 +59,20 @@ public class ContributorRequest extends BaseEntity<UUID> {
     public ContributorRequestId getIdValue() {
         return ContributorRequestId.from(this.id);
     }
+
+    public UUID getAccountId() {
+        return accountId;
+    }
+
+    public ContributorRequestStatus getStatus() {
+        return status;
+    }
+
+    public void approve(LocalDateTime approvedAt) {
+        if (this.status != ContributorRequestStatus.REQUESTED) {
+            return;
+        }
+        this.status = ContributorRequestStatus.APPROVED;
+        this.approvedAt = approvedAt;
+    }
 }

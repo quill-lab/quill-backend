@@ -37,6 +37,7 @@ class NovelRoomApiController(
     private val upsertNovelCharactersUseCase: UpsertNovelCharactersUseCase,
     private val updateChapterUseCase: UpdateChapterUseCase,
     private val findDraftChapterTextsUseCase: FindDraftChapterTextsUseCase,
+    private val approveJoinRequestUseCase: ApproveJoinRequestUseCase,
 ) {
     @Operation(summary = "소설 공방 수정", description = "소설 공방을 수정합니다.")
     @PatchMapping("/{novelRoomId}")
@@ -512,5 +513,25 @@ class NovelRoomApiController(
                 updatedAt = draftText.updatedAt,
             ),
         )
+    }
+
+    @Operation(summary = "소설 공방 참여 신청 승인", description = "소설 공방 관리자가 작가 참여 신청을 승인합니다.")
+    @PostMapping("/{novelRoomId}/join-requests/{requesterId}/approve")
+    fun approveJoinRequest(
+        @RequiredAuth accountId: String,
+        @PathVariable @ValidUUID novelRoomId: String,
+        @PathVariable @ValidUUID requesterId: String,
+    ): ResponseEntity<Void> {
+        approveJoinRequestUseCase.execute(
+            request =
+                ApproveJoinRequestUseCase.Request(
+                    adminAccountId = accountId,
+                    novelRoomId = novelRoomId,
+                    requesterAccountId = requesterId,
+                ),
+            executedAt = LocalDateTime.now(),
+        )
+
+        return ResponseEntity.noContent().build()
     }
 }
