@@ -269,4 +269,42 @@ public class Novel extends BaseEntity<UUID> {
 
         return draftText.updateContent(contributor.getContributorId(), content, now);
     }
+
+    public boolean finalizeChapterText(@Nonnull ChapterId chapterId, @Nonnull ContributorInfo contributorInfo, @Nonnull LocalDateTime now) {
+        Optional<Chapter> chapterOpt = this.chapters.stream()
+                .filter(c -> c.getIdValue().equals(chapterId))
+                .findFirst();
+
+        if (chapterOpt.isEmpty()) {
+            return false;
+        }
+
+        Chapter chapter = chapterOpt.get();
+
+        if (!chapter.isCurrentWriter(contributorInfo.getContributorId())) {
+            return false;
+        }
+
+        Optional<ChapterText> draftTextOpt = findDraftChapterText(chapterId);
+
+        if (draftTextOpt.isEmpty()) {
+            return false;
+        }
+
+        ChapterText draftText = draftTextOpt.get();
+
+        if (!draftText.getContributorId().equals(contributorInfo.getContributorId())) {
+            return false;
+        }
+
+        boolean finalized = draftText.finalize(now);
+
+        if (!finalized) {
+            return false;
+        }
+
+        chapter.advanceTurn(now);
+
+        return true;
+    }
 }

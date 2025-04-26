@@ -34,6 +34,9 @@ public class ChapterAuthor extends BaseEntity<UUID> {
     @Column(nullable = false)
     private boolean isCurrentWriter;
 
+    @Column
+    private Integer writingOrder;
+
     protected ChapterAuthor() {
     }
 
@@ -50,6 +53,7 @@ public class ChapterAuthor extends BaseEntity<UUID> {
         this.contributorId = contributorId.getId();
         this.accountId = accountId.getId();
         this.isCurrentWriter = isCurrentWriter;
+
         setCreatedAt(createdAt);
         setUpdatedAt(updatedAt);
         setDeletedAt(deletedAt);

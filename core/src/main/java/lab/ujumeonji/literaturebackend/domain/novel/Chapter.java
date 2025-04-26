@@ -164,7 +164,7 @@ public class Chapter extends BaseEntity<UUID> {
         this.chapterTexts.add(createdChapterText);
     }
 
-    void advanceTurn(LocalDateTime now) {
+    void advanceTurn() {
         List<ChapterAuthor> activeAuthors = this.chapterAuthors.stream()
                 .toList();
 
@@ -199,7 +199,7 @@ public class Chapter extends BaseEntity<UUID> {
                 .findFirst();
     }
 
-    private boolean isCurrentWriter(ContributorId contributorId) {
+    boolean isCurrentWriter(ContributorId contributorId) {
         return findCurrentAuthor(this.chapterAuthors)
                 .map(current -> current.getContributorId().equals(contributorId))
                 .orElse(false);

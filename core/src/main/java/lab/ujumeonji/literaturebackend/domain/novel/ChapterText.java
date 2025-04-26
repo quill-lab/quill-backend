@@ -105,4 +105,14 @@ public class ChapterText extends BaseEntity<UUID> {
         setUpdatedAt(updatedAt);
         return true;
     }
+
+    boolean finalize(@NotNull LocalDateTime updatedAt) {
+        if (this.status != ChapterTextStatus.DRAFT) {
+            return false;
+        }
+
+        this.status = ChapterTextStatus.FINALIZED;
+        setUpdatedAt(updatedAt);
+        return true;
+    }
 }

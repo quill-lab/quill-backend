@@ -41,6 +41,7 @@ class NovelRoomApiController(
     private val updateChapterUseCase: UpdateChapterUseCase,
     private val findDraftChapterTextsUseCase: FindDraftChapterTextsUseCase,
     private val updateDraftChapterTextUseCase: UpdateDraftChapterTextUseCase,
+    private val finalizeChapterTextUseCase: FinalizeChapterTextUseCase,
     private val approveJoinRequestUseCase: ApproveJoinRequestUseCase,
     private val rejectJoinRequestUseCase: RejectJoinRequestUseCase,
     private val removeContributorUseCase: RemoveContributorUseCase,
@@ -609,5 +610,32 @@ class NovelRoomApiController(
         } else {
             ResponseEntity.badRequest().build()
         }
+    }
+
+    @Operation(
+        summary = "챕터 텍스트 확정 및 다음 작가로 넘기기",
+        description = "현재 순서의 작가가 작성 중인 챕터 텍스트를 확정하고, 다음 순서의 작가로 넘깁니다."
+    )
+    @PostMapping("/{novelRoomId}/chapters/{chapterId}/finalize")
+    fun finalizeChapterText(
+        @RequiredAuth accountId: String,
+        @PathVariable @ValidUUID novelRoomId: String,
+        @PathVariable @ValidUUID chapterId: String,
+    ): ResponseEntity<FinalizeChapterTextResponse> {
+        val result = finalizeChapterTextUseCase.execute(
+            request =
+                FinalizeChapterTextUseCase.Request(
+                    accountId = accountId,
+                    contributorGroupId = novelRoomId,
+                    chapterId = chapterId,
+                ),
+            executedAt = LocalDateTime.now(),
+        )
+
+        return ResponseEntity.ok(
+            FinalizeChapterTextResponse(
+                success = result.success,
+            ),
+        )
     }
 }
