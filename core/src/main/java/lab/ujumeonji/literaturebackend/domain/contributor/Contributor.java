@@ -13,7 +13,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "contributors")
-@SQLDelete(sql = "UPDATE contributors SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?")
+@SQLDelete(sql = "update contributors set deleted_at = current_timestamp where id = ?")
 @Where(clause = "deleted_at IS NULL")
 public class Contributor extends BaseEntity<UUID> {
 
@@ -90,5 +90,9 @@ public class Contributor extends BaseEntity<UUID> {
 
     void updateWritingOrder(Integer writingOrder) {
         this.writingOrder = writingOrder;
+    }
+
+    public void markAsDeleted(LocalDateTime deletedAt) {
+        setDeletedAt(deletedAt);
     }
 }

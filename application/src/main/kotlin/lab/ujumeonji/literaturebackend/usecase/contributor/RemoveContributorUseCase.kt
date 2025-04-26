@@ -12,9 +12,9 @@ import java.time.LocalDateTime
 
 @Component
 @Transactional
-class RejectJoinRequestUseCase(
+class RemoveContributorUseCase(
     private val contributorService: ContributorService,
-) : UseCase<RejectJoinRequestUseCase.Request, RejectJoinRequestUseCase.Response> {
+) : UseCase<RemoveContributorUseCase.Request, RemoveContributorUseCase.Response> {
     override fun execute(
         request: Request,
         executedAt: LocalDateTime,
@@ -23,20 +23,19 @@ class RejectJoinRequestUseCase(
             ?: throw BusinessException(ErrorCode.CONTRIBUTOR_GROUP_NOT_FOUND)
 
         val adminAccountId = AccountId.from(request.adminAccountId)
-        val requesterAccountId = AccountId.from(request.requesterAccountId)
+        val targetAccountId = AccountId.from(request.targetAccountId)
+        val success = contributorGroup.removeContributor(adminAccountId, targetAccountId, executedAt)
 
-        contributorGroup.rejectJoinRequest(adminAccountId, requesterAccountId, executedAt)
-
-        return Response()
+        return Response(success)
     }
 
     data class Request(
         val adminAccountId: String,
         val novelRoomId: String,
-        val requesterAccountId: String,
+        val targetAccountId: String,
     )
 
     data class Response(
-        val success: Boolean = true,
+        val success: Boolean,
     )
 }

@@ -10,6 +10,7 @@ import lab.ujumeonji.literaturebackend.support.auth.RequiredAuth
 import lab.ujumeonji.literaturebackend.support.validation.ValidUUID
 import lab.ujumeonji.literaturebackend.usecase.contributor.ApproveJoinRequestUseCase
 import lab.ujumeonji.literaturebackend.usecase.contributor.RejectJoinRequestUseCase
+import lab.ujumeonji.literaturebackend.usecase.contributor.RemoveContributorUseCase
 import lab.ujumeonji.literaturebackend.usecase.novel.*
 import lab.ujumeonji.literaturebackend.usecase.post.CreateNovelRoomRecruitmentPostUseCase
 import org.springframework.http.HttpStatus
@@ -41,6 +42,7 @@ class NovelRoomApiController(
     private val findDraftChapterTextsUseCase: FindDraftChapterTextsUseCase,
     private val approveJoinRequestUseCase: ApproveJoinRequestUseCase,
     private val rejectJoinRequestUseCase: RejectJoinRequestUseCase,
+    private val removeContributorUseCase: RemoveContributorUseCase,
 ) {
     @Operation(summary = "소설 공방 수정", description = "소설 공방을 수정합니다.")
     @PatchMapping("/{novelRoomId}")
@@ -556,5 +558,29 @@ class NovelRoomApiController(
         )
 
         return ResponseEntity.noContent().build()
+    }
+
+    @Operation(summary = "소설 공방 참여자 강제 퇴장", description = "소설 공방 관리자가 참여자를 강제로 퇴장시킵니다.")
+    @DeleteMapping("/{novelRoomId}/contributors/{contributorId}")
+    fun removeContributor(
+        @RequiredAuth accountId: String,
+        @PathVariable @ValidUUID novelRoomId: String,
+        @PathVariable @ValidUUID contributorId: String,
+    ): ResponseEntity<Void> {
+        val result = removeContributorUseCase.execute(
+            request =
+                RemoveContributorUseCase.Request(
+                    adminAccountId = accountId,
+                    novelRoomId = novelRoomId,
+                    targetAccountId = contributorId,
+                ),
+            executedAt = LocalDateTime.now(),
+        )
+
+        return if (result.success) {
+            ResponseEntity.noContent().build()
+        } else {
+            ResponseEntity.badRequest().build()
+        }
     }
 }
