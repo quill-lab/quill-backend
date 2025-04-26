@@ -65,6 +65,7 @@ public class Chapter extends BaseEntity<UUID> {
                         contributors.get(index).getContributorId(),
                         contributors.get(index).getAccountId(),
                         index == 0,
+                        index,
                         createdAt))
                 .toList();
         this.status = ChapterStatus.DRAFT;
@@ -149,7 +150,7 @@ public class Chapter extends BaseEntity<UUID> {
 
         this.chapterTexts.add(createdChapterText);
 
-        advanceTurn(now);
+        advanceTurn();
 
         return Optional.of(createdChapterText);
     }
@@ -166,6 +167,7 @@ public class Chapter extends BaseEntity<UUID> {
 
     void advanceTurn() {
         List<ChapterAuthor> activeAuthors = this.chapterAuthors.stream()
+                .sorted(Comparator.comparingInt(ChapterAuthor::getWritingOrder))
                 .toList();
 
         if (activeAuthors.isEmpty()) {

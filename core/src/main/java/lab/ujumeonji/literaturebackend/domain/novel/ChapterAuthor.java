@@ -45,6 +45,7 @@ public class ChapterAuthor extends BaseEntity<UUID> {
             @NotNull ContributorId contributorId,
             @NotNull AccountId accountId,
             boolean isCurrentWriter,
+            Integer writingOrder,
             @NotNull LocalDateTime createdAt,
             @NotNull LocalDateTime updatedAt,
             LocalDateTime deletedAt) {
@@ -53,6 +54,7 @@ public class ChapterAuthor extends BaseEntity<UUID> {
         this.contributorId = contributorId.getId();
         this.accountId = accountId.getId();
         this.isCurrentWriter = isCurrentWriter;
+        this.writingOrder = writingOrder;
 
         setCreatedAt(createdAt);
         setUpdatedAt(updatedAt);
@@ -64,8 +66,9 @@ public class ChapterAuthor extends BaseEntity<UUID> {
             @NotNull ContributorId contributorId,
             @NotNull AccountId accountId,
             boolean isCurrentWriter,
+            Integer writingOrder,
             @NotNull LocalDateTime now) {
-        return new ChapterAuthor(chapter, contributorId, accountId, isCurrentWriter, now, now, null);
+        return new ChapterAuthor(chapter, contributorId, accountId, isCurrentWriter, writingOrder, now, now, null);
     }
 
     @Override
@@ -91,5 +94,9 @@ public class ChapterAuthor extends BaseEntity<UUID> {
 
     void unmarkAsCurrentWriter() {
         this.isCurrentWriter = false;
+    }
+
+    int getWritingOrder() {
+        return writingOrder;
     }
 }

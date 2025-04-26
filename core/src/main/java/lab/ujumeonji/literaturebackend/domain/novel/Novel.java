@@ -303,7 +303,7 @@ public class Novel extends BaseEntity<UUID> {
             return false;
         }
 
-        chapter.advanceTurn(now);
+        chapter.advanceTurn();
 
         return true;
     }
