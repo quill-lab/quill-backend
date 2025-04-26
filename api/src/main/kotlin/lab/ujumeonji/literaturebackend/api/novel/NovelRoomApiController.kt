@@ -488,15 +488,15 @@ class NovelRoomApiController(
     }
 
     @Operation(
-        summary = "챕터 임시 텍스트 목록 조회",
+        summary = "챕터 임시 텍스트 조회",
         description = "특정 챕터의 임시 저장된(DRAFT) 텍스트 목록을 조회합니다. 요청한 사용자가 작성한 임시 텍스트만 조회됩니다.",
     )
     @GetMapping("/{novelRoomId}/chapters/{chapterId}/draft-texts")
-    fun findDraftChapterTexts(
+    fun findDraftChapterText(
         @RequiredAuth accountId: String,
         @PathVariable @ValidUUID novelRoomId: String,
         @PathVariable @ValidUUID chapterId: String,
-    ): ResponseEntity<GetDraftChapterTextsResponse> {
+    ): ResponseEntity<GetDraftChapterTextResponse> {
         val draftText =
             findDraftChapterTextsUseCase.execute(
                 request =
@@ -509,7 +509,7 @@ class NovelRoomApiController(
             )
 
         return ResponseEntity.ok(
-            GetDraftChapterTextsResponse(
+            GetDraftChapterTextResponse(
                 id = draftText.id,
                 content = draftText.content,
                 accountId = draftText.accountId,
