@@ -40,6 +40,7 @@ class NovelRoomApiController(
     private val upsertNovelCharactersUseCase: UpsertNovelCharactersUseCase,
     private val updateChapterUseCase: UpdateChapterUseCase,
     private val findDraftChapterTextsUseCase: FindDraftChapterTextsUseCase,
+    private val updateDraftChapterTextUseCase: UpdateDraftChapterTextUseCase,
     private val approveJoinRequestUseCase: ApproveJoinRequestUseCase,
     private val rejectJoinRequestUseCase: RejectJoinRequestUseCase,
     private val removeContributorUseCase: RemoveContributorUseCase,
@@ -518,6 +519,32 @@ class NovelRoomApiController(
                 updatedAt = draftText.updatedAt,
             ),
         )
+    }
+
+    @Operation(
+        summary = "챕터 임시 텍스트 수정",
+        description = "특정 챕터의 임시 저장된(DRAFT) 텍스트를 수정합니다. 요청한 사용자가 작성한 임시 텍스트만 수정할 수 있습니다.",
+    )
+    @PatchMapping("/{novelRoomId}/chapters/{chapterId}/draft-texts")
+    fun updateDraftChapterText(
+        @RequiredAuth accountId: String,
+        @PathVariable @ValidUUID novelRoomId: String,
+        @PathVariable @ValidUUID chapterId: String,
+        @Valid @RequestBody request: UpdateDraftChapterTextRequest,
+    ): ResponseEntity<Void> {
+        val result =
+            updateDraftChapterTextUseCase.execute(
+                request =
+                    UpdateDraftChapterTextUseCase.Request(
+                        accountId = accountId,
+                        contributorGroupId = novelRoomId,
+                        chapterId = chapterId,
+                        content = request.content,
+                    ),
+                executedAt = LocalDateTime.now(),
+            )
+
+        return ResponseEntity.noContent().build()
     }
 
     @Operation(summary = "소설 공방 참여 신청 승인", description = "소설 공방 관리자가 작가 참여 신청을 승인합니다.")

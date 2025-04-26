@@ -252,4 +252,21 @@ public class Novel extends BaseEntity<UUID> {
                         .findFirst()
                 );
     }
+
+    public boolean updateDraftChapterText(@Nonnull ChapterId chapterId, @Nonnull ContributorInfo contributor,
+                                          @Nonnull String content, @Nonnull LocalDateTime now) {
+        Optional<ChapterText> draftTextOpt = findDraftChapterText(chapterId);
+
+        if (draftTextOpt.isEmpty()) {
+            return false;
+        }
+
+        ChapterText draftText = draftTextOpt.get();
+
+        if (!draftText.getContributorId().equals(contributor.getContributorId())) {
+            return false;
+        }
+
+        return draftText.updateContent(contributor.getContributorId(), content, now);
+    }
 }

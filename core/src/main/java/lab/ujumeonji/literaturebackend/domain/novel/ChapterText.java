@@ -91,4 +91,18 @@ public class ChapterText extends BaseEntity<UUID> {
     public ChapterTextStatus getStatus() {
         return status;
     }
+
+    boolean updateContent(@NotNull ContributorId contributor, @NotNull String content, @NotNull LocalDateTime updatedAt) {
+        if (!this.contributorId.equals(contributor.getId())) {
+            return false;
+        }
+
+        if (this.status != ChapterTextStatus.DRAFT) {
+            return false;
+        }
+
+        this.content = content;
+        setUpdatedAt(updatedAt);
+        return true;
+    }
 }
