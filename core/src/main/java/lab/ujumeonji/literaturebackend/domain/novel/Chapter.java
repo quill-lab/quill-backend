@@ -204,4 +204,9 @@ public class Chapter extends BaseEntity<UUID> {
                 .map(current -> current.getContributorId().equals(contributorId))
                 .orElse(false);
     }
+
+    public Optional<ChapterAuthorInfo> getCurrentAuthor() {
+        return findCurrentAuthor(this.chapterAuthors)
+                .map(ChapterAuthorInfo::from);
+    }
 }

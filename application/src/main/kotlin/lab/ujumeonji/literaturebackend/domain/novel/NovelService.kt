@@ -53,7 +53,7 @@ class NovelService(
                     description = chapter.description,
                     chapterNumber = chapter.chapterNumber,
                     status = chapter.status,
-                    currentContributorId = chapter.currentChapterAuthor.getOrNull()?.contributorId,
+                    currentChapterInfo = chapter.currentAuthor.getOrNull(),
                     approvedAt = chapter.approvedAt,
                     createdAt = chapter.createdAt,
                     updatedAt = chapter.updatedAt,

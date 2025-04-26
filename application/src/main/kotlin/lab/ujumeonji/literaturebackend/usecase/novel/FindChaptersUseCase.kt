@@ -63,8 +63,13 @@ class FindChaptersUseCase(
                         status = ChapterStatusEnum.fromChapterStatus(chapter.status),
                         approvedAt = chapter.approvedAt,
                         currentAuthor =
-                            chapter.currentContributorId?.let { contributorId ->
-                                val account = accountMap[contributors.find { it.contributorId == contributorId }?.accountId]
+                            chapter.currentChapterInfo?.let { contributorId ->
+                                val account =
+                                    accountMap[
+                                        contributors.find {
+                                            it.contributorId.equals(contributorId.contributorId)
+                                        }?.accountId,
+                                    ]
                                 Response.ChapterItem.Author(
                                     id = account?.idValue.toString(),
                                     name = account?.name,
