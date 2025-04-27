@@ -40,6 +40,9 @@ public class Chapter extends BaseEntity<UUID> {
   @OneToMany(mappedBy = "chapter", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
   private List<ChapterAuthor> chapterAuthors = new ArrayList<>();
 
+  @OneToMany(mappedBy = "chapter", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+  private List<ChapterPublicationRequest> publicationRequests = new ArrayList<>();
+
   @Column private LocalDateTime approvedAt;
 
   @Column
@@ -117,6 +120,11 @@ public class Chapter extends BaseEntity<UUID> {
     return Collections.unmodifiableList(this.chapterAuthors);
   }
 
+  @Nonnull
+  public List<ChapterPublicationRequest> getPublicationRequests() {
+    return Collections.unmodifiableList(this.publicationRequests);
+  }
+
   @Nullable
   String getTitle() {
     return title;
@@ -172,11 +180,73 @@ public class Chapter extends BaseEntity<UUID> {
   }
 
   void update(@Nullable String title, @Nonnull LocalDateTime now) {
-    if (this.status != ChapterStatus.REQUESTED) {
+    if (this.status == ChapterStatus.REQUESTED || this.status == ChapterStatus.APPROVED) {
       return;
     }
     this.title = title;
     setUpdatedAt(now);
+  }
+
+  boolean requestPublication(@Nonnull AccountId requesterId, @Nonnull LocalDateTime now) {
+    if (this.status != ChapterStatus.DRAFT && this.status != ChapterStatus.IN_PROGRESS) {
+      return false;
+    }
+
+    ChapterPublicationRequest request = ChapterPublicationRequest.create(this, requesterId, now);
+    this.publicationRequests.add(request);
+
+    this.status = ChapterStatus.REQUESTED;
+    setUpdatedAt(now);
+    return true;
+  }
+
+  boolean approvePublication(@Nonnull AccountId reviewerId, @Nonnull LocalDateTime now) {
+    if (this.status != ChapterStatus.REQUESTED) {
+      return false;
+    }
+
+    Optional<ChapterPublicationRequest> latestRequest =
+        this.publicationRequests.stream()
+            .filter(request -> request.getStatus() == ChapterPublicationRequestStatus.REQUESTED)
+            .max(Comparator.comparing(BaseEntity::getCreatedAt));
+
+    if (latestRequest.isEmpty()) {
+      return false;
+    }
+
+    boolean approved = latestRequest.get().approve(reviewerId, now);
+    if (!approved) {
+      return false;
+    }
+
+    this.status = ChapterStatus.APPROVED;
+    this.approvedAt = now;
+    setUpdatedAt(now);
+    return true;
+  }
+
+  boolean rejectPublication(@Nonnull AccountId reviewerId, @Nonnull LocalDateTime now) {
+    if (this.status != ChapterStatus.REQUESTED) {
+      return false;
+    }
+
+    Optional<ChapterPublicationRequest> latestRequest =
+        this.publicationRequests.stream()
+            .filter(request -> request.getStatus() == ChapterPublicationRequestStatus.REQUESTED)
+            .max(Comparator.comparing(BaseEntity::getCreatedAt));
+
+    if (latestRequest.isEmpty()) {
+      return false;
+    }
+
+    boolean rejected = latestRequest.get().reject(reviewerId, now);
+    if (!rejected) {
+      return false;
+    }
+
+    this.status = ChapterStatus.REJECTED;
+    setUpdatedAt(now);
+    return true;
   }
 
   private Optional<ChapterAuthor> findCurrentAuthor(List<ChapterAuthor> authors) {
@@ -189,7 +259,7 @@ public class Chapter extends BaseEntity<UUID> {
         .orElse(false);
   }
 
-  public Optional<ChapterAuthorInfo> getCurrentAuthor() {
+  Optional<ChapterAuthorInfo> getCurrentAuthor() {
     return findCurrentAuthor(this.chapterAuthors).map(ChapterAuthorInfo::from);
   }
 }

@@ -9,11 +9,11 @@ import java.util.*;
 import java.util.stream.Collectors;
 import lab.ujumeonji.literaturebackend.domain.account.AccountId;
 import lab.ujumeonji.literaturebackend.domain.common.BaseEntity;
+import lab.ujumeonji.literaturebackend.domain.common.SoftDeleteable;
 import lab.ujumeonji.literaturebackend.domain.contributor.ContributorInfo;
 import lab.ujumeonji.literaturebackend.domain.novel.command.AddCharacterCommand;
 import lab.ujumeonji.literaturebackend.domain.novel.command.UpdateNovelCommand;
 import lab.ujumeonji.literaturebackend.domain.novel.command.UpsertCharactersCommand;
-import lab.ujumeonji.literaturebackend.domain.common.SoftDeleteable;
 import org.hibernate.annotations.SQLDelete;
 import org.jetbrains.annotations.Nullable;
 
@@ -313,5 +313,68 @@ public class Novel extends BaseEntity<UUID> {
     chapter.advanceTurn(now);
 
     return true;
+  }
+
+  public boolean requestChapterPublication(
+      @Nonnull ChapterId chapterId, @Nonnull AccountId requesterId, @Nonnull LocalDateTime now) {
+    Optional<Chapter> chapterOpt =
+        this.chapters.stream().filter(c -> c.getIdValue().equals(chapterId)).findFirst();
+
+    if (chapterOpt.isEmpty()) {
+      return false;
+    }
+
+    Chapter chapter = chapterOpt.get();
+    return chapter.requestPublication(requesterId, now);
+  }
+
+  public boolean approveChapterPublication(
+      @Nonnull ChapterId chapterId, @Nonnull AccountId reviewerId, @Nonnull LocalDateTime now) {
+    Optional<Chapter> chapterOpt =
+        this.chapters.stream().filter(c -> c.getIdValue().equals(chapterId)).findFirst();
+
+    if (chapterOpt.isEmpty()) {
+      return false;
+    }
+
+    Chapter chapter = chapterOpt.get();
+    return chapter.approvePublication(reviewerId, now);
+  }
+
+  /**
+   * Reject publication of a chapter. Only chapters in REQUESTED status can be rejected.
+   *
+   * @param chapterId ID of the chapter to reject
+   * @param reviewerId ID of the reviewer who is rejecting the publication
+   * @param now Current timestamp
+   * @return true if the rejection was successful, false otherwise
+   */
+  public boolean rejectChapterPublication(
+      @Nonnull ChapterId chapterId, @Nonnull AccountId reviewerId, @Nonnull LocalDateTime now) {
+    Optional<Chapter> chapterOpt =
+        this.chapters.stream().filter(c -> c.getIdValue().equals(chapterId)).findFirst();
+
+    if (chapterOpt.isEmpty()) {
+      return false;
+    }
+
+    Chapter chapter = chapterOpt.get();
+    return chapter.rejectPublication(reviewerId, now);
+  }
+
+  /**
+   * Get the publication requests for a specific chapter.
+   *
+   * @param chapterId ID of the chapter
+   * @return List of publication requests for the chapter, or empty list if chapter not found
+   */
+  @Nonnull
+  public List<ChapterPublicationRequest> getChapterPublicationRequests(
+      @Nonnull ChapterId chapterId) {
+    return this.chapters.stream()
+        .filter(c -> c.getIdValue().equals(chapterId))
+        .findFirst()
+        .map(Chapter::getPublicationRequests)
+        .orElse(Collections.emptyList());
   }
 }
