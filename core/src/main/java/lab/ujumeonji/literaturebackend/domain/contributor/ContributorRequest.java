@@ -7,16 +7,13 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 import lab.ujumeonji.literaturebackend.domain.account.AccountId;
 import lab.ujumeonji.literaturebackend.domain.common.BaseEntity;
-import org.hibernate.annotations.Filter;
-import org.hibernate.annotations.FilterDef;
-import org.hibernate.annotations.ParamDef;
+import lab.ujumeonji.literaturebackend.domain.common.SoftDeleteable;
 import org.hibernate.annotations.SQLDelete;
 
 @Entity
 @Table(name = "contributor_requests")
 @SQLDelete(sql = "UPDATE contributor_requests SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?")
-@FilterDef(name = "deletedFilter", parameters = @ParamDef(name = "isDeleted", type = Boolean.class))
-@Filter(name = "deletedFilter", condition = "deleted_at IS NULL")
+@SoftDeleteable
 public class ContributorRequest extends BaseEntity<UUID> {
 
   @Id private UUID id;

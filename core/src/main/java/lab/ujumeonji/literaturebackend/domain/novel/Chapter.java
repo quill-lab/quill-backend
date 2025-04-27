@@ -8,19 +8,16 @@ import java.util.*;
 import java.util.stream.IntStream;
 import lab.ujumeonji.literaturebackend.domain.account.AccountId;
 import lab.ujumeonji.literaturebackend.domain.common.BaseEntity;
+import lab.ujumeonji.literaturebackend.domain.common.SoftDeleteable;
 import lab.ujumeonji.literaturebackend.domain.contributor.ContributorId;
 import lab.ujumeonji.literaturebackend.domain.contributor.ContributorInfo;
-import org.hibernate.annotations.Filter;
-import org.hibernate.annotations.FilterDef;
-import org.hibernate.annotations.ParamDef;
 import org.hibernate.annotations.SQLDelete;
 import org.springframework.lang.Nullable;
 
 @Entity
 @Table(name = "chapters")
 @SQLDelete(sql = "update chapters set deleted_at = current_timestamp where id = ?")
-@FilterDef(name = "deletedFilter", parameters = @ParamDef(name = "isDeleted", type = Boolean.class))
-@Filter(name = "deletedFilter", condition = "deleted_at IS NULL")
+@SoftDeleteable
 public class Chapter extends BaseEntity<UUID> {
 
   @Id private UUID id;

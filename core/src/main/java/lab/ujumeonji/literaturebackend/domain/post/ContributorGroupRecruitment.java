@@ -6,9 +6,9 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 import lab.ujumeonji.literaturebackend.domain.account.AccountId;
 import lab.ujumeonji.literaturebackend.domain.common.BaseEntity;
+import lab.ujumeonji.literaturebackend.domain.common.SoftDeleteable;
 import lab.ujumeonji.literaturebackend.domain.contributor.ContributorGroupId;
 import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
@@ -16,7 +16,7 @@ import org.jetbrains.annotations.Nullable;
 @Table(name = "contributor_group_recruitments")
 @SQLDelete(
     sql = "UPDATE contributor_group_recruitments SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?")
-@Where(clause = "deleted_at IS NULL")
+@SoftDeleteable
 public class ContributorGroupRecruitment extends BaseEntity<UUID> {
 
   @Id private UUID id;

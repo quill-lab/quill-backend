@@ -6,18 +6,15 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 import lab.ujumeonji.literaturebackend.domain.account.AccountId;
 import lab.ujumeonji.literaturebackend.domain.common.BaseEntity;
+import lab.ujumeonji.literaturebackend.domain.common.SoftDeleteable;
 import lab.ujumeonji.literaturebackend.domain.contributor.ContributorId;
-import org.hibernate.annotations.Filter;
-import org.hibernate.annotations.FilterDef;
-import org.hibernate.annotations.ParamDef;
 import org.hibernate.annotations.SQLDelete;
 import org.jetbrains.annotations.NotNull;
 
 @Entity
 @Table(name = "chapter_authors")
 @SQLDelete(sql = "update chapter_authors set deleted_at = current_timestamp where id = ?")
-@FilterDef(name = "deletedFilter", parameters = @ParamDef(name = "isDeleted", type = Boolean.class))
-@Filter(name = "deletedFilter", condition = "deleted_at IS NULL")
+@SoftDeleteable
 public class ChapterAuthor extends BaseEntity<UUID> {
 
   @Id private UUID id;
