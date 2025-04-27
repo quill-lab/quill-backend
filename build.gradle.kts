@@ -18,7 +18,6 @@ allprojects {
     }
 }
 
-// 공통 설정을 서브프로젝트에 적용
 subprojects {
     apply {
         plugin("org.jetbrains.kotlin.jvm")
@@ -31,7 +30,7 @@ subprojects {
     ktlint {
         verbose.set(true)
         outputToConsole.set(true)
-        ignoreFailures.set(true) // 일단 오류를 무시하고 빌드 진행
+        ignoreFailures.set(true)
         enableExperimentalRules.set(true)
         filter {
             exclude("**/generated/**")
@@ -44,7 +43,6 @@ subprojects {
         buildUponDefaultConfig = true
     }
 
-    // 모든 모듈에 공통으로 적용되는 Java 버전 설정
     java {
         toolchain {
             languageVersion.set(JavaLanguageVersion.of(21))
@@ -52,7 +50,6 @@ subprojects {
         sourceCompatibility = JavaVersion.VERSION_21
     }
 
-    // 공통 Kotlin 컴파일러 옵션 설정
     tasks.withType<org.jetbrains.kotlin.gradle.tasks.KotlinCompile> {
         kotlinOptions {
             freeCompilerArgs = listOf("-Xjsr305=strict")
@@ -60,12 +57,10 @@ subprojects {
         }
     }
 
-    // 공통 테스트 설정
     tasks.withType<Test> {
         useJUnitPlatform()
     }
 
-    // 공통 의존성 관리
     dependencyManagement {
         imports {
             mavenBom(org.springframework.boot.gradle.plugin.SpringBootPlugin.BOM_COORDINATES)
@@ -73,13 +68,10 @@ subprojects {
         }
     }
 
-    // 모든 모듈에 공통으로 적용되는 의존성
     dependencies {
-        // Kotlin 관련 공통 의존성
         implementation("org.jetbrains.kotlin:kotlin-reflect")
         implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 
-        // 테스트 관련 공통 의존성
         testImplementation("org.junit.jupiter:junit-jupiter-api")
         testImplementation("org.junit.jupiter:junit-jupiter-engine")
         testImplementation("io.kotest:kotest-runner-junit5:5.5.5")
