@@ -1,0 +1,27 @@
+# Custom values for Mautic Helm chart deployment
+# This file contains customizations for the target environment
+
+ingress:
+  enabled: true
+  className: nginx
+  annotations:
+    kubernetes.io/ingress.class: nginx
+    kubernetes.io/tls-acme: "true"
+  hosts:
+    - host: mautic.cd80.run
+      paths:
+        - path: /
+          pathType: ImplementationSpecific
+  tls:
+    - secretName: mautic-tls
+      hosts:
+        - mautic.cd80.run
+
+# Update the Mautic URL to match the ingress host
+env:
+  - name: MAUTIC_URL
+    value: "https://mautic.cd80.run"
+
+# Ensure MariaDB is enabled
+mariadb:
+  enabled: true

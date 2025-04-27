@@ -1,0 +1,53 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ include "mautic.fullname" . }}
+  labels:
+    {{- include "mautic.labels" . | nindent 4 }}
+spec:
+  {{- if not .Values.autoscaling.enabled }}
+  replicas: {{ .Values.replicaCount }}
+  {{- end }}
+  selector:
+    matchLabels:
+      {{- include "mautic.selectorLabels" . | nindent 6 }}
+  template:
+    metadata:
+      labels:
+        {{- include "mautic.selectorLabels" . | nindent 8 }}
+    spec:
+      serviceAccountName: {{ include "mautic.serviceAccountName" . }}
+      containers:
+        - name: {{ .Chart.Name }}
+          image: "{{ .Values.image.repository }}:{{ .Values.image.tag | default .Chart.AppVersion }}"
+          imagePullPolicy: {{ .Values.image.pullPolicy }}
+          ports:
+            - name: http
+              containerPort: {{ .Values.service.port }}
+              protocol: TCP
+          env:
+          {{- range .Values.env }}
+            - name: {{ .name }}
+              {{- if .value }}
+              value: {{ .value | quote }}
+              {{- else if .valueFrom }}
+              valueFrom:
+                {{- toYaml .valueFrom | nindent 16 }}
+              {{- end }}
+          {{- end }}
+          envFrom:
+            - secretRef:
+                name: {{ include "mautic.fullname" . }}-secrets
+          {{- if .Values.persistence.enabled }}
+          volumeMounts:
+            - name: mautic-data
+              mountPath: /var/www/html
+          {{- end }}
+          resources:
+            {{- toYaml .Values.resources | nindent 12 }}
+      {{- if .Values.persistence.enabled }}
+      volumes:
+        - name: mautic-data
+          persistentVolumeClaim:
+            claimName: {{ include "mautic.fullname" . }}-pvc
+      {{- end }}
