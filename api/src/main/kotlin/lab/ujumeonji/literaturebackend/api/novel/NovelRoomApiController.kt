@@ -465,7 +465,7 @@ class NovelRoomApiController(
         summary = "챕터 임시 텍스트 조회",
         description = "특정 챕터의 임시 저장된(DRAFT) 텍스트 목록을 조회합니다. 요청한 사용자가 작성한 임시 텍스트만 조회됩니다.",
     )
-    @GetMapping("/{novelRoomId}/chapters/{chapterId}/draft-texts")
+    @GetMapping("/{novelRoomId}/chapters/{chapterId}/draft-text")
     fun findDraftChapterText(
         @RequiredAuth accountId: String,
         @PathVariable @ValidUUID novelRoomId: String,
@@ -498,7 +498,7 @@ class NovelRoomApiController(
         summary = "챕터 임시 텍스트 수정",
         description = "특정 챕터의 임시 저장된(DRAFT) 텍스트를 수정합니다. 요청한 사용자가 작성한 임시 텍스트만 수정할 수 있습니다.",
     )
-    @PatchMapping("/{novelRoomId}/chapters/{chapterId}/draft-texts")
+    @PatchMapping("/{novelRoomId}/chapters/{chapterId}/draft-text")
     fun updateDraftChapterText(
         @RequiredAuth accountId: String,
         @PathVariable @ValidUUID novelRoomId: String,

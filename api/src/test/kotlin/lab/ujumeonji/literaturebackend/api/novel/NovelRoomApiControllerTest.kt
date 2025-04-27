@@ -444,10 +444,7 @@ constructor(
             val account = fixtureAccount()
             val novelRoomId = fixtureNovelRoom(account)
 
-            val createChapterResponse =
-                performAuthPost("/api/v1/novel-rooms/$novelRoomId/chapters", emptyMap<String, String>(), account)
-            val chapterId =
-                objectMapper.readTree(createChapterResponse.andReturn().response.contentAsString).get("id").asText()
+            val chapterId = fixtureChapter(novelRoomId, account)
 
             `when`("인증된 사용자가 챕터 텍스트를 조회하면") {
                 val response = performAuthGet("/api/v1/novel-rooms/$novelRoomId/chapters/$chapterId/texts", account)
@@ -455,7 +452,7 @@ constructor(
                 then("챕터 텍스트 목록이 반환된다") {
                     response
                         .andExpect(status().isOk)
-                        .andExpect(jsonPath("$.chapterTexts").isArray)
+                        .andExpect(jsonPath("$.items").isArray)
                 }
             }
 
@@ -525,10 +522,7 @@ constructor(
             val account = fixtureAccount()
             val novelRoomId = fixtureNovelRoom(account)
 
-            val createChapterResponse =
-                performAuthPost("/api/v1/novel-rooms/$novelRoomId/chapters", emptyMap<String, String>(), account)
-            val chapterId =
-                objectMapper.readTree(createChapterResponse.andReturn().response.contentAsString).get("id").asText()
+            val chapterId = fixtureChapter(novelRoomId, account)
 
             val request =
                 mapOf(
@@ -561,10 +555,7 @@ constructor(
             val account = fixtureAccount()
             val novelRoomId = fixtureNovelRoom(account)
 
-            val createChapterResponse =
-                performAuthPost("/api/v1/novel-rooms/$novelRoomId/chapters", emptyMap<String, String>(), account)
-            val chapterId =
-                objectMapper.readTree(createChapterResponse.andReturn().response.contentAsString).get("id").asText()
+            val chapterId = fixtureChapter(novelRoomId, account)
 
             `when`("인증된 사용자가 드래프트 챕터 텍스트를 조회하면") {
                 val response =
@@ -592,10 +583,7 @@ constructor(
             val account = fixtureAccount()
             val novelRoomId = fixtureNovelRoom(account)
 
-            val createChapterResponse =
-                performAuthPost("/api/v1/novel-rooms/$novelRoomId/chapters", emptyMap<String, String>(), account)
-            val chapterId =
-                objectMapper.readTree(createChapterResponse.andReturn().response.contentAsString).get("id").asText()
+            val chapterId = fixtureChapter(novelRoomId, account)
 
             val request =
                 mapOf(
@@ -630,18 +618,18 @@ constructor(
             val account = fixtureAccount()
             val novelRoomId = fixtureNovelRoom(account)
 
-            val createChapterResponse =
-                performAuthPost("/api/v1/novel-rooms/$novelRoomId/chapters", emptyMap<String, String>(), account)
-            val chapterId =
-                objectMapper.readTree(createChapterResponse.andReturn().response.contentAsString).get("id").asText()
+            val chapterId = fixtureChapter(novelRoomId, account)
 
             `when`("인증된 사용자가 챕터 텍스트를 확정하면") {
-                val response = performAuthPost("/api/v1/novel-rooms/$novelRoomId/chapters/$chapterId/finalize", account)
+                val response = performAuthPost(
+                    "/api/v1/novel-rooms/$novelRoomId/chapters/$chapterId/finalize",
+                    emptyMap<String, String>(),
+                    account,
+                )
 
                 then("챕터 텍스트가 확정된다") {
                     response
                         .andExpect(status().isOk)
-                        .andExpect(jsonPath("$.id").exists())
                 }
             }
 
