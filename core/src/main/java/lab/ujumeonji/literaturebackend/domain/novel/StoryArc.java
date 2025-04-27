@@ -5,14 +5,17 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.UUID;
 import lab.ujumeonji.literaturebackend.domain.common.BaseEntity;
+import org.hibernate.annotations.Filter;
+import org.hibernate.annotations.FilterDef;
+import org.hibernate.annotations.ParamDef;
 import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
 import org.jetbrains.annotations.Nullable;
 
 @Entity
 @Table(name = "story_arcs")
 @SQLDelete(sql = "update story_arcs set deleted_at = current_timestamp where id = ?")
-@Where(clause = "deleted_at IS NULL")
+@FilterDef(name = "deletedFilter", parameters = @ParamDef(name = "isDeleted", type = Boolean.class))
+@Filter(name = "deletedFilter", condition = "deleted_at IS NULL")
 public class StoryArc extends BaseEntity<UUID> {
 
   @Id private UUID id;

@@ -13,14 +13,17 @@ import lab.ujumeonji.literaturebackend.domain.contributor.ContributorInfo;
 import lab.ujumeonji.literaturebackend.domain.novel.command.AddCharacterCommand;
 import lab.ujumeonji.literaturebackend.domain.novel.command.UpdateNovelCommand;
 import lab.ujumeonji.literaturebackend.domain.novel.command.UpsertCharactersCommand;
+import org.hibernate.annotations.Filter;
+import org.hibernate.annotations.FilterDef;
+import org.hibernate.annotations.ParamDef;
 import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
 import org.jetbrains.annotations.Nullable;
 
 @Entity
 @Table(name = "novels")
 @SQLDelete(sql = "update novels set deleted_at = current_timestamp where id = ?")
-@Where(clause = "deleted_at IS NULL")
+@FilterDef(name = "deletedFilter", parameters = @ParamDef(name = "isDeleted", type = Boolean.class))
+@Filter(name = "deletedFilter", condition = "deleted_at IS NULL")
 public class Novel extends BaseEntity<UUID> {
 
   @Id private UUID id;
