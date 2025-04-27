@@ -41,7 +41,7 @@ class GetChapterPublicationRequestsUseCase(
         val publicationRequests = chapterPublicationRequestService.findByChapterId(chapterId)
 
         return Response(
-            requests = publicationRequests.map { ChapterPublicationRequestDto.from(it) }
+            requests = publicationRequests.map { ChapterPublicationRequestDto.from(it) },
         )
     }
 

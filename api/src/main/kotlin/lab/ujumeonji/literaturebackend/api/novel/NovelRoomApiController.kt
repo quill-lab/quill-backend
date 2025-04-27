@@ -44,6 +44,10 @@ class NovelRoomApiController(
     private val approveJoinRequestUseCase: ApproveJoinRequestUseCase,
     private val rejectJoinRequestUseCase: RejectJoinRequestUseCase,
     private val removeContributorUseCase: RemoveContributorUseCase,
+    private val requestChapterPublicationUseCase: RequestChapterPublicationUseCase,
+    private val approveChapterPublicationUseCase: ApproveChapterPublicationUseCase,
+    private val rejectChapterPublicationUseCase: RejectChapterPublicationUseCase,
+    private val getChapterPublicationRequestsUseCase: GetChapterPublicationRequestsUseCase,
 ) {
     @Operation(summary = "소설 공방 수정", description = "소설 공방을 수정합니다.")
     @PatchMapping("/{novelRoomId}")
@@ -609,6 +613,131 @@ class NovelRoomApiController(
         return ResponseEntity.ok(
             FinalizeChapterTextResponse(
                 success = result.success,
+            ),
+        )
+    }
+
+    @Operation(
+        summary = "챕터 연재 신청",
+        description = "챕터의 연재를 신청합니다. 대표 작가만 신청할 수 있습니다.",
+    )
+    @PostMapping("/{novelRoomId}/chapters/{chapterId}/publication-requests")
+    fun requestChapterPublication(
+        @RequiredAuth accountId: String,
+        @PathVariable @ValidUUID novelRoomId: String,
+        @PathVariable @ValidUUID chapterId: String,
+    ): ResponseEntity<RequestChapterPublicationResponse> {
+        val result =
+            requestChapterPublicationUseCase.execute(
+                request =
+                    RequestChapterPublicationUseCase.Request(
+                        accountId = accountId,
+                        contributorGroupId = novelRoomId,
+                        chapterId = chapterId,
+                    ),
+                executedAt = LocalDateTime.now(),
+            )
+
+        return ResponseEntity.ok(
+            RequestChapterPublicationResponse(
+                id = result.id,
+            ),
+        )
+    }
+
+    @Operation(
+        summary = "챕터 연재 신청 승인",
+        description = "챕터의 연재 신청을 승인합니다. 관리자만 승인할 수 있습니다.",
+    )
+    @PostMapping("/{novelRoomId}/chapters/{chapterId}/publication-requests/approve")
+    fun approveChapterPublication(
+        @RequiredAuth accountId: String,
+        @PathVariable @ValidUUID novelRoomId: String,
+        @PathVariable @ValidUUID chapterId: String,
+    ): ResponseEntity<ApproveChapterPublicationResponse> {
+        val result =
+            approveChapterPublicationUseCase.execute(
+                request =
+                    ApproveChapterPublicationUseCase.Request(
+                        accountId = accountId,
+                        contributorGroupId = novelRoomId,
+                        chapterId = chapterId,
+                    ),
+                executedAt = LocalDateTime.now(),
+            )
+
+        return ResponseEntity.ok(
+            ApproveChapterPublicationResponse(
+                id = result.id,
+            ),
+        )
+    }
+
+    @Operation(
+        summary = "챕터 연재 신청 거부",
+        description = "챕터의 연재 신청을 거부합니다. 관리자만 거부할 수 있습니다.",
+    )
+    @PostMapping("/{novelRoomId}/chapters/{chapterId}/publication-requests/reject")
+    fun rejectChapterPublication(
+        @RequiredAuth accountId: String,
+        @PathVariable @ValidUUID novelRoomId: String,
+        @PathVariable @ValidUUID chapterId: String,
+    ): ResponseEntity<RejectChapterPublicationResponse> {
+        val result =
+            rejectChapterPublicationUseCase.execute(
+                request =
+                    RejectChapterPublicationUseCase.Request(
+                        accountId = accountId,
+                        contributorGroupId = novelRoomId,
+                        chapterId = chapterId,
+                    ),
+                executedAt = LocalDateTime.now(),
+            )
+
+        return ResponseEntity.ok(
+            RejectChapterPublicationResponse(
+                id = result.id,
+            ),
+        )
+    }
+
+    @Operation(
+        summary = "챕터 연재 신청 내역 조회",
+        description = "챕터의 연재 신청 내역을 조회합니다.",
+    )
+    @GetMapping("/{novelRoomId}/chapters/{chapterId}/publication-requests")
+    fun getChapterPublicationRequests(
+        @RequiredAuth accountId: String,
+        @PathVariable @ValidUUID novelRoomId: String,
+        @PathVariable @ValidUUID chapterId: String,
+    ): ResponseEntity<GetChapterPublicationRequestsResponse> {
+        val result =
+            getChapterPublicationRequestsUseCase.execute(
+                request =
+                    GetChapterPublicationRequestsUseCase.Request(
+                        accountId = accountId,
+                        contributorGroupId = novelRoomId,
+                        chapterId = chapterId,
+                    ),
+                executedAt = LocalDateTime.now(),
+            )
+
+        return ResponseEntity.ok(
+            GetChapterPublicationRequestsResponse(
+                requests =
+                    result.requests.map { request ->
+                        GetChapterPublicationRequestsResponse.ChapterPublicationRequest(
+                            id = request.id,
+                            chapterId = request.chapterId,
+                            requesterId = request.requesterId,
+                            status = request.status,
+                            reviewerId = request.reviewerId,
+                            comment = request.comment,
+                            reviewedAt = request.reviewedAt,
+                            createdAt = request.createdAt,
+                            updatedAt = request.updatedAt,
+                        )
+                    },
             ),
         )
     }
