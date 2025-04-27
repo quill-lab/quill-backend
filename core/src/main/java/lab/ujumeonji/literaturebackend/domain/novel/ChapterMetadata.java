@@ -5,11 +5,10 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import java.util.UUID;
 import lab.ujumeonji.literaturebackend.domain.common.BaseEntity;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
-
-import java.util.UUID;
 
 @Entity
 @Table(name = "chapter_metadata")
@@ -17,30 +16,25 @@ import java.util.UUID;
 @Where(clause = "deleted_at IS NULL")
 public class ChapterMetadata extends BaseEntity<UUID> {
 
-    @Id
-    private UUID id;
+  @Id private UUID id;
 
-    @Column
-    private int likes;
+  @Column private int likes;
 
-    @Column
-    private int views;
+  @Column private int views;
 
-    @Column
-    private int commentCount;
+  @Column private int commentCount;
 
-    protected ChapterMetadata() {
-    }
+  protected ChapterMetadata() {}
 
-    ChapterMetadata(int likes, int views, int commentCount) {
-        this.id = UuidCreator.getTimeOrderedEpoch();
-        this.likes = likes;
-        this.views = views;
-        this.commentCount = commentCount;
-    }
+  ChapterMetadata(int likes, int views, int commentCount) {
+    this.id = UuidCreator.getTimeOrderedEpoch();
+    this.likes = likes;
+    this.views = views;
+    this.commentCount = commentCount;
+  }
 
-    @Override
-    public UUID getId() {
-        return id;
-    }
+  @Override
+  public UUID getId() {
+    return id;
+  }
 }

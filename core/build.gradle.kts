@@ -1,8 +1,10 @@
 import org.jetbrains.kotlin.gradle.dsl.JvmTarget
+import com.diffplug.gradle.spotless.SpotlessExtension
 
 plugins {
     id("org.springframework.boot") apply false
     kotlin("plugin.jpa")
+    id("com.diffplug.spotless") version "6.25.0"
 }
 
 java {
@@ -10,6 +12,17 @@ java {
         languageVersion = JavaLanguageVersion.of(21)
     }
     sourceCompatibility = JavaVersion.VERSION_21
+}
+
+configure<SpotlessExtension> {
+    java {
+        target("src/*/java/**/*.java")
+        googleJavaFormat()
+        importOrder()
+        removeUnusedImports()
+        trimTrailingWhitespace()
+        endWithNewline()
+    }
 }
 
 configurations {

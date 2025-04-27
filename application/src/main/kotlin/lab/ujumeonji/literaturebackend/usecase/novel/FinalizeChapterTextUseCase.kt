@@ -36,18 +36,20 @@ class FinalizeChapterTextUseCase(
             throw BusinessException(ErrorCode.NO_PERMISSION_TO_UPDATE)
         }
 
-        val contributorInfo = contributorGroup.findContributorInfoByAccountId(accountId)
-            .orElseThrow { BusinessException(ErrorCode.CONTRIBUTOR_NOT_FOUND) }
+        val contributorInfo =
+            contributorGroup.findContributorInfoByAccountId(accountId)
+                .orElseThrow { BusinessException(ErrorCode.CONTRIBUTOR_NOT_FOUND) }
 
         val novel =
             novelService.findNovel(contributorGroup.novelId)
                 ?: throw BusinessException(ErrorCode.NOVEL_NOT_FOUND)
 
-        val finalized = novel.finalizeChapterText(
-            ChapterId.from(request.chapterId),
-            contributorInfo,
-            executedAt,
-        )
+        val finalized =
+            novel.finalizeChapterText(
+                ChapterId.from(request.chapterId),
+                contributorInfo,
+                executedAt,
+            )
 
         if (!finalized) {
             throw BusinessException(ErrorCode.NOT_YOUR_TURN_TO_WRITE)

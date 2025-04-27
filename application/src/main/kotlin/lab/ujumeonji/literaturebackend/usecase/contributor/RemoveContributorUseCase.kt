@@ -19,8 +19,9 @@ class RemoveContributorUseCase(
         request: Request,
         executedAt: LocalDateTime,
     ): Response {
-        val contributorGroup = contributorService.findGroupById(ContributorGroupId.from(request.novelRoomId))
-            ?: throw BusinessException(ErrorCode.CONTRIBUTOR_GROUP_NOT_FOUND)
+        val contributorGroup =
+            contributorService.findGroupById(ContributorGroupId.from(request.novelRoomId))
+                ?: throw BusinessException(ErrorCode.CONTRIBUTOR_GROUP_NOT_FOUND)
 
         val adminAccountId = AccountId.from(request.adminAccountId)
         val targetAccountId = AccountId.from(request.targetAccountId)

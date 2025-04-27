@@ -2,6 +2,8 @@ package lab.ujumeonji.literaturebackend.domain.novel;
 
 import com.github.f4b6a3.uuid.UuidCreator;
 import jakarta.persistence.*;
+import java.time.LocalDateTime;
+import java.util.UUID;
 import lab.ujumeonji.literaturebackend.domain.account.AccountId;
 import lab.ujumeonji.literaturebackend.domain.common.BaseEntity;
 import lab.ujumeonji.literaturebackend.domain.contributor.ContributorId;
@@ -9,98 +11,96 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 import org.jetbrains.annotations.NotNull;
 
-import java.time.LocalDateTime;
-import java.util.UUID;
-
 @Entity
 @Table(name = "chapter_authors")
 @SQLDelete(sql = "update chapter_authors set deleted_at = current_timestamp where id = ?")
 @Where(clause = "deleted_at IS NULL")
 public class ChapterAuthor extends BaseEntity<UUID> {
 
-    @Id
-    private UUID id;
+  @Id private UUID id;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = false)
-    @JoinColumn(name = "chapter_id", nullable = false, foreignKey = @ForeignKey(name = "fk_chapter_author_chapter"))
-    private Chapter chapter;
+  @ManyToOne(fetch = FetchType.LAZY, optional = false)
+  @JoinColumn(
+      name = "chapter_id",
+      nullable = false,
+      foreignKey = @ForeignKey(name = "fk_chapter_author_chapter"))
+  private Chapter chapter;
 
-    @Column(name = "contributor_id", nullable = false)
-    private UUID contributorId;
+  @Column(name = "contributor_id", nullable = false)
+  private UUID contributorId;
 
-    @Column(name = "account_id", nullable = false)
-    private UUID accountId;
+  @Column(name = "account_id", nullable = false)
+  private UUID accountId;
 
-    @Column(nullable = false)
-    private boolean isCurrentWriter;
+  @Column(nullable = false)
+  private boolean isCurrentWriter;
 
-    @Column
-    private Integer writingOrder;
+  @Column private Integer writingOrder;
 
-    protected ChapterAuthor() {
-    }
+  protected ChapterAuthor() {}
 
-    ChapterAuthor(
-            @NotNull Chapter chapter,
-            @NotNull ContributorId contributorId,
-            @NotNull AccountId accountId,
-            boolean isCurrentWriter,
-            Integer writingOrder,
-            @NotNull LocalDateTime createdAt,
-            @NotNull LocalDateTime updatedAt,
-            LocalDateTime deletedAt) {
-        this.id = UuidCreator.getTimeOrderedEpoch();
-        this.chapter = chapter;
-        this.contributorId = contributorId.getId();
-        this.accountId = accountId.getId();
-        this.isCurrentWriter = isCurrentWriter;
-        this.writingOrder = writingOrder;
+  ChapterAuthor(
+      @NotNull Chapter chapter,
+      @NotNull ContributorId contributorId,
+      @NotNull AccountId accountId,
+      boolean isCurrentWriter,
+      Integer writingOrder,
+      @NotNull LocalDateTime createdAt,
+      @NotNull LocalDateTime updatedAt,
+      LocalDateTime deletedAt) {
+    this.id = UuidCreator.getTimeOrderedEpoch();
+    this.chapter = chapter;
+    this.contributorId = contributorId.getId();
+    this.accountId = accountId.getId();
+    this.isCurrentWriter = isCurrentWriter;
+    this.writingOrder = writingOrder;
 
-        setCreatedAt(createdAt);
-        setUpdatedAt(updatedAt);
-        setDeletedAt(deletedAt);
-    }
+    setCreatedAt(createdAt);
+    setUpdatedAt(updatedAt);
+    setDeletedAt(deletedAt);
+  }
 
-    public static ChapterAuthor create(
-            @NotNull Chapter chapter,
-            @NotNull ContributorId contributorId,
-            @NotNull AccountId accountId,
-            boolean isCurrentWriter,
-            Integer writingOrder,
-            @NotNull LocalDateTime now) {
-        return new ChapterAuthor(chapter, contributorId, accountId, isCurrentWriter, writingOrder, now, now, null);
-    }
+  public static ChapterAuthor create(
+      @NotNull Chapter chapter,
+      @NotNull ContributorId contributorId,
+      @NotNull AccountId accountId,
+      boolean isCurrentWriter,
+      Integer writingOrder,
+      @NotNull LocalDateTime now) {
+    return new ChapterAuthor(
+        chapter, contributorId, accountId, isCurrentWriter, writingOrder, now, now, null);
+  }
 
-    @Override
-    public UUID getId() {
-        return id;
-    }
+  @Override
+  public UUID getId() {
+    return id;
+  }
 
-    ChapterAuthorId getIdValue() {
-        return ChapterAuthorId.from(this.id);
-    }
+  ChapterAuthorId getIdValue() {
+    return ChapterAuthorId.from(this.id);
+  }
 
-    ContributorId getContributorId() {
-        return ContributorId.from(this.contributorId);
-    }
+  ContributorId getContributorId() {
+    return ContributorId.from(this.contributorId);
+  }
 
-    AccountId getAccountId() {
-        return AccountId.from(this.accountId);
-    }
+  AccountId getAccountId() {
+    return AccountId.from(this.accountId);
+  }
 
-    boolean isCurrentWriter() {
-        return isCurrentWriter;
-    }
+  boolean isCurrentWriter() {
+    return isCurrentWriter;
+  }
 
-    void markAsCurrentWriter() {
-        this.isCurrentWriter = true;
-    }
+  void markAsCurrentWriter() {
+    this.isCurrentWriter = true;
+  }
 
-    void unmarkAsCurrentWriter() {
-        this.isCurrentWriter = false;
-    }
+  void unmarkAsCurrentWriter() {
+    this.isCurrentWriter = false;
+  }
 
-    int getWritingOrder() {
-        return writingOrder;
-    }
+  int getWritingOrder() {
+    return writingOrder;
+  }
 }

@@ -4,6 +4,9 @@ import com.github.f4b6a3.uuid.UuidCreator;
 import jakarta.annotation.Nonnull;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
+import java.time.LocalDateTime;
+import java.util.*;
+import java.util.stream.Collectors;
 import lab.ujumeonji.literaturebackend.domain.account.AccountId;
 import lab.ujumeonji.literaturebackend.domain.common.BaseEntity;
 import lab.ujumeonji.literaturebackend.domain.contributor.ContributorInfo;
@@ -14,284 +17,301 @@ import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 import org.jetbrains.annotations.Nullable;
 
-import java.time.LocalDateTime;
-import java.util.*;
-import java.util.stream.Collectors;
-
 @Entity
 @Table(name = "novels")
 @SQLDelete(sql = "update novels set deleted_at = current_timestamp where id = ?")
 @Where(clause = "deleted_at IS NULL")
 public class Novel extends BaseEntity<UUID> {
 
-    @Id
-    private UUID id;
+  @Id private UUID id;
 
-    @Column(nullable = false)
-    private String title;
+  @Column(nullable = false)
+  private String title;
 
-    @Column(columnDefinition = "text")
-    private String description;
+  @Column(columnDefinition = "text")
+  private String description;
 
-    @Column
-    private String coverImage;
+  @Column private String coverImage;
 
-    @Column(columnDefinition = "text")
-    private String synopsis;
+  @Column(columnDefinition = "text")
+  private String synopsis;
 
-    @OneToMany(mappedBy = "novel", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    private List<NovelTag> tags = new ArrayList<>();
+  @OneToMany(
+      mappedBy = "novel",
+      cascade = CascadeType.ALL,
+      fetch = FetchType.LAZY,
+      orphanRemoval = true)
+  private List<NovelTag> tags = new ArrayList<>();
 
-    @OneToMany(mappedBy = "novel", cascade = CascadeType.ALL, fetch = FetchType.LAZY, orphanRemoval = true)
-    private List<Character> characters = new ArrayList<>();
+  @OneToMany(
+      mappedBy = "novel",
+      cascade = CascadeType.ALL,
+      fetch = FetchType.LAZY,
+      orphanRemoval = true)
+  private List<Character> characters = new ArrayList<>();
 
-    @OneToMany(mappedBy = "novel", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<StoryArc> storyArcs = new ArrayList<>();
+  @OneToMany(mappedBy = "novel", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+  private List<StoryArc> storyArcs = new ArrayList<>();
 
-    @OneToMany(mappedBy = "novel", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
-    private List<Chapter> chapters = new ArrayList<>();
+  @OneToMany(mappedBy = "novel", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+  private List<Chapter> chapters = new ArrayList<>();
 
-    @Enumerated(EnumType.STRING)
-    @Column(nullable = false)
-    private NovelCategory category;
+  @Enumerated(EnumType.STRING)
+  @Column(nullable = false)
+  private NovelCategory category;
 
-    protected Novel() {
-    }
+  protected Novel() {}
 
-    Novel(String title, String description, String coverImage, List<String> tags, String synopsis,
-          NovelCategory category,
-          LocalDateTime createdAt,
-          LocalDateTime updatedAt,
-          LocalDateTime deletedAt) {
-        this.id = UuidCreator.getTimeOrderedEpoch();
-        this.title = title;
-        this.description = description;
-        this.coverImage = coverImage;
-        this.synopsis = synopsis;
-        this.category = category;
+  Novel(
+      String title,
+      String description,
+      String coverImage,
+      List<String> tags,
+      String synopsis,
+      NovelCategory category,
+      LocalDateTime createdAt,
+      LocalDateTime updatedAt,
+      LocalDateTime deletedAt) {
+    this.id = UuidCreator.getTimeOrderedEpoch();
+    this.title = title;
+    this.description = description;
+    this.coverImage = coverImage;
+    this.synopsis = synopsis;
+    this.category = category;
 
-        setUpStoryArcs(createdAt);
-        addTags(tags, createdAt);
+    setUpStoryArcs(createdAt);
+    addTags(tags, createdAt);
 
-        setCreatedAt(createdAt);
-        setUpdatedAt(updatedAt);
-        setDeletedAt(deletedAt);
-    }
+    setCreatedAt(createdAt);
+    setUpdatedAt(updatedAt);
+    setDeletedAt(deletedAt);
+  }
 
-    static Novel create(String title, String description, NovelCategory category, String coverImage, List<String> tags,
-                        String synopsis,
-                        LocalDateTime now) {
-        return new Novel(title, description, coverImage, tags, synopsis, category, now, now, null);
-    }
+  static Novel create(
+      String title,
+      String description,
+      NovelCategory category,
+      String coverImage,
+      List<String> tags,
+      String synopsis,
+      LocalDateTime now) {
+    return new Novel(title, description, coverImage, tags, synopsis, category, now, now, null);
+  }
 
-    public CharacterId addCharacter(@NotNull AddCharacterCommand command, @NotNull LocalDateTime now) {
-        Character character = Character.create(this, command.getName(), command.getDescription(), now);
+  public CharacterId addCharacter(
+      @NotNull AddCharacterCommand command, @NotNull LocalDateTime now) {
+    Character character = Character.create(this, command.getName(), command.getDescription(), now);
 
-        this.characters.add(character);
+    this.characters.add(character);
 
-        return character.getIdValue();
-    }
+    return character.getIdValue();
+  }
 
-    public List<Character> getCharacters() {
-        return characters;
-    }
+  public List<Character> getCharacters() {
+    return characters;
+  }
 
-    public NovelCategory getCategory() {
-        return category;
-    }
+  public NovelCategory getCategory() {
+    return category;
+  }
 
-    public String getTitle() {
-        return title;
-    }
+  public String getTitle() {
+    return title;
+  }
 
-    public List<String> getTagNames() {
-        return tags.stream()
-                .map(NovelTag::getName)
-                .collect(Collectors.toList());
-    }
+  public List<String> getTagNames() {
+    return tags.stream().map(NovelTag::getName).collect(Collectors.toList());
+  }
 
-    public String getDescription() {
-        return description;
-    }
+  public String getDescription() {
+    return description;
+  }
 
-    @Nullable
-    public String getSynopsis() {
-        return synopsis;
-    }
+  @Nullable
+  public String getSynopsis() {
+    return synopsis;
+  }
 
-    public void update(@NotNull UpdateNovelCommand command, @NotNull LocalDateTime now) {
-        this.title = command.getTitle();
-        this.description = command.getDescription();
-        this.synopsis = command.getSynopsis();
-        this.category = command.getCategory();
-        this.addTags(command.getTags(), now);
-    }
+  public void update(@NotNull UpdateNovelCommand command, @NotNull LocalDateTime now) {
+    this.title = command.getTitle();
+    this.description = command.getDescription();
+    this.synopsis = command.getSynopsis();
+    this.category = command.getCategory();
+    this.addTags(command.getTags(), now);
+  }
 
-    public void updatePhase(
-            @NotNull StoryPhase phase,
-            @Nullable Integer startChapterNumber,
-            @Nullable Integer endChapterNumber,
-            @Nullable String description,
-            @NotNull LocalDateTime now) {
-        this.storyArcs.forEach(storyArc -> {
-            if (storyArc.getPhase().equals(phase)) {
-                storyArc.updatePhase(startChapterNumber, endChapterNumber, description, now);
-            }
+  public void updatePhase(
+      @NotNull StoryPhase phase,
+      @Nullable Integer startChapterNumber,
+      @Nullable Integer endChapterNumber,
+      @Nullable String description,
+      @NotNull LocalDateTime now) {
+    this.storyArcs.forEach(
+        storyArc -> {
+          if (storyArc.getPhase().equals(phase)) {
+            storyArc.updatePhase(startChapterNumber, endChapterNumber, description, now);
+          }
         });
-    }
+  }
 
-    @Override
-    public UUID getId() {
-        return id;
-    }
+  @Override
+  public UUID getId() {
+    return id;
+  }
 
-    public NovelId getIdValue() {
-        return NovelId.from(this.id);
-    }
+  public NovelId getIdValue() {
+    return NovelId.from(this.id);
+  }
 
-    public List<StoryArc> getStoryArcs() {
-        return storyArcs.stream()
-                .sorted(Comparator.comparing(storyArc -> storyArc.getPhase().ordinal()))
-                .collect(Collectors.toList());
-    }
+  public List<StoryArc> getStoryArcs() {
+    return storyArcs.stream()
+        .sorted(Comparator.comparing(storyArc -> storyArc.getPhase().ordinal()))
+        .collect(Collectors.toList());
+  }
 
-    private void addTags(@NotNull List<String> tagNames, @NotNull LocalDateTime now) {
-        List<String> existingTagNames = this.tags.stream()
-                .map(NovelTag::getName)
-                .toList();
+  private void addTags(@NotNull List<String> tagNames, @NotNull LocalDateTime now) {
+    List<String> existingTagNames = this.tags.stream().map(NovelTag::getName).toList();
 
-        List<NovelTag> newTags = Objects.requireNonNull(tagNames)
-                .stream()
-                .filter(tag -> !existingTagNames.contains(tag))
-                .map(tag -> NovelTag.create(tag, this, now))
-                .toList();
+    List<NovelTag> newTags =
+        Objects.requireNonNull(tagNames).stream()
+            .filter(tag -> !existingTagNames.contains(tag))
+            .map(tag -> NovelTag.create(tag, this, now))
+            .toList();
 
-        this.tags.addAll(newTags);
+    this.tags.addAll(newTags);
 
-        this.tags.forEach(tag -> {
-            if (!tagNames.contains(tag.getName())) {
-                tag.markAsDeleted(now);
-            }
+    this.tags.forEach(
+        tag -> {
+          if (!tagNames.contains(tag.getName())) {
+            tag.markAsDeleted(now);
+          }
         });
+  }
+
+  private void setUpStoryArcs(LocalDateTime createdAt) {
+    for (StoryPhase phase : StoryPhase.values()) {
+      StoryArc storyArc = StoryArc.create(this, phase, createdAt);
+      this.storyArcs.add(storyArc);
+    }
+  }
+
+  @Nonnull
+  public List<ChapterText> findChapterTexts(@Nonnull ChapterId chapterId) {
+    return this.chapters.stream()
+        .filter(c -> c.getIdValue().equals(chapterId))
+        .findFirst()
+        .map(Chapter::getChapterTexts)
+        .orElse(Collections.emptyList());
+  }
+
+  public Chapter createChapter(
+      @Nonnull List<ContributorInfo> orderedContributorIds, @Nonnull LocalDateTime now) {
+    Chapter chapter = Chapter.createEmpty(this, orderedContributorIds, now);
+
+    this.chapters.add(chapter);
+
+    return chapter;
+  }
+
+  public List<Character> replaceCharacters(
+      @Nonnull List<UpsertCharactersCommand> commands,
+      @Nonnull AccountId updatedBy,
+      @Nonnull LocalDateTime now) {
+    // Remove existing characters
+    this.characters.clear();
+
+    // Add new characters
+    List<Character> newCharacters =
+        commands.stream()
+            .map(
+                command -> Character.create(this, command.getName(), command.getDescription(), now))
+            .collect(Collectors.toList());
+    this.characters.addAll(newCharacters);
+    return newCharacters;
+  }
+
+  public boolean updateChapter(
+      @Nonnull ChapterId chapterId, @Nullable String title, @Nonnull LocalDateTime now) {
+    Optional<Chapter> chapter =
+        this.chapters.stream().filter(c -> c.getIdValue().equals(chapterId)).findFirst();
+
+    if (chapter.isPresent()) {
+      chapter.get().update(title, now);
+      return true;
     }
 
-    private void setUpStoryArcs(LocalDateTime createdAt) {
-        for (StoryPhase phase : StoryPhase.values()) {
-            StoryArc storyArc = StoryArc.create(
-                    this,
-                    phase,
-                    createdAt);
-            this.storyArcs.add(storyArc);
-        }
+    return false;
+  }
+
+  @Nonnull
+  public Optional<ChapterText> findDraftChapterText(@Nonnull ChapterId chapterId) {
+    return this.chapters.stream()
+        .filter(chapter -> chapter.getIdValue().equals(chapterId))
+        .findFirst()
+        .flatMap(
+            chapter ->
+                chapter.getChapterTexts().stream()
+                    .filter(text -> text.getStatus() == ChapterTextStatus.DRAFT)
+                    .findFirst());
+  }
+
+  public boolean updateDraftChapterText(
+      @Nonnull ChapterId chapterId,
+      @Nonnull ContributorInfo contributor,
+      @Nonnull String content,
+      @Nonnull LocalDateTime now) {
+    Optional<ChapterText> draftTextOpt = findDraftChapterText(chapterId);
+
+    if (draftTextOpt.isEmpty()) {
+      return false;
     }
 
-    @Nonnull
-    public List<ChapterText> findChapterTexts(@Nonnull ChapterId chapterId) {
-        return this.chapters.stream()
-                .filter(c -> c.getIdValue().equals(chapterId))
-                .findFirst()
-                .map(Chapter::getChapterTexts)
-                .orElse(Collections.emptyList());
+    ChapterText draftText = draftTextOpt.get();
+
+    if (!draftText.getContributorId().equals(contributor.getContributorId())) {
+      return false;
     }
 
-    public Chapter createChapter(@Nonnull List<ContributorInfo> orderedContributorIds,
-                                 @Nonnull LocalDateTime now) {
-        Chapter chapter = Chapter.createEmpty(this, orderedContributorIds, now);
+    return draftText.updateContent(contributor.getContributorId(), content, now);
+  }
 
-        this.chapters.add(chapter);
+  public boolean finalizeChapterText(
+      @Nonnull ChapterId chapterId,
+      @Nonnull ContributorInfo contributorInfo,
+      @Nonnull LocalDateTime now) {
+    Optional<Chapter> chapterOpt =
+        this.chapters.stream().filter(c -> c.getIdValue().equals(chapterId)).findFirst();
 
-        return chapter;
+    if (chapterOpt.isEmpty()) {
+      return false;
     }
 
-    public List<Character> replaceCharacters(@Nonnull List<UpsertCharactersCommand> commands,
-                                             @Nonnull AccountId updatedBy, @Nonnull LocalDateTime now) {
-        // Remove existing characters
-        this.characters.clear();
+    Chapter chapter = chapterOpt.get();
 
-        // Add new characters
-        List<Character> newCharacters = commands.stream()
-                .map(command -> Character.create(this, command.getName(), command.getDescription(), now))
-                .collect(Collectors.toList());
-        this.characters.addAll(newCharacters);
-        return newCharacters;
+    if (!chapter.isCurrentWriter(contributorInfo.getContributorId())) {
+      return false;
     }
 
-    public boolean updateChapter(@Nonnull ChapterId chapterId, @Nullable String title, @Nonnull LocalDateTime now) {
-        Optional<Chapter> chapter = this.chapters.stream()
-                .filter(c -> c.getIdValue().equals(chapterId))
-                .findFirst();
+    Optional<ChapterText> draftTextOpt = findDraftChapterText(chapterId);
 
-        if (chapter.isPresent()) {
-            chapter.get().update(title, now);
-            return true;
-        }
-
-        return false;
+    if (draftTextOpt.isEmpty()) {
+      return false;
     }
 
-    @Nonnull
-    public Optional<ChapterText> findDraftChapterText(@Nonnull ChapterId chapterId) {
-        return this.chapters.stream()
-                .filter(chapter -> chapter.getIdValue().equals(chapterId))
-                .findFirst()
-                .flatMap(chapter -> chapter.getChapterTexts().stream()
-                        .filter(text -> text.getStatus() == ChapterTextStatus.DRAFT)
-                        .findFirst()
-                );
+    ChapterText draftText = draftTextOpt.get();
+
+    if (!draftText.getContributorId().equals(contributorInfo.getContributorId())) {
+      return false;
     }
 
-    public boolean updateDraftChapterText(@Nonnull ChapterId chapterId, @Nonnull ContributorInfo contributor,
-                                          @Nonnull String content, @Nonnull LocalDateTime now) {
-        Optional<ChapterText> draftTextOpt = findDraftChapterText(chapterId);
+    boolean finalized = draftText.finalize(now);
 
-        if (draftTextOpt.isEmpty()) {
-            return false;
-        }
-
-        ChapterText draftText = draftTextOpt.get();
-
-        if (!draftText.getContributorId().equals(contributor.getContributorId())) {
-            return false;
-        }
-
-        return draftText.updateContent(contributor.getContributorId(), content, now);
+    if (!finalized) {
+      return false;
     }
 
-    public boolean finalizeChapterText(@Nonnull ChapterId chapterId, @Nonnull ContributorInfo contributorInfo, @Nonnull LocalDateTime now) {
-        Optional<Chapter> chapterOpt = this.chapters.stream()
-                .filter(c -> c.getIdValue().equals(chapterId))
-                .findFirst();
+    chapter.advanceTurn(now);
 
-        if (chapterOpt.isEmpty()) {
-            return false;
-        }
-
-        Chapter chapter = chapterOpt.get();
-
-        if (!chapter.isCurrentWriter(contributorInfo.getContributorId())) {
-            return false;
-        }
-
-        Optional<ChapterText> draftTextOpt = findDraftChapterText(chapterId);
-
-        if (draftTextOpt.isEmpty()) {
-            return false;
-        }
-
-        ChapterText draftText = draftTextOpt.get();
-
-        if (!draftText.getContributorId().equals(contributorInfo.getContributorId())) {
-            return false;
-        }
-
-        boolean finalized = draftText.finalize(now);
-
-        if (!finalized) {
-            return false;
-        }
-
-        chapter.advanceTurn(now);
-
-        return true;
-    }
+    return true;
+  }
 }

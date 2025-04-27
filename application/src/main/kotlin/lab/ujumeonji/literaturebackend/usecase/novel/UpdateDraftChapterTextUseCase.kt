@@ -40,15 +40,17 @@ class UpdateDraftChapterTextUseCase(
             novelService.findNovel(contributorGroup.novelId)
                 ?: throw BusinessException(ErrorCode.NOVEL_NOT_FOUND)
 
-        val contributorInfo = contributorGroup.findContributorInfoByAccountId(accountId)
-            .orElseThrow { BusinessException(ErrorCode.CONTRIBUTOR_NOT_FOUND) }
+        val contributorInfo =
+            contributorGroup.findContributorInfoByAccountId(accountId)
+                .orElseThrow { BusinessException(ErrorCode.CONTRIBUTOR_NOT_FOUND) }
 
-        val updated = novel.updateDraftChapterText(
-            ChapterId.from(request.chapterId),
-            contributorInfo,
-            request.content,
-            executedAt,
-        )
+        val updated =
+            novel.updateDraftChapterText(
+                ChapterId.from(request.chapterId),
+                contributorInfo,
+                request.content,
+                executedAt,
+            )
 
         if (!updated) {
             throw BusinessException(ErrorCode.BAD_REQUEST)

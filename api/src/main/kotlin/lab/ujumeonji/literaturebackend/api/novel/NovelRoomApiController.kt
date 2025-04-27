@@ -567,15 +567,16 @@ class NovelRoomApiController(
         @PathVariable @ValidUUID novelRoomId: String,
         @PathVariable @ValidUUID contributorId: String,
     ): ResponseEntity<Void> {
-        val result = removeContributorUseCase.execute(
-            request =
-                RemoveContributorUseCase.Request(
-                    adminAccountId = accountId,
-                    novelRoomId = novelRoomId,
-                    targetAccountId = contributorId,
-                ),
-            executedAt = LocalDateTime.now(),
-        )
+        val result =
+            removeContributorUseCase.execute(
+                request =
+                    RemoveContributorUseCase.Request(
+                        adminAccountId = accountId,
+                        novelRoomId = novelRoomId,
+                        targetAccountId = contributorId,
+                    ),
+                executedAt = LocalDateTime.now(),
+            )
 
         return if (result.success) {
             ResponseEntity.noContent().build()
@@ -594,15 +595,16 @@ class NovelRoomApiController(
         @PathVariable @ValidUUID novelRoomId: String,
         @PathVariable @ValidUUID chapterId: String,
     ): ResponseEntity<FinalizeChapterTextResponse> {
-        val result = finalizeChapterTextUseCase.execute(
-            request =
-                FinalizeChapterTextUseCase.Request(
-                    accountId = accountId,
-                    contributorGroupId = novelRoomId,
-                    chapterId = chapterId,
-                ),
-            executedAt = LocalDateTime.now(),
-        )
+        val result =
+            finalizeChapterTextUseCase.execute(
+                request =
+                    FinalizeChapterTextUseCase.Request(
+                        accountId = accountId,
+                        contributorGroupId = novelRoomId,
+                        chapterId = chapterId,
+                    ),
+                executedAt = LocalDateTime.now(),
+            )
 
         return ResponseEntity.ok(
             FinalizeChapterTextResponse(

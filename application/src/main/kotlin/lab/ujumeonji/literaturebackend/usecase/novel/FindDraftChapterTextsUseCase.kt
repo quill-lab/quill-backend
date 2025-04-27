@@ -29,21 +29,25 @@ class FindDraftChapterTextsUseCase(
         accountService.findById(accountId)
             ?: throw BusinessException(ErrorCode.ACCOUNT_NOT_FOUND)
 
-        val contributorGroup = contributorService.findGroupById(contributorGroupId)
-            ?: throw BusinessException(ErrorCode.CONTRIBUTOR_GROUP_NOT_FOUND)
+        val contributorGroup =
+            contributorService.findGroupById(contributorGroupId)
+                ?: throw BusinessException(ErrorCode.CONTRIBUTOR_GROUP_NOT_FOUND)
 
         if (!contributorGroup.isParticipating(accountId)) {
             throw BusinessException(ErrorCode.NO_PERMISSION_TO_VIEW)
         }
 
-        val contributor = contributorGroup.findContributorInfoByAccountId(accountId)
-            .orElseThrow { BusinessException(ErrorCode.NO_PERMISSION_TO_VIEW) }
+        val contributor =
+            contributorGroup.findContributorInfoByAccountId(accountId)
+                .orElseThrow { BusinessException(ErrorCode.NO_PERMISSION_TO_VIEW) }
 
-        val novel = novelService.findNovel(contributorGroup.novelId)
-            ?: throw BusinessException(ErrorCode.NOVEL_NOT_FOUND)
+        val novel =
+            novelService.findNovel(contributorGroup.novelId)
+                ?: throw BusinessException(ErrorCode.NOVEL_NOT_FOUND)
 
-        val draftText = novel.findDraftChapterText(chapterId)
-            .orElseThrow { BusinessException(ErrorCode.DRAFT_CHAPTER_TEXT_NOT_FOUND) }
+        val draftText =
+            novel.findDraftChapterText(chapterId)
+                .orElseThrow { BusinessException(ErrorCode.DRAFT_CHAPTER_TEXT_NOT_FOUND) }
 
         val account = accountService.findById(contributor.accountId)
 
