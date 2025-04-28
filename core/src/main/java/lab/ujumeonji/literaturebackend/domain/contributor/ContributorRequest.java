@@ -66,8 +66,8 @@ public class ContributorRequest extends BaseEntity<UUID> {
     return ContributorRequestId.from(this.id);
   }
 
-  public UUID getAccountId() {
-    return accountId;
+  public AccountId getAccountId() {
+    return AccountId.from(accountId);
   }
 
   public ContributorRequestStatus getStatus() {

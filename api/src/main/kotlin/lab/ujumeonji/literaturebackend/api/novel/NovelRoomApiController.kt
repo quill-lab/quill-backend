@@ -525,18 +525,18 @@ class NovelRoomApiController(
     }
 
     @Operation(summary = "소설 공방 참여 신청 승인", description = "소설 공방 관리자가 작가 참여 신청을 승인합니다.")
-    @PostMapping("/{novelRoomId}/join-requests/{requesterId}/approve")
+    @PostMapping("/{novelRoomId}/join-requests/{contributorRequestId}/approve")
     fun approveJoinRequest(
         @RequiredAuth accountId: String,
         @PathVariable @ValidUUID novelRoomId: String,
-        @PathVariable @ValidUUID requesterId: String,
+        @PathVariable @ValidUUID contributorRequestId: String,
     ): ResponseEntity<Void> {
         approveJoinRequestUseCase.execute(
             request =
                 ApproveJoinRequestUseCase.Request(
                     adminAccountId = accountId,
                     novelRoomId = novelRoomId,
-                    requesterAccountId = requesterId,
+                    contributorRequestId = contributorRequestId,
                 ),
             executedAt = LocalDateTime.now(),
         )
