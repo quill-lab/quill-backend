@@ -545,18 +545,18 @@ class NovelRoomApiController(
     }
 
     @Operation(summary = "소설 공방 참여 신청 거부", description = "소설 공방 관리자가 작가 참여 신청을 거부합니다.")
-    @PostMapping("/{novelRoomId}/join-requests/{requesterId}/reject")
+    @PostMapping("/{novelRoomId}/join-requests/{contributorRequestId}/reject")
     fun rejectJoinRequest(
         @RequiredAuth accountId: String,
         @PathVariable @ValidUUID novelRoomId: String,
-        @PathVariable @ValidUUID requesterId: String,
+        @PathVariable @ValidUUID contributorRequestId: String,
     ): ResponseEntity<Void> {
         rejectJoinRequestUseCase.execute(
             request =
                 RejectJoinRequestUseCase.Request(
                     adminAccountId = accountId,
                     novelRoomId = novelRoomId,
-                    requesterAccountId = requesterId,
+                    contributorRequestId = contributorRequestId,
                 ),
             executedAt = LocalDateTime.now(),
         )

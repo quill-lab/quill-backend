@@ -256,7 +256,7 @@ public class ContributorGroup extends BaseEntity<UUID> {
 
   public boolean rejectJoinRequest(
       @Nonnull AccountId adminAccountId,
-      @Nonnull AccountId requesterAccountId,
+      @Nonnull ContributorRequestId contributorRequestId,
       @Nonnull LocalDateTime now) {
     if (!hasManagePermission(adminAccountId)) {
       return false;
@@ -266,7 +266,7 @@ public class ContributorGroup extends BaseEntity<UUID> {
         contributorRequests.stream()
             .filter(
                 r ->
-                    r.getAccountId().equals(requesterAccountId.getId())
+                    r.getIdValue().equals(contributorRequestId)
                         && r.getStatus() == ContributorRequestStatus.REQUESTED
                         && r.getDeletedAt() == null)
             .findFirst();
