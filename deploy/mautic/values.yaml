@@ -3,7 +3,7 @@ replicaCount: 1
 image:
   repository: mautic/mautic
   pullPolicy: IfNotPresent
-  tag: "v4.4.10"
+  tag: "5-apache"
 
 imagePullSecrets: [ ]
 nameOverride: "mautic"
@@ -77,30 +77,15 @@ autoscaling:
 
 env:
   - name: MAUTIC_DB_HOST
-    valueFrom:
-      secretKeyRef:
-        name: mautic-secrets
-        key: DB_HOST
+    value: "${MYSQL_HOST}"
   - name: MAUTIC_DB_PORT
-    valueFrom:
-      secretKeyRef:
-        name: mautic-secrets
-        key: DB_PORT
+    value: "${MYSQL_PORT}"
+  - name: MAUTIC_DB_DATABASE
+    value: "${MYSQL_DATABASE}"
   - name: MAUTIC_DB_USER
-    valueFrom:
-      secretKeyRef:
-        name: mautic-secrets
-        key: DB_USERNAME
+    value: "${MYSQL_USER}"
   - name: MAUTIC_DB_PASSWORD
-    valueFrom:
-      secretKeyRef:
-        name: mautic-secrets
-        key: DB_PASSWORD
-  - name: MAUTIC_DB_NAME
-    valueFrom:
-      secretKeyRef:
-        name: mautic-secrets
-        key: DB_DATABASE
+    value: "${MYSQL_PASSWORD}"
   - name: MAUTIC_URL
     value: "https://mautic.cd80.run"
   - name: PHP_MEMORY_LIMIT
@@ -111,6 +96,26 @@ env:
     value: "100M"
   - name: PHP_POST_MAX_SIZE
     value: "100M"
+  - name: MAUTIC_TRUSTED_PROXIES
+    value: "0.0.0.0/0"
+  - name: MAUTIC_RUN_CRON_JOBS
+    value: "true"
+  - name: MAUTIC_CRON_HUBSPOT
+    value: "false"
+  - name: MAUTIC_CRON_SALESFORCE
+    value: "false"
+  - name: MAUTIC_CRON_PIPEDRIVE
+    value: "false"
+  - name: MAUTIC_CRON_ZOHO
+    value: "false"
+  - name: MAUTIC_CRON_SUGARCRM
+    value: "false"
+  - name: MAUTIC_CRON_DYNAMICS
+    value: "false"
+  - name: MAUTIC_MESSENGER_DSN_EMAIL
+    value: "doctrine://default"
+  - name: MAUTIC_MESSENGER_DSN_HIT
+    value: "doctrine://default"
 
 persistence:
   enabled: true
@@ -132,9 +137,9 @@ affinity: { }
 secrets:
   DB_HOST: "mariadb"
   DB_PORT: "3306"
-  DB_USERNAME: "mautic"
-  DB_PASSWORD: "mautic"
-  DB_DATABASE: "mautic"
+  DB_USER: "mautic"
+  DB_PASSWD: "mautic"
+  DB_NAME: "mautic"
 
   SMTP_HOST: ""
   SMTP_PORT: ""

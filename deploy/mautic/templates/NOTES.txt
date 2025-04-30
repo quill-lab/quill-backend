@@ -25,6 +25,6 @@
    - When you first access Mautic, you'll be guided through the installation process
    - Use the database credentials you provided in the values.yaml file
    - For database host, use: {{ .Values.secrets.DB_HOST }}
-   - For database name, use: {{ .Values.secrets.DB_DATABASE }}
-   - For database user, use: {{ .Values.secrets.DB_USERNAME }}
-   - For database password, use the value you set in values.yaml
+   - For database name, use: {{ .Values.secrets.DB_NAME }}
+   - For database user, use: {{ .Values.secrets.DB_USER }}
+   - For database password, use: {{ .Values.secrets.DB_PASSWD }}
