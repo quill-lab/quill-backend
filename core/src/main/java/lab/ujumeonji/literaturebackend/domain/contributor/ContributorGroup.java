@@ -281,22 +281,18 @@ public class ContributorGroup extends BaseEntity<UUID> {
 
   public boolean removeContributor(
       @Nonnull AccountId adminAccountId,
-      @Nonnull AccountId targetAccountId,
+      @Nonnull ContributorId targetAccountId,
       @Nonnull LocalDateTime now) {
     if (!hasManagePermission(adminAccountId)) {
       return false;
     }
 
-    if (adminAccountId.equals(targetAccountId)) {
-      return false;
-    }
-
     Optional<Contributor> contributor =
         contributors.stream()
-            .filter(c -> c.getAccountId().equals(targetAccountId) && !c.isDeleted())
+            .filter(c -> c.getIdValue().equals(targetAccountId) && !c.isDeleted())
             .findFirst();
 
-    if (contributor.isEmpty()) {
+    if (contributor.isEmpty() || contributor.get().getAccountId().equals(adminAccountId)) {
       return false;
     }
 

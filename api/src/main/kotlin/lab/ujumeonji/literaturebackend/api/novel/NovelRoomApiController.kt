@@ -577,7 +577,7 @@ class NovelRoomApiController(
                     RemoveContributorUseCase.Request(
                         adminAccountId = accountId,
                         novelRoomId = novelRoomId,
-                        targetAccountId = contributorId,
+                        targetContributorId = contributorId,
                     ),
                 executedAt = LocalDateTime.now(),
             )
