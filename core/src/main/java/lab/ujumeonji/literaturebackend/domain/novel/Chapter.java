@@ -49,7 +49,8 @@ public class Chapter extends BaseEntity<UUID> {
   @Enumerated(EnumType.STRING)
   private ChapterStatus status;
 
-  @Column private Integer chapterNumber;
+  @Column(nullable = false)
+  private Integer chapterNumber;
 
   protected Chapter() {}
 
@@ -86,15 +87,17 @@ public class Chapter extends BaseEntity<UUID> {
     setDeletedAt(deletedAt);
   }
 
-  Chapter(Novel novel, List<ContributorInfo> contributors, LocalDateTime now) {
-    this(null, null, novel, null, contributors, now, now, null);
+  Chapter(
+      Novel novel, Integer chapterNumber, List<ContributorInfo> contributors, LocalDateTime now) {
+    this(null, null, novel, chapterNumber, contributors, now, now, null);
   }
 
   static Chapter createEmpty(
       @Nonnull Novel novel,
+      @Nonnull Integer chapterNumber,
       @Nonnull List<ContributorInfo> contributors,
       @Nonnull LocalDateTime now) {
-    Chapter chapter = new Chapter(novel, contributors, now);
+    Chapter chapter = new Chapter(novel, chapterNumber, contributors, now);
 
     ContributorInfo contributor = contributors.getFirst();
     chapter.addDefaultText(contributor.getAccountId(), contributor.getContributorId(), now);

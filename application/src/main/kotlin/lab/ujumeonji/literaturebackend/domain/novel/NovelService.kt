@@ -48,7 +48,7 @@ class NovelService(
         val chapters =
             chaptersPage.content.map { chapter ->
                 ChapterData(
-                    id = ChapterId.from(chapter.id),
+                    id = chapter.idValue,
                     title = chapter.title,
                     description = chapter.description,
                     chapterNumber = chapter.chapterNumber,
