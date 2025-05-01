@@ -205,9 +205,13 @@ public class Novel extends BaseEntity<UUID> {
   }
 
   public Chapter createChapter(
-      @Nonnull List<ContributorInfo> orderedContributorIds, @Nullable String title, @Nonnull LocalDateTime now) {
+      @Nonnull List<ContributorInfo> orderedContributorIds,
+      @Nullable String title,
+      @Nullable String description,
+      @Nonnull LocalDateTime now) {
     Chapter chapter =
-        Chapter.createEmpty(this, this.chapters.size() + 1, orderedContributorIds, title, now);
+        Chapter.createEmpty(
+            this, this.chapters.size() + 1, orderedContributorIds, title, description, now);
 
     this.chapters.add(chapter);
 
@@ -232,16 +236,24 @@ public class Novel extends BaseEntity<UUID> {
   }
 
   public boolean updateChapter(
-      @Nonnull ChapterId chapterId, @Nullable String title, @Nonnull LocalDateTime now) {
+      @Nonnull ChapterId chapterId,
+      @Nullable String title,
+      @Nullable String description,
+      @Nonnull LocalDateTime now) {
     Optional<Chapter> chapter =
         this.chapters.stream().filter(c -> c.getIdValue().equals(chapterId)).findFirst();
 
     if (chapter.isPresent()) {
-      chapter.get().update(title, now);
+      chapter.get().update(title, description, now);
       return true;
     }
 
     return false;
+  }
+
+  public boolean updateChapter(
+      @Nonnull ChapterId chapterId, @Nullable String title, @Nonnull LocalDateTime now) {
+    return updateChapter(chapterId, title, null, now);
   }
 
   @Nonnull

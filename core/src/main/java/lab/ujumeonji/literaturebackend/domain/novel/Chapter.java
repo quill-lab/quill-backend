@@ -92,8 +92,10 @@ public class Chapter extends BaseEntity<UUID> {
       @Nonnull Integer chapterNumber,
       @Nonnull List<ContributorInfo> contributors,
       @Nullable String title,
+      @Nullable String description,
       @Nonnull LocalDateTime now) {
-    Chapter chapter = new Chapter(title, null, novel, chapterNumber, contributors, now, now, null);
+    Chapter chapter =
+        new Chapter(title, description, novel, chapterNumber, contributors, now, now, null);
 
     ContributorInfo contributor = contributors.getFirst();
     chapter.addDefaultText(contributor.getAccountId(), contributor.getContributorId(), now);
@@ -178,12 +180,17 @@ public class Chapter extends BaseEntity<UUID> {
     addDefaultText(nextAuthor.getAccountId(), nextAuthor.getContributorId(), now);
   }
 
-  void update(@Nullable String title, @Nonnull LocalDateTime now) {
+  void update(@Nullable String title, @Nullable String description, @Nonnull LocalDateTime now) {
     if (this.status == ChapterStatus.REQUESTED || this.status == ChapterStatus.APPROVED) {
       return;
     }
     this.title = title;
+    this.description = description;
     setUpdatedAt(now);
+  }
+
+  void update(@Nullable String title, @Nonnull LocalDateTime now) {
+    update(title, null, now);
   }
 
   boolean requestPublication(@Nonnull AccountId requesterId, @Nonnull LocalDateTime now) {

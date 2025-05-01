@@ -40,7 +40,7 @@ class CreateNovelRoomUseCase(
             throw BusinessException(ErrorCode.CONTRIBUTOR_GROUP_EMPTY)
         }
 
-        novel.createChapter(contributorGroup.contributors, executedAt)
+        novel.createChapter(contributorGroup.contributors, null, null, executedAt)
 
         return Response("${contributorGroup.idValue}")
     }

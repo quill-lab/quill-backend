@@ -392,6 +392,7 @@ class NovelRoomApiController(
                         accountId = accountId,
                         contributorGroupId = novelRoomId,
                         title = request.title,
+                        description = request.description,
                     ),
                 executedAt = LocalDateTime.now(),
             )
@@ -456,6 +457,7 @@ class NovelRoomApiController(
                         contributorGroupId = novelRoomId,
                         chapterId = chapterId,
                         title = request.title,
+                        description = request.description,
                     ),
                 executedAt = LocalDateTime.now(),
             )

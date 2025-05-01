@@ -37,7 +37,8 @@ class CreateChapterUseCase(
             novelService.findNovel(contributorGroup.novelId)
                 ?: throw BusinessException(ErrorCode.NOVEL_NOT_FOUND)
 
-        val createdChapter = novel.createChapter(contributorGroup.contributors, request.title, executedAt)
+        val createdChapter =
+            novel.createChapter(contributorGroup.contributors, request.title, request.description, executedAt)
 
         return Response(createdChapter.idValue.toString())
     }
@@ -46,6 +47,7 @@ class CreateChapterUseCase(
         val accountId: String,
         val contributorGroupId: String,
         val title: String,
+        val description: String? = null,
     )
 
     data class Response(
