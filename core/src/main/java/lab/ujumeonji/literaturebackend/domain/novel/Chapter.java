@@ -87,17 +87,13 @@ public class Chapter extends BaseEntity<UUID> {
     setDeletedAt(deletedAt);
   }
 
-  Chapter(
-      Novel novel, Integer chapterNumber, List<ContributorInfo> contributors, LocalDateTime now) {
-    this(null, null, novel, chapterNumber, contributors, now, now, null);
-  }
-
   static Chapter createEmpty(
       @Nonnull Novel novel,
       @Nonnull Integer chapterNumber,
       @Nonnull List<ContributorInfo> contributors,
+      @Nullable String title,
       @Nonnull LocalDateTime now) {
-    Chapter chapter = new Chapter(novel, chapterNumber, contributors, now);
+    Chapter chapter = new Chapter(title, null, novel, chapterNumber, contributors, now, now, null);
 
     ContributorInfo contributor = contributors.getFirst();
     chapter.addDefaultText(contributor.getAccountId(), contributor.getContributorId(), now);

@@ -205,9 +205,9 @@ public class Novel extends BaseEntity<UUID> {
   }
 
   public Chapter createChapter(
-      @Nonnull List<ContributorInfo> orderedContributorIds, @Nonnull LocalDateTime now) {
+      @Nonnull List<ContributorInfo> orderedContributorIds, @Nullable String title, @Nonnull LocalDateTime now) {
     Chapter chapter =
-        Chapter.createEmpty(this, this.chapters.size() + 1, orderedContributorIds, now);
+        Chapter.createEmpty(this, this.chapters.size() + 1, orderedContributorIds, title, now);
 
     this.chapters.add(chapter);
 

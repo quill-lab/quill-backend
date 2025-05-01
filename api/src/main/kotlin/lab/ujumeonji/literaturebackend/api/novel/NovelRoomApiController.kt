@@ -383,6 +383,7 @@ class NovelRoomApiController(
     fun createChapter(
         @RequiredAuth accountId: String,
         @PathVariable @ValidUUID novelRoomId: String,
+        @Valid @RequestBody request: CreateChapterRequest,
     ): ResponseEntity<CreateChapterResponse> {
         val result =
             createChapterUseCase.execute(
@@ -390,6 +391,7 @@ class NovelRoomApiController(
                     CreateChapterUseCase.Request(
                         accountId = accountId,
                         contributorGroupId = novelRoomId,
+                        title = request.title,
                     ),
                 executedAt = LocalDateTime.now(),
             )
