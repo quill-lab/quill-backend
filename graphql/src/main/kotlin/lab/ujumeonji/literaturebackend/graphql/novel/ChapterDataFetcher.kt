@@ -9,7 +9,6 @@ import lab.ujumeonji.literaturebackend.graphql.generated.types.*
 import lab.ujumeonji.literaturebackend.usecase.novel.FindChaptersUseCase
 import java.time.LocalDateTime
 import java.util.*
-import java.time.ZoneOffset
 
 @DgsComponent
 class ChapterDataFetcher(
@@ -39,7 +38,7 @@ class ChapterDataFetcher(
                 Chapter(
                     id = chapterItem.id,
                     title = chapterItem.title,
-                    editedAt = chapterItem.editedAt.atOffset(ZoneOffset.UTC),
+                    editedAt = chapterItem.editedAt,
                     episode = chapterItem.episode,
                     status =
                         when (chapterItem.status) {
@@ -50,7 +49,7 @@ class ChapterDataFetcher(
                             ChapterStatusEnum.CANCELLED -> ChapterStatus.CANCELLED
                             ChapterStatusEnum.REJECTED -> ChapterStatus.REJECTED
                         },
-                    approvedAt = chapterItem.approvedAt?.atOffset(ZoneOffset.UTC),
+                    approvedAt = chapterItem.approvedAt,
                     currentAuthor =
                         chapterItem.currentAuthor?.let {
                             Author(it.id, it.name)
