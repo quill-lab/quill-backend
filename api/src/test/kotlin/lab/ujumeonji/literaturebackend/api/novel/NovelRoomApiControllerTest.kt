@@ -22,7 +22,10 @@ class NovelRoomApiControllerTest
             given("대표 작가가 챕터 생성을 요청할 때") {
                 val account = fixtureAccount()
                 val novelRoomId = fixtureNovelRoom(account)
-                val dummyBody = emptyMap<String, String>()
+                val dummyBody =
+                    mapOf(
+                        "title" to "sample chapter title",
+                    )
 
                 `when`("인증된 사용자가 챕터 생성을 요청하면") {
                     val response = performAuthPost("/api/v1/novel-rooms/$novelRoomId/chapters", dummyBody, account)
@@ -35,7 +38,7 @@ class NovelRoomApiControllerTest
                 }
 
                 `when`("인증되지 않은 사용자가 챕터 생성을 요청하면") {
-                    val response = performPost("/api/v1/novel-rooms/$novelRoomId/chapters")
+                    val response = performPost("/api/v1/novel-rooms/$novelRoomId/chapters", dummyBody)
 
                     then("인증 오류가 발생한다") {
                         response
@@ -45,8 +48,8 @@ class NovelRoomApiControllerTest
                 }
 
                 `when`("존재하지 않는 소설 공방에 챕터 생성을 요청하면") {
-                    val invalidNovelRoomId = "00000000-0000-0000-0000-000000000000"
-                    val response = performAuthPost("/api/v1/novel-rooms/$invalidNovelRoomId/chapters", account)
+                    val invalidNovelRoomId = "54509be6-7da0-4400-9cda-ec2b283e93c6"
+                    val response = performAuthPost("/api/v1/novel-rooms/$invalidNovelRoomId/chapters", dummyBody, account)
 
                     then("소설 공방을 찾을 수 없다는 오류가 발생한다") {
                         response
@@ -467,7 +470,7 @@ class NovelRoomApiControllerTest
                 }
 
                 `when`("존재하지 않는 소설 공방의 챕터 텍스트를 조회하면") {
-                    val invalidNovelRoomId = "00000000-0000-0000-0000-000000000000"
+                    val invalidNovelRoomId = "54509be6-7da0-4400-9cda-ec2b283e93c6"
                     val response =
                         performAuthGet("/api/v1/novel-rooms/$invalidNovelRoomId/chapters/$chapterId/texts", account)
 
@@ -527,6 +530,7 @@ class NovelRoomApiControllerTest
                 val request =
                     mapOf(
                         "title" to "업데이트된 챕터 제목",
+                        "description" to "업데이트된 챕터 소개",
                     )
 
                 `when`("인증된 사용자가 챕터를 업데이트하면") {

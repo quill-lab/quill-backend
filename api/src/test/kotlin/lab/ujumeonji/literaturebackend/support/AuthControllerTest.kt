@@ -160,8 +160,13 @@ abstract class AuthControllerTest(
     }
 
     protected fun fixtureChapter(novelRoomId: String, account: TestAccount?): String {
+        val request =
+            mapOf(
+                "title" to "fixture chapter",
+            )
         val createChapterResponse =
-            performAuthPost("/api/v1/novel-rooms/$novelRoomId/chapters", emptyMap<String, String>(), account)
+            performAuthPost("/api/v1/novel-rooms/$novelRoomId/chapters", request, account)
+
         return objectMapper.readTree(createChapterResponse.andReturn().response.contentAsString).get("id").asText()
     }
 }
