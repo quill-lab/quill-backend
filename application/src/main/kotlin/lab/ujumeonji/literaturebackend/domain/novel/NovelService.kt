@@ -37,6 +37,26 @@ class NovelService(
 
     fun findNovels(ids: List<NovelId>): List<Novel> = novelRepository.findAllById(ids.map { it.id }).toList()
 
+    fun findChapterById(id: ChapterId): ChapterData? {
+        val chapterOptional = chapterRepository.findById(id.id)
+        if (chapterOptional.isEmpty) {
+            return null
+        }
+
+        val chapter = chapterOptional.get()
+        return ChapterData(
+            id = chapter.idValue,
+            title = chapter.title,
+            description = chapter.description,
+            chapterNumber = chapter.chapterNumber,
+            status = chapter.status,
+            currentChapterInfo = chapter.currentAuthor.getOrNull(),
+            approvedAt = chapter.approvedAt,
+            createdAt = chapter.createdAt,
+            updatedAt = chapter.updatedAt,
+        )
+    }
+
     fun findChaptersByNovelId(
         novelId: NovelId,
         offset: Int,

@@ -6,6 +6,7 @@ import com.netflix.graphql.dgs.InputArgument
 import lab.ujumeonji.literaturebackend.domain.novel.command.ChapterStatusEnum
 import lab.ujumeonji.literaturebackend.graphql.auth.RequiredGraphQLAuth
 import lab.ujumeonji.literaturebackend.graphql.generated.types.*
+import lab.ujumeonji.literaturebackend.usecase.novel.FindChapterUseCase
 import lab.ujumeonji.literaturebackend.usecase.novel.FindChaptersUseCase
 import java.time.LocalDateTime
 import java.util.*
@@ -13,6 +14,7 @@ import java.util.*
 @DgsComponent
 class ChapterDataFetcher(
     private val findChaptersUseCase: FindChaptersUseCase,
+    private val findChapterUseCase: FindChapterUseCase,
 ) {
     @DgsQuery
     fun chaptersConnection(
@@ -52,7 +54,7 @@ class ChapterDataFetcher(
                     approvedAt = chapterItem.approvedAt,
                     currentAuthor =
                         chapterItem.currentAuthor?.let {
-                            Author(it.id, it.name)
+                            Author(it.id, it.name, it.accountId)
                         },
                     metadata =
                         ChapterMetadata(
@@ -81,5 +83,53 @@ class ChapterDataFetcher(
             nodes = nodes,
             totalCount = result.totalCount,
         )
+    }
+
+    @DgsQuery
+    fun chapter(
+        @RequiredGraphQLAuth accountId: String,
+        @InputArgument id: String,
+    ): Chapter? {
+        try {
+            val result =
+                findChapterUseCase.execute(
+                    request =
+                        FindChapterUseCase.Request(
+                            chapterId = id,
+                            accountId = accountId,
+                        ),
+                    executedAt = LocalDateTime.now(),
+                )
+
+            return Chapter(
+                id = result.id,
+                title = result.title,
+                editedAt = result.editedAt,
+                episode = result.episode,
+                status =
+                    when (result.status) {
+                        ChapterStatusEnum.DRAFT -> ChapterStatus.DRAFT
+                        ChapterStatusEnum.IN_PROGRESS -> ChapterStatus.IN_PROGRESS
+                        ChapterStatusEnum.REQUESTED -> ChapterStatus.REQUESTED
+                        ChapterStatusEnum.APPROVED -> ChapterStatus.APPROVED
+                        ChapterStatusEnum.CANCELLED -> ChapterStatus.CANCELLED
+                        ChapterStatusEnum.REJECTED -> ChapterStatus.REJECTED
+                    },
+                approvedAt = result.approvedAt,
+                currentAuthor =
+                    result.currentAuthor?.let {
+                        Author(it.id, it.name, it.accountId)
+                    },
+                metadata =
+                    ChapterMetadata(
+                        viewCount = result.metadata.viewCount,
+                        commentCount = result.metadata.commentCount,
+                        likeCount = result.metadata.likeCount,
+                    ),
+            )
+        } catch (e: Exception) {
+            // Handle exceptions (e.g., BusinessException for CHAPTER_NOT_FOUND)
+            return null
+        }
     }
 }
