@@ -9,18 +9,18 @@ import java.util.*;
 import java.util.stream.Collectors;
 import lab.ujumeonji.literaturebackend.domain.account.AccountId;
 import lab.ujumeonji.literaturebackend.domain.common.BaseEntity;
-import lab.ujumeonji.literaturebackend.domain.common.SoftDeleteable;
 import lab.ujumeonji.literaturebackend.domain.contributor.ContributorInfo;
 import lab.ujumeonji.literaturebackend.domain.novel.command.AddCharacterCommand;
 import lab.ujumeonji.literaturebackend.domain.novel.command.UpdateNovelCommand;
 import lab.ujumeonji.literaturebackend.domain.novel.command.UpsertCharactersCommand;
 import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 import org.jetbrains.annotations.Nullable;
 
 @Entity
 @Table(name = "novels")
 @SQLDelete(sql = "update novels set deleted_at = current_timestamp where id = ?")
-@SoftDeleteable
+@SQLRestriction("deleted_at IS NULL")
 public class Novel extends BaseEntity<UUID> {
 
   @Id private UUID id;

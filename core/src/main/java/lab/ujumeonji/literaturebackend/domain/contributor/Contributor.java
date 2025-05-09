@@ -7,13 +7,13 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 import lab.ujumeonji.literaturebackend.domain.account.AccountId;
 import lab.ujumeonji.literaturebackend.domain.common.BaseEntity;
-import lab.ujumeonji.literaturebackend.domain.common.SoftDeleteable;
 import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 
 @Entity
 @Table(name = "contributors")
 @SQLDelete(sql = "update contributors set deleted_at = current_timestamp where id = ?")
-@SoftDeleteable
+@SQLRestriction("deleted_at IS NULL")
 public class Contributor extends BaseEntity<UUID> {
 
   @Id private UUID id;

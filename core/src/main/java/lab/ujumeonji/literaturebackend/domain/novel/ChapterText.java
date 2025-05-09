@@ -6,15 +6,15 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 import lab.ujumeonji.literaturebackend.domain.account.AccountId;
 import lab.ujumeonji.literaturebackend.domain.common.BaseEntity;
-import lab.ujumeonji.literaturebackend.domain.common.SoftDeleteable;
 import lab.ujumeonji.literaturebackend.domain.contributor.ContributorId;
 import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 import org.jetbrains.annotations.NotNull;
 
 @Entity
 @Table(name = "chapter_texts")
 @SQLDelete(sql = "update chapter_texts set deleted_at = current_timestamp where id = ?")
-@SoftDeleteable
+@SQLRestriction("deleted_at IS NULL")
 public class ChapterText extends BaseEntity<UUID> {
 
   @Id private UUID id;

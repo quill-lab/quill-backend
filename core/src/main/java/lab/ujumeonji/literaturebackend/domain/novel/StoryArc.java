@@ -5,14 +5,14 @@ import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.UUID;
 import lab.ujumeonji.literaturebackend.domain.common.BaseEntity;
-import lab.ujumeonji.literaturebackend.domain.common.SoftDeleteable;
 import org.hibernate.annotations.SQLDelete;
+import org.hibernate.annotations.SQLRestriction;
 import org.jetbrains.annotations.Nullable;
 
 @Entity
 @Table(name = "story_arcs")
 @SQLDelete(sql = "update story_arcs set deleted_at = current_timestamp where id = ?")
-@SoftDeleteable
+@SQLRestriction("deleted_at IS NULL")
 public class StoryArc extends BaseEntity<UUID> {
 
   @Id private UUID id;
