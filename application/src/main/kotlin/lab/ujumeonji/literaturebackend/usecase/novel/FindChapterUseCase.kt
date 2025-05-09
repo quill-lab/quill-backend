@@ -22,8 +22,9 @@ class FindChapterUseCase(
         executedAt: LocalDateTime,
     ): Response {
         val chapterId = ChapterId.from(request.chapterId)
-        val chapter = novelService.findChapterById(chapterId)
-            ?: throw BusinessException(ErrorCode.CHAPTER_NOT_FOUND)
+        val chapter =
+            novelService.findChapterById(chapterId)
+                ?: throw BusinessException(ErrorCode.CHAPTER_NOT_FOUND)
 
         val author = chapter.currentChapterInfo
 
@@ -34,19 +35,21 @@ class FindChapterUseCase(
             editedAt = chapter.updatedAt,
             status = ChapterStatusEnum.fromChapterStatus(chapter.status),
             approvedAt = chapter.approvedAt,
-            currentAuthor = author?.let { author ->
-                val account = accountService.findById(author.accountId)
-                Response.Author(
-                    id = author.chapterAuthorId.toString(),
-                    accountId = account?.idValue.toString(),
-                    name = account?.name,
-                )
-            },
-            metadata = Response.ChapterMetadata(
-                viewCount = 0,
-                commentCount = 0,
-                likeCount = 0,
-            ),
+            currentAuthor =
+                author?.let { author ->
+                    val account = accountService.findById(author.accountId)
+                    Response.Author(
+                        id = author.chapterAuthorId.toString(),
+                        accountId = account?.idValue.toString(),
+                        name = account?.name,
+                    )
+                },
+            metadata =
+                Response.ChapterMetadata(
+                    viewCount = 0,
+                    commentCount = 0,
+                    likeCount = 0,
+                ),
         )
     }
 

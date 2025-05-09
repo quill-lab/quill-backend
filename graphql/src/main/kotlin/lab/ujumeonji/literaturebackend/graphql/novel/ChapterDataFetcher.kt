@@ -8,13 +8,16 @@ import lab.ujumeonji.literaturebackend.graphql.auth.RequiredGraphQLAuth
 import lab.ujumeonji.literaturebackend.graphql.generated.types.*
 import lab.ujumeonji.literaturebackend.usecase.novel.FindChapterUseCase
 import lab.ujumeonji.literaturebackend.usecase.novel.FindChaptersUseCase
+import lab.ujumeonji.literaturebackend.usecase.novel.FindNovelEpisodesUseCase
 import java.time.LocalDateTime
 import java.util.*
+import kotlin.math.exp
 
 @DgsComponent
 class ChapterDataFetcher(
     private val findChaptersUseCase: FindChaptersUseCase,
     private val findChapterUseCase: FindChapterUseCase,
+    private val findNovelEpisodesUseCase: FindNovelEpisodesUseCase,
 ) {
     @DgsQuery
     fun chaptersConnection(
@@ -128,8 +131,58 @@ class ChapterDataFetcher(
                     ),
             )
         } catch (e: Exception) {
-            // Handle exceptions (e.g., BusinessException for CHAPTER_NOT_FOUND)
             return null
         }
+    }
+
+    @DgsQuery
+    fun novelEpisodes(
+        @InputArgument novelId: String,
+        @InputArgument offset: Int = 0,
+        @InputArgument limit: Int = 20,
+    ): EpisodeConnection {
+        val result =
+            findNovelEpisodesUseCase.execute(
+                FindNovelEpisodesUseCase.Request(
+                    novelId = novelId,
+                    offset = offset,
+                    limit = limit,
+                ),
+                executedAt = LocalDateTime.now(),
+            )
+
+        val nodes =
+            result.chapters.map { chapterItem ->
+                Episode(
+                    id = chapterItem.id,
+                    episode = chapterItem.episode,
+                    title = chapterItem.title,
+                    metadata =
+                        ChapterMetadata(
+                            viewCount = chapterItem.metadata.viewCount,
+                            commentCount = chapterItem.metadata.commentCount,
+                            likeCount = chapterItem.metadata.likeCount,
+                        ),
+                )
+            }
+
+        val edges =
+            nodes.map { node ->
+                EpisodeEdge(
+                    node = node,
+                    cursor = Base64.getEncoder().encodeToString(node.id.toByteArray()),
+                )
+            }
+
+        return EpisodeConnection(
+            edges = edges,
+            pageInfo =
+                PageInfo(
+                    offset = offset,
+                    limit = limit,
+                ),
+            nodes = nodes,
+            totalCount = result.totalCount,
+        )
     }
 }
