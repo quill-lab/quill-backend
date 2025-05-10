@@ -11,7 +11,6 @@ import lab.ujumeonji.literaturebackend.usecase.novel.FindChaptersUseCase
 import lab.ujumeonji.literaturebackend.usecase.novel.FindNovelEpisodesUseCase
 import java.time.LocalDateTime
 import java.util.*
-import kotlin.math.exp
 
 @DgsComponent
 class ChapterDataFetcher(
