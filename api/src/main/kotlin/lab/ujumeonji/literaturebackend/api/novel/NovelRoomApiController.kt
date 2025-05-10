@@ -63,7 +63,6 @@ class NovelRoomApiController(
                         accountId = accountId,
                         contributorGroupId = novelRoomId,
                         title = request.title,
-                        description = request.description,
                         category = request.category,
                         tags = request.tags,
                         synopsis = request.synopsis,
@@ -103,7 +102,6 @@ class NovelRoomApiController(
                         alias = result.category.alias,
                     ),
                 title = result.title,
-                description = result.description,
                 synopsis = result.synopsis,
                 createdAt = result.createdAt,
                 completedAt = result.completedAt,
@@ -128,7 +126,6 @@ class NovelRoomApiController(
                     CreateNovelRoomUseCase.Request(
                         creatorId = accountId,
                         title = request.title,
-                        description = request.description,
                         category = request.category,
                         maxContributorCount = request.maxContributors,
                         novelCoverImage = request.coverImage,

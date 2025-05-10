@@ -24,7 +24,6 @@ class NovelService(
         novelRepository.save(
             Novel.create(
                 command.title,
-                command.description,
                 command.category,
                 command.coverImage,
                 command.tags,

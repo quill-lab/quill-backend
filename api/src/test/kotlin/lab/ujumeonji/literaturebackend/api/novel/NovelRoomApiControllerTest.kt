@@ -64,7 +64,6 @@ class NovelRoomApiControllerTest
                     mapOf(
                         "maxContributors" to 5,
                         "title" to "테스트 소설",
-                        "description" to "테스트 소설 설명",
                         "category" to "GENERAL",
                         "tags" to listOf("태그1", "태그2"),
                         "synopsis" to "테스트 소설의 줄거리입니다.",
@@ -126,7 +125,6 @@ class NovelRoomApiControllerTest
                             .andExpect(status().isOk)
                             .andExpect(jsonPath("$.id").exists())
                             .andExpect(jsonPath("$.title").exists())
-                            .andExpect(jsonPath("$.description").exists())
                             .andExpect(jsonPath("$.synopsis").exists())
                             .andExpect(jsonPath("$.createdAt").exists())
                             .andExpect(jsonPath("$.role").exists())

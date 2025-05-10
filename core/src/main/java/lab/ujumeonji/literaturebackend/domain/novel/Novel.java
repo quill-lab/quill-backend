@@ -28,9 +28,6 @@ public class Novel extends BaseEntity<UUID> {
   @Column(nullable = false)
   private String title;
 
-  @Column(columnDefinition = "text")
-  private String description;
-
   @Column private String coverImage;
 
   @Column(columnDefinition = "text")
@@ -64,7 +61,6 @@ public class Novel extends BaseEntity<UUID> {
 
   Novel(
       String title,
-      String description,
       String coverImage,
       List<String> tags,
       String synopsis,
@@ -74,7 +70,6 @@ public class Novel extends BaseEntity<UUID> {
       LocalDateTime deletedAt) {
     this.id = UuidCreator.getTimeOrderedEpoch();
     this.title = title;
-    this.description = description;
     this.coverImage = coverImage;
     this.synopsis = synopsis;
     this.category = category;
@@ -89,13 +84,12 @@ public class Novel extends BaseEntity<UUID> {
 
   static Novel create(
       String title,
-      String description,
       NovelCategory category,
       String coverImage,
       List<String> tags,
       String synopsis,
       LocalDateTime now) {
-    return new Novel(title, description, coverImage, tags, synopsis, category, now, now, null);
+    return new Novel(title, coverImage, tags, synopsis, category, now, now, null);
   }
 
   public CharacterId addCharacter(
@@ -123,10 +117,6 @@ public class Novel extends BaseEntity<UUID> {
     return tags.stream().map(NovelTag::getName).collect(Collectors.toList());
   }
 
-  public String getDescription() {
-    return description;
-  }
-
   @Nullable
   public String getSynopsis() {
     return synopsis;
@@ -134,7 +124,6 @@ public class Novel extends BaseEntity<UUID> {
 
   public void update(@NotNull UpdateNovelCommand command, @NotNull LocalDateTime now) {
     this.title = command.getTitle();
-    this.description = command.getDescription();
     this.synopsis = command.getSynopsis();
     this.category = command.getCategory();
     this.addTags(command.getTags(), now);

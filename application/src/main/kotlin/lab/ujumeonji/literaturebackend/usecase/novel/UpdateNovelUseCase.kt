@@ -44,7 +44,6 @@ class UpdateNovelUseCase(
         novel.update(
             UpdateNovelCommand(
                 title = request.title,
-                description = request.description,
                 category = request.category?.toNovelCategory(),
                 tags = request.tags,
                 synopsis = request.synopsis,
@@ -59,7 +58,6 @@ class UpdateNovelUseCase(
         val accountId: String,
         val contributorGroupId: String,
         val title: String?,
-        val description: String?,
         val category: NovelCategoryEnum?,
         val tags: List<String>?,
         val synopsis: String?,
