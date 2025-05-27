@@ -39,7 +39,7 @@ class FindNovelRoomParticipantsUseCase(
         return contributors.mapNotNull { contributor ->
             accounts[contributor.accountId]?.let { account ->
                 Response(
-                    id = account.idValue.toString(),
+                    id = contributor.contributorId.toString(),
                     nickname = account.name,
                     role = ContributorRoleEnum.fromContributorRole(contributor.role),
                     writingOrder = contributor.writingOrder,

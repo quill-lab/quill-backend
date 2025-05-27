@@ -7,7 +7,7 @@ import java.util.UUID;
 import lab.ujumeonji.literaturebackend.domain.common.BaseEntity;
 import lab.ujumeonji.literaturebackend.support.encrypt.PasswordEncoder;
 import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.SQLRestriction;
 import org.jetbrains.annotations.NotNull;
 
 @Entity
@@ -15,7 +15,7 @@ import org.jetbrains.annotations.NotNull;
     name = "accounts",
     indexes = {@Index(name = "idx_account_email", columnList = "email")})
 @SQLDelete(sql = "UPDATE accounts SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?")
-@Where(clause = "deleted_at IS NULL")
+@SQLRestriction("deleted_at IS NULL")
 public class Account extends BaseEntity<UUID> {
 
   public static final String UNKNOWN = "알 수 없음";

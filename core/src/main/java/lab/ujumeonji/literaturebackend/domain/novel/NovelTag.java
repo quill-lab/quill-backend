@@ -6,13 +6,13 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 import lab.ujumeonji.literaturebackend.domain.common.BaseEntity;
 import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.SQLRestriction;
 import org.jetbrains.annotations.NotNull;
 
 @Entity
 @Table(name = "novel_tags")
 @SQLDelete(sql = "update novel_tags set deleted_at = current_timestamp where id = ?")
-@Where(clause = "deleted_at IS NULL")
+@SQLRestriction("deleted_at IS NULL")
 public class NovelTag extends BaseEntity<UUID> {
 
   @Id private UUID id;

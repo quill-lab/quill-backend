@@ -8,15 +8,15 @@ import lab.ujumeonji.literaturebackend.domain.account.AccountId;
 import lab.ujumeonji.literaturebackend.domain.common.BaseEntity;
 import lab.ujumeonji.literaturebackend.domain.contributor.ContributorGroupId;
 import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.SQLRestriction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 @Entity
 @Table(name = "contributor_group_recruitments")
 @SQLDelete(
-    sql = "UPDATE contributor_group_recruitments SET deleted_at = CURRENT_TIMESTAMP WHERE id = ?")
-@Where(clause = "deleted_at IS NULL")
+    sql = "update contributor_group_recruitments set deleted_at = current_timestamp where id = ?")
+@SQLRestriction("deleted_at IS NULL")
 public class ContributorGroupRecruitment extends BaseEntity<UUID> {
 
   @Id private UUID id;

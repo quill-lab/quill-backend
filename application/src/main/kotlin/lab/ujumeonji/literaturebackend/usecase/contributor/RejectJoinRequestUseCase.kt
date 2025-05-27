@@ -2,6 +2,7 @@ package lab.ujumeonji.literaturebackend.usecase.contributor
 
 import lab.ujumeonji.literaturebackend.domain.account.AccountId
 import lab.ujumeonji.literaturebackend.domain.contributor.ContributorGroupId
+import lab.ujumeonji.literaturebackend.domain.contributor.ContributorRequestId
 import lab.ujumeonji.literaturebackend.domain.contributor.ContributorService
 import lab.ujumeonji.literaturebackend.support.exception.BusinessException
 import lab.ujumeonji.literaturebackend.support.exception.ErrorCode
@@ -23,10 +24,10 @@ class RejectJoinRequestUseCase(
             contributorService.findGroupById(ContributorGroupId.from(request.novelRoomId))
                 ?: throw BusinessException(ErrorCode.CONTRIBUTOR_GROUP_NOT_FOUND)
 
-        val adminAccountId = AccountId.from(request.adminAccountId)
-        val requesterAccountId = AccountId.from(request.requesterAccountId)
+        val contributorGroupManagerId = AccountId.from(request.adminAccountId)
+        val contributorRequestId = ContributorRequestId.from(request.contributorRequestId)
 
-        contributorGroup.rejectJoinRequest(adminAccountId, requesterAccountId, executedAt)
+        contributorGroup.rejectJoinRequest(contributorGroupManagerId, contributorRequestId, executedAt)
 
         return Response()
     }
@@ -34,7 +35,7 @@ class RejectJoinRequestUseCase(
     data class Request(
         val adminAccountId: String,
         val novelRoomId: String,
-        val requesterAccountId: String,
+        val contributorRequestId: String,
     )
 
     data class Response(

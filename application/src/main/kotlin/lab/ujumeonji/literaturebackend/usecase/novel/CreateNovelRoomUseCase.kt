@@ -40,7 +40,7 @@ class CreateNovelRoomUseCase(
             throw BusinessException(ErrorCode.CONTRIBUTOR_GROUP_EMPTY)
         }
 
-        novel.createChapter(contributorGroup.contributors, executedAt)
+        novel.createChapter(contributorGroup.contributors, null, null, executedAt)
 
         return Response("${contributorGroup.idValue}")
     }
@@ -52,7 +52,6 @@ class CreateNovelRoomUseCase(
         command =
             CreateNovelCommand(
                 title = request.title,
-                description = request.description,
                 category = request.category.toNovelCategory(),
                 coverImage = request.novelCoverImage,
                 synopsis = request.synopsis,
@@ -79,7 +78,6 @@ class CreateNovelRoomUseCase(
     data class Request(
         val creatorId: String,
         val title: String,
-        val description: String,
         val category: NovelCategoryEnum,
         val tags: List<String>,
         val synopsis: String?,

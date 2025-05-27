@@ -14,22 +14,19 @@ import lab.ujumeonji.literaturebackend.domain.novel.command.AddCharacterCommand;
 import lab.ujumeonji.literaturebackend.domain.novel.command.UpdateNovelCommand;
 import lab.ujumeonji.literaturebackend.domain.novel.command.UpsertCharactersCommand;
 import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.SQLRestriction;
 import org.jetbrains.annotations.Nullable;
 
 @Entity
 @Table(name = "novels")
 @SQLDelete(sql = "update novels set deleted_at = current_timestamp where id = ?")
-@Where(clause = "deleted_at IS NULL")
+@SQLRestriction("deleted_at IS NULL")
 public class Novel extends BaseEntity<UUID> {
 
   @Id private UUID id;
 
   @Column(nullable = false)
   private String title;
-
-  @Column(columnDefinition = "text")
-  private String description;
 
   @Column private String coverImage;
 
@@ -64,7 +61,6 @@ public class Novel extends BaseEntity<UUID> {
 
   Novel(
       String title,
-      String description,
       String coverImage,
       List<String> tags,
       String synopsis,
@@ -74,7 +70,6 @@ public class Novel extends BaseEntity<UUID> {
       LocalDateTime deletedAt) {
     this.id = UuidCreator.getTimeOrderedEpoch();
     this.title = title;
-    this.description = description;
     this.coverImage = coverImage;
     this.synopsis = synopsis;
     this.category = category;
@@ -89,13 +84,12 @@ public class Novel extends BaseEntity<UUID> {
 
   static Novel create(
       String title,
-      String description,
       NovelCategory category,
       String coverImage,
       List<String> tags,
       String synopsis,
       LocalDateTime now) {
-    return new Novel(title, description, coverImage, tags, synopsis, category, now, now, null);
+    return new Novel(title, coverImage, tags, synopsis, category, now, now, null);
   }
 
   public CharacterId addCharacter(
@@ -123,10 +117,6 @@ public class Novel extends BaseEntity<UUID> {
     return tags.stream().map(NovelTag::getName).collect(Collectors.toList());
   }
 
-  public String getDescription() {
-    return description;
-  }
-
   @Nullable
   public String getSynopsis() {
     return synopsis;
@@ -134,7 +124,6 @@ public class Novel extends BaseEntity<UUID> {
 
   public void update(@NotNull UpdateNovelCommand command, @NotNull LocalDateTime now) {
     this.title = command.getTitle();
-    this.description = command.getDescription();
     this.synopsis = command.getSynopsis();
     this.category = command.getCategory();
     this.addTags(command.getTags(), now);
@@ -205,8 +194,13 @@ public class Novel extends BaseEntity<UUID> {
   }
 
   public Chapter createChapter(
-      @Nonnull List<ContributorInfo> orderedContributorIds, @Nonnull LocalDateTime now) {
-    Chapter chapter = Chapter.createEmpty(this, orderedContributorIds, now);
+      @Nonnull List<ContributorInfo> orderedContributorIds,
+      @Nullable String title,
+      @Nullable String description,
+      @Nonnull LocalDateTime now) {
+    Chapter chapter =
+        Chapter.createEmpty(
+            this, this.chapters.size() + 1, orderedContributorIds, title, description, now);
 
     this.chapters.add(chapter);
 
@@ -231,16 +225,24 @@ public class Novel extends BaseEntity<UUID> {
   }
 
   public boolean updateChapter(
-      @Nonnull ChapterId chapterId, @Nullable String title, @Nonnull LocalDateTime now) {
+      @Nonnull ChapterId chapterId,
+      @Nullable String title,
+      @Nullable String description,
+      @Nonnull LocalDateTime now) {
     Optional<Chapter> chapter =
         this.chapters.stream().filter(c -> c.getIdValue().equals(chapterId)).findFirst();
 
     if (chapter.isPresent()) {
-      chapter.get().update(title, now);
+      chapter.get().update(title, description, now);
       return true;
     }
 
     return false;
+  }
+
+  public boolean updateChapter(
+      @Nonnull ChapterId chapterId, @Nullable String title, @Nonnull LocalDateTime now) {
+    return updateChapter(chapterId, title, null, now);
   }
 
   @Nonnull
@@ -313,5 +315,68 @@ public class Novel extends BaseEntity<UUID> {
     chapter.advanceTurn(now);
 
     return true;
+  }
+
+  public boolean requestChapterPublication(
+      @Nonnull ChapterId chapterId, @Nonnull AccountId requesterId, @Nonnull LocalDateTime now) {
+    Optional<Chapter> chapterOpt =
+        this.chapters.stream().filter(c -> c.getIdValue().equals(chapterId)).findFirst();
+
+    if (chapterOpt.isEmpty()) {
+      return false;
+    }
+
+    Chapter chapter = chapterOpt.get();
+    return chapter.requestPublication(requesterId, now);
+  }
+
+  public boolean approveChapterPublication(
+      @Nonnull ChapterId chapterId, @Nonnull AccountId reviewerId, @Nonnull LocalDateTime now) {
+    Optional<Chapter> chapterOpt =
+        this.chapters.stream().filter(c -> c.getIdValue().equals(chapterId)).findFirst();
+
+    if (chapterOpt.isEmpty()) {
+      return false;
+    }
+
+    Chapter chapter = chapterOpt.get();
+    return chapter.approvePublication(reviewerId, now);
+  }
+
+  /**
+   * Reject publication of a chapter. Only chapters in REQUESTED status can be rejected.
+   *
+   * @param chapterId ID of the chapter to reject
+   * @param reviewerId ID of the reviewer who is rejecting the publication
+   * @param now Current timestamp
+   * @return true if the rejection was successful, false otherwise
+   */
+  public boolean rejectChapterPublication(
+      @Nonnull ChapterId chapterId, @Nonnull AccountId reviewerId, @Nonnull LocalDateTime now) {
+    Optional<Chapter> chapterOpt =
+        this.chapters.stream().filter(c -> c.getIdValue().equals(chapterId)).findFirst();
+
+    if (chapterOpt.isEmpty()) {
+      return false;
+    }
+
+    Chapter chapter = chapterOpt.get();
+    return chapter.rejectPublication(reviewerId, now);
+  }
+
+  /**
+   * Get the publication requests for a specific chapter.
+   *
+   * @param chapterId ID of the chapter
+   * @return List of publication requests for the chapter, or empty list if chapter not found
+   */
+  @Nonnull
+  public List<ChapterPublicationRequest> getChapterPublicationRequests(
+      @Nonnull ChapterId chapterId) {
+    return this.chapters.stream()
+        .filter(c -> c.getIdValue().equals(chapterId))
+        .findFirst()
+        .map(Chapter::getPublicationRequests)
+        .orElse(Collections.emptyList());
   }
 }

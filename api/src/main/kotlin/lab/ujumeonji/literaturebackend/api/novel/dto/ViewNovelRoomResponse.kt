@@ -8,7 +8,6 @@ data class ViewNovelRoomResponse(
     val id: String,
     val category: Category,
     val title: String,
-    val description: String,
     val synopsis: String?,
     val createdAt: LocalDateTime,
     val completedAt: LocalDateTime?,

@@ -10,7 +10,6 @@ class GraphQLConfig {
     @DgsRuntimeWiring
     fun addScalars(builder: RuntimeWiring.Builder): RuntimeWiring.Builder {
         return builder
-            .scalar(ExtendedScalars.DateTime)
             .scalar(ExtendedScalars.Url)
             .scalar(ExtendedScalars.UUID)
     }

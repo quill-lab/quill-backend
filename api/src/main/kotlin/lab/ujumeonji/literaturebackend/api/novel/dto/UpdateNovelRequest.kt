@@ -10,9 +10,6 @@ data class UpdateNovelRequest(
     @field:NotBlank(message = "제목은 필수입니다")
     @field:Size(min = 1, max = 100, message = "제목은 1자 이상 100자 이하여야 합니다")
     val title: String,
-    @field:NotBlank(message = "한 줄 설명은 필수입니다")
-    @field:Size(max = 500, message = "한 줄 설명은 500자 이하여야 합니다")
-    val description: String,
     @field:NotEmpty(message = "태그는 최소 1개 이상이어야 합니다")
     @field:Size(max = 10, message = "태그는 최대 10개까지 가능합니다")
     val tags: List<String>,

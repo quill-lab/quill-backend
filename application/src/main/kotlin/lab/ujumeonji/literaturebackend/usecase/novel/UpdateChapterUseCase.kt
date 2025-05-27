@@ -38,6 +38,7 @@ class UpdateChapterUseCase(
             novel.updateChapter(
                 ChapterId.from(request.chapterId),
                 request.title,
+                request.description,
                 executedAt,
             )
 
@@ -52,7 +53,8 @@ class UpdateChapterUseCase(
         val accountId: String,
         val contributorGroupId: String,
         val chapterId: String,
-        val title: String?,
+        val title: String,
+        val description: String,
     )
 
     data class Response(
