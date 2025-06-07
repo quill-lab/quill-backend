@@ -4,7 +4,6 @@ import lab.ujumeonji.literaturebackend.domain.novel.NovelCategory
 
 data class UpdateNovelCommand(
     val title: String?,
-    val description: String?,
     val category: NovelCategory?,
     val tags: List<String>?,
     val synopsis: String?,

@@ -9,13 +9,13 @@ import lab.ujumeonji.literaturebackend.domain.account.AccountId;
 import lab.ujumeonji.literaturebackend.domain.common.BaseEntity;
 import lab.ujumeonji.literaturebackend.domain.novel.NovelId;
 import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.SQLRestriction;
 import org.jetbrains.annotations.Nullable;
 
 @Entity
 @Table(name = "contributor_groups")
 @SQLDelete(sql = "update contributor_groups set deleted_at = current_timestamp where id = ?")
-@Where(clause = "deleted_at IS NULL")
+@SQLRestriction("deleted_at IS NULL")
 public class ContributorGroup extends BaseEntity<UUID> {
 
   @Id private UUID id;
@@ -226,7 +226,7 @@ public class ContributorGroup extends BaseEntity<UUID> {
 
   public boolean approveJoinRequest(
       @Nonnull AccountId adminAccountId,
-      @Nonnull AccountId requesterAccountId,
+      @Nonnull ContributorRequestId contributorRequestId,
       @Nonnull LocalDateTime now) {
     if (!hasManagePermission(adminAccountId)) {
       return false;
@@ -236,7 +236,7 @@ public class ContributorGroup extends BaseEntity<UUID> {
         contributorRequests.stream()
             .filter(
                 r ->
-                    r.getAccountId().equals(requesterAccountId.getId())
+                    r.getIdValue().equals(contributorRequestId)
                         && r.getStatus() == ContributorRequestStatus.REQUESTED
                         && r.getDeletedAt() == null)
             .findFirst();
@@ -247,8 +247,8 @@ public class ContributorGroup extends BaseEntity<UUID> {
 
     request.get().approve(now);
 
-    if (!isParticipating(requesterAccountId)) {
-      addContributor(requesterAccountId, ContributorRole.COLLABORATOR, now);
+    if (!isParticipating(request.get().getAccountId())) {
+      addContributor(request.get().getAccountId(), ContributorRole.COLLABORATOR, now);
     }
 
     return true;
@@ -256,7 +256,7 @@ public class ContributorGroup extends BaseEntity<UUID> {
 
   public boolean rejectJoinRequest(
       @Nonnull AccountId adminAccountId,
-      @Nonnull AccountId requesterAccountId,
+      @Nonnull ContributorRequestId contributorRequestId,
       @Nonnull LocalDateTime now) {
     if (!hasManagePermission(adminAccountId)) {
       return false;
@@ -266,7 +266,7 @@ public class ContributorGroup extends BaseEntity<UUID> {
         contributorRequests.stream()
             .filter(
                 r ->
-                    r.getAccountId().equals(requesterAccountId.getId())
+                    r.getIdValue().equals(contributorRequestId)
                         && r.getStatus() == ContributorRequestStatus.REQUESTED
                         && r.getDeletedAt() == null)
             .findFirst();
@@ -281,22 +281,18 @@ public class ContributorGroup extends BaseEntity<UUID> {
 
   public boolean removeContributor(
       @Nonnull AccountId adminAccountId,
-      @Nonnull AccountId targetAccountId,
+      @Nonnull ContributorId targetAccountId,
       @Nonnull LocalDateTime now) {
     if (!hasManagePermission(adminAccountId)) {
       return false;
     }
 
-    if (adminAccountId.equals(targetAccountId)) {
-      return false;
-    }
-
     Optional<Contributor> contributor =
         contributors.stream()
-            .filter(c -> c.getAccountId().equals(targetAccountId) && !c.isDeleted())
+            .filter(c -> c.getIdValue().equals(targetAccountId) && !c.isDeleted())
             .findFirst();
 
-    if (contributor.isEmpty()) {
+    if (contributor.isEmpty() || contributor.get().getAccountId().equals(adminAccountId)) {
       return false;
     }
 

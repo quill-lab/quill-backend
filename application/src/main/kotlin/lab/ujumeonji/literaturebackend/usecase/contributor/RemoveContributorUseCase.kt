@@ -2,6 +2,7 @@ package lab.ujumeonji.literaturebackend.usecase.contributor
 
 import lab.ujumeonji.literaturebackend.domain.account.AccountId
 import lab.ujumeonji.literaturebackend.domain.contributor.ContributorGroupId
+import lab.ujumeonji.literaturebackend.domain.contributor.ContributorId
 import lab.ujumeonji.literaturebackend.domain.contributor.ContributorService
 import lab.ujumeonji.literaturebackend.support.exception.BusinessException
 import lab.ujumeonji.literaturebackend.support.exception.ErrorCode
@@ -23,9 +24,9 @@ class RemoveContributorUseCase(
             contributorService.findGroupById(ContributorGroupId.from(request.novelRoomId))
                 ?: throw BusinessException(ErrorCode.CONTRIBUTOR_GROUP_NOT_FOUND)
 
-        val adminAccountId = AccountId.from(request.adminAccountId)
-        val targetAccountId = AccountId.from(request.targetAccountId)
-        val success = contributorGroup.removeContributor(adminAccountId, targetAccountId, executedAt)
+        val contributorGroupManagerId = AccountId.from(request.adminAccountId)
+        val targetContributorId = ContributorId.from(request.targetContributorId)
+        val success = contributorGroup.removeContributor(contributorGroupManagerId, targetContributorId, executedAt)
 
         return Response(success)
     }
@@ -33,7 +34,7 @@ class RemoveContributorUseCase(
     data class Request(
         val adminAccountId: String,
         val novelRoomId: String,
-        val targetAccountId: String,
+        val targetContributorId: String,
     )
 
     data class Response(

@@ -8,13 +8,13 @@ import lab.ujumeonji.literaturebackend.domain.account.AccountId;
 import lab.ujumeonji.literaturebackend.domain.common.BaseEntity;
 import lab.ujumeonji.literaturebackend.domain.contributor.ContributorId;
 import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.Where;
+import org.hibernate.annotations.SQLRestriction;
 import org.jetbrains.annotations.NotNull;
 
 @Entity
 @Table(name = "chapter_authors")
 @SQLDelete(sql = "update chapter_authors set deleted_at = current_timestamp where id = ?")
-@Where(clause = "deleted_at IS NULL")
+@SQLRestriction("deleted_at IS NULL")
 public class ChapterAuthor extends BaseEntity<UUID> {
 
   @Id private UUID id;

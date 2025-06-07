@@ -10,9 +10,6 @@ data class CreateNovelRoomBodyRequest(
     @field:NotBlank(message = "제목은 필수입니다")
     @field:Size(min = 1, max = 100, message = "제목은 1자 이상 100자 이하여야 합니다")
     val title: String,
-    @field:NotBlank(message = "소개는 필수입니다")
-    @field:Size(min = 1, max = 200, message = "소개는 1자 이상 200자 이하여야 합니다")
-    val description: String,
     @field:NotNull(message = "카테고리는 필수입니다")
     val category: NovelCategoryEnum,
     @field:Size(max = 5, message = "태그는 최대 5개까지만 등록할 수 있습니다")

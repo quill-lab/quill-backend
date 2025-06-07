@@ -1,7 +1,6 @@
 plugins {
     id("org.springframework.boot")
     id("com.google.cloud.tools.jib")
-    id("com.netflix.dgs.codegen") version "7.0.3"
 }
 
 dependencies {

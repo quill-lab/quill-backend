@@ -3,7 +3,7 @@ replicaCount: 3
 image:
   repository: webdev0594/gow-graphql
   pullPolicy: IfNotPresent
-  tag: "313c760d4c21c17a52330f5af5ce08b8"
+  tag: "4e60beb4b536a36daf2042c4f602836d"
 
 imagePullSecrets: []
 nameOverride: "gow-jvm-graphql"

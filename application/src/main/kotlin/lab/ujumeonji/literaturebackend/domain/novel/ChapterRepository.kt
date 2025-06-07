@@ -10,4 +10,10 @@ interface ChapterRepository : CrudRepository<Chapter, UUID> {
         novelId: UUID,
         pageable: Pageable,
     ): Page<Chapter>
+
+    fun findByNovelIdAndStatusIs(
+        novelId: UUID,
+        status: ChapterStatus,
+        pageable: Pageable,
+    ): Page<Chapter>
 }
