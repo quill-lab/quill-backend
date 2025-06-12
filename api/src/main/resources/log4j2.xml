@@ -23,12 +23,6 @@
     </Appenders>
 
     <Loggers>
-        <!-- Micrometer Tracing -->
-        <Logger name="io.micrometer.tracing" level="DEBUG" additivity="false">
-            <AppenderRef ref="ConsoleAppender"/>
-            <AppenderRef ref="FileAppender"/>
-        </Logger>
-
         <!-- Spring Framework -->
         <Logger name="org.springframework" level="INFO" additivity="false">
             <AppenderRef ref="ConsoleAppender"/>

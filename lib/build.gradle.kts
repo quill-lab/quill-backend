@@ -1,5 +1,12 @@
 plugins {
-    id("org.springframework.boot") apply false
+    kotlin("jvm")
+    `java-library`
+}
+
+java {
+    toolchain {
+        languageVersion.set(JavaLanguageVersion.of(21))
+    }
 }
 
 dependencies {
