@@ -1,7 +1,7 @@
 # ─────────────────────────────────────────────
 # 1) 빌드 스테이지
 # ─────────────────────────────────────────────
-FROM gradle:8.11.1-jdk21-jammy AS builder
+FROM gradle:8.11.1-jdk21-jammy AS api-builder
 WORKDIR /home/project
 
 # 루트의 Gradle 설정만 먼저 복사
