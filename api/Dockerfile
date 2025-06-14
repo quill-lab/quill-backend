@@ -14,12 +14,9 @@ COPY application/ application/
 COPY core/ core/
 COPY lib/ lib/
 
-# 의존성만 미리 내려받아 캐시에 저장
-RUN --mount=type=cache,target=/home/project/.gradle \
-    gradle :api:bootJar --no-daemon --parallel --configure-on-demand -x test
-
-RUN --mount=type=cache,target=/home/project/.gradle \
-    gradle :api:bootJar --no-daemon -x test
+# API 전용 캐시 사용
+RUN --mount=type=cache,target=/root/.gradle,id=gradle-cache-api \
+    gradle --no-daemon :api:bootJar -x test
 
 # ─────────────────────────────────────────────
 # 2) 런타임 스테이지
