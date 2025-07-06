@@ -14,16 +14,16 @@ class AuthApiControllerTest(
     mockMvc: MockMvc,
     objectMapper: ObjectMapper,
 ) : ControllerTest(
-        mockMvc = mockMvc,
-        objectMapper = objectMapper,
-    ) {
+    mockMvc = mockMvc,
+    objectMapper = objectMapper,
+) {
     init {
         given("사용자가 회원 정보를 입력 후") {
             val request =
                 SignUpBodyRequest(
-                    email = "test@example.com",
-                    password = "Password!@#\$1",
-                    name = "testuser",
+                    email = "test123@example.com",
+                    password = "Password123^!@#",
+                    name = "testuser1",
                 )
 
             `when`("회원 가입을 요청하면") {

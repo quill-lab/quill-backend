@@ -26,10 +26,6 @@ dependencies {
     implementation("org.springframework.data:spring-data-jpa")
     runtimeOnly("org.postgresql:postgresql")
 
-    // Flyway 로 DB 마이그레이션
-    implementation("org.flywaydb:flyway-core")
-    implementation("org.flywaydb:flyway-database-postgresql")
-
     // JWT
     implementation("io.jsonwebtoken:jjwt-api:0.12.5")
     runtimeOnly("io.jsonwebtoken:jjwt-impl:0.12.5")
