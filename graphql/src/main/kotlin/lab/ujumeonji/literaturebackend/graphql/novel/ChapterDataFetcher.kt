@@ -10,6 +10,7 @@ import lab.ujumeonji.literaturebackend.usecase.novel.FindChapterUseCase
 import lab.ujumeonji.literaturebackend.usecase.novel.FindChaptersUseCase
 import lab.ujumeonji.literaturebackend.usecase.novel.FindNovelEpisodesUseCase
 import java.time.LocalDateTime
+import java.time.ZoneOffset
 import java.util.*
 
 @DgsComponent
@@ -106,7 +107,7 @@ class ChapterDataFetcher(
             return Chapter(
                 id = result.id,
                 title = result.title,
-                editedAt = result.editedAt,
+                editedAt = result.editedAt.atOffset(ZoneOffset.UTC),
                 episode = result.episode,
                 status =
                     when (result.status) {
@@ -117,7 +118,7 @@ class ChapterDataFetcher(
                         ChapterStatusEnum.CANCELLED -> ChapterStatus.CANCELLED
                         ChapterStatusEnum.REJECTED -> ChapterStatus.REJECTED
                     },
-                approvedAt = result.approvedAt,
+                approvedAt = result.approvedAt?.atOffset(ZoneOffset.UTC),
                 currentAuthor =
                     result.currentAuthor?.let {
                         Author(it.id, it.name, it.accountId)

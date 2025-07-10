@@ -29,7 +29,7 @@ tasks.withType<com.netflix.graphql.dgs.codegen.gradle.GenerateJavaTask> {
     packageName = "lab.ujumeonji.literaturebackend.graphql.generated"
     typeMapping =
         mutableMapOf(
-            "DateTime" to "java.time.LocalDateTime",
+            "DateTime" to "java.time.OffsetDateTime",
             "UUID" to "java.util.UUID",
         )
 }

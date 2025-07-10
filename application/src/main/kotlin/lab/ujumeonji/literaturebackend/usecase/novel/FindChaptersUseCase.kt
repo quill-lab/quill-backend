@@ -12,6 +12,8 @@ import lab.ujumeonji.literaturebackend.usecase.UseCase
 import org.springframework.stereotype.Component
 import org.springframework.transaction.annotation.Transactional
 import java.time.LocalDateTime
+import java.time.OffsetDateTime
+import java.time.ZoneOffset
 
 @Component
 @Transactional(readOnly = true)
@@ -59,9 +61,9 @@ class FindChaptersUseCase(
                         id = chapter.id.toString(),
                         episode = chapter.chapterNumber,
                         title = chapter.title,
-                        editedAt = chapter.updatedAt,
+                        editedAt = chapter.updatedAt.atOffset(ZoneOffset.UTC),
                         status = ChapterStatusEnum.fromChapterStatus(chapter.status),
-                        approvedAt = chapter.approvedAt,
+                        approvedAt = chapter.approvedAt?.atOffset(ZoneOffset.UTC),
                         currentAuthor =
                             chapter.currentChapterInfo?.let { author ->
                                 val account =
@@ -107,9 +109,9 @@ class FindChaptersUseCase(
             val id: String,
             val episode: Int,
             val title: String?,
-            val editedAt: LocalDateTime,
+            val editedAt: OffsetDateTime,
             val status: ChapterStatusEnum,
-            val approvedAt: LocalDateTime?,
+            val approvedAt: OffsetDateTime?,
             val currentAuthor: Author?,
             val metadata: ChapterMetadata,
         ) {
