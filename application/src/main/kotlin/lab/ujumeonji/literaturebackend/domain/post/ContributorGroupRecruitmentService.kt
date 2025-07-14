@@ -8,4 +8,6 @@ interface ContributorGroupRecruitmentService {
         command: CreateNovelRoomRecruitmentPostCommand,
         now: LocalDateTime,
     ): ContributorGroupRecruitment
+
+    fun findRecruitmentById(id: ContributorGroupRecruitmentId): ContributorGroupRecruitment?
 }

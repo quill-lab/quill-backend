@@ -1,16 +1,24 @@
 package lab.ujumeonji.literaturebackend.domain.post;
 
-import com.github.f4b6a3.uuid.UuidCreator;
-import jakarta.persistence.*;
 import java.time.LocalDateTime;
 import java.util.UUID;
-import lab.ujumeonji.literaturebackend.domain.account.AccountId;
-import lab.ujumeonji.literaturebackend.domain.common.BaseEntity;
-import lab.ujumeonji.literaturebackend.domain.contributor.ContributorGroupId;
+
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.SQLRestriction;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
+
+import com.github.f4b6a3.uuid.UuidCreator;
+
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
+import lab.ujumeonji.literaturebackend.domain.account.AccountId;
+import lab.ujumeonji.literaturebackend.domain.common.BaseEntity;
+import lab.ujumeonji.literaturebackend.domain.contributor.ContributorGroupId;
+import lab.ujumeonji.literaturebackend.domain.post.command.UpdateContributorGroupRecruitmentCommand;
 
 @Entity
 @Table(name = "contributor_group_recruitments")
@@ -19,74 +27,86 @@ import org.jetbrains.annotations.Nullable;
 @SQLRestriction("deleted_at IS NULL")
 public class ContributorGroupRecruitment extends BaseEntity<UUID> {
 
-  @Id private UUID id;
+    @Id
+    private UUID id;
 
-  private String title;
+    private String title;
 
-  private String content;
+    private String content;
 
-  private String link;
+    private String link;
 
-  private UUID contributorGroupId;
+    private UUID contributorGroupId;
 
-  private UUID authorId;
+    private UUID authorId;
 
-  @Enumerated(EnumType.STRING)
-  private ContributorGroupRecruitmentStatus status;
+    @Enumerated(EnumType.STRING)
+    private ContributorGroupRecruitmentStatus status;
 
-  protected ContributorGroupRecruitment() {}
+    protected ContributorGroupRecruitment() {
+    }
 
-  ContributorGroupRecruitment(
-      @NotNull final UUID id,
-      @NotNull final ContributorGroupId contributorGroupId,
-      @NotNull final AccountId authorId,
-      @NotNull final String title,
-      @NotNull final String content,
-      @Nullable final String link,
-      @NotNull final LocalDateTime createdAt,
-      @NotNull final LocalDateTime updatedAt,
-      @Nullable final LocalDateTime deletedAt) {
-    this.id = id;
-    this.contributorGroupId = contributorGroupId.getId();
-    this.authorId = authorId.getId();
-    this.title = title;
-    this.content = content;
-    this.link = link;
-    this.status = ContributorGroupRecruitmentStatus.RECRUITING;
-    setCreatedAt(createdAt);
-    setUpdatedAt(updatedAt);
-    setDeletedAt(deletedAt);
-  }
+    ContributorGroupRecruitment(
+        @NotNull final UUID id,
+        @NotNull final ContributorGroupId contributorGroupId,
+        @NotNull final AccountId authorId,
+        @NotNull final String title,
+        @NotNull final String content,
+        @Nullable final String link,
+        @NotNull final LocalDateTime createdAt,
+        @NotNull final LocalDateTime updatedAt,
+        @Nullable final LocalDateTime deletedAt) {
+        this.id = id;
+        this.contributorGroupId = contributorGroupId.getId();
+        this.authorId = authorId.getId();
+        this.title = title;
+        this.content = content;
+        this.link = link;
+        this.status = ContributorGroupRecruitmentStatus.RECRUITING;
+        setCreatedAt(createdAt);
+        setUpdatedAt(updatedAt);
+        setDeletedAt(deletedAt);
+    }
 
-  static ContributorGroupRecruitment create(
-      @NotNull final ContributorGroupId contributorGroupId,
-      @NotNull final AccountId authorId,
-      @NotNull final String title,
-      @NotNull final String content,
-      @Nullable final String link,
-      @NotNull final LocalDateTime now) {
-    return new ContributorGroupRecruitment(
-        UuidCreator.getTimeOrderedEpoch(),
-        contributorGroupId,
-        authorId,
-        title,
-        content,
-        link,
-        now,
-        now,
-        null);
-  }
+    static ContributorGroupRecruitment create(
+        @NotNull final ContributorGroupId contributorGroupId,
+        @NotNull final AccountId authorId,
+        @NotNull final String title,
+        @NotNull final String content,
+        @Nullable final String link,
+        @NotNull final LocalDateTime now) {
+        return new ContributorGroupRecruitment(
+            UuidCreator.getTimeOrderedEpoch(),
+            contributorGroupId,
+            authorId,
+            title,
+            content,
+            link,
+            now,
+            now,
+            null);
+    }
 
-  @Override
-  public UUID getId() {
-    return id;
-  }
+    public void update(
+        @NotNull final UpdateContributorGroupRecruitmentCommand command,
+        @NotNull LocalDateTime now
+    ) {
+        this.title = command.getTitle();
+        this.content = command.getContent();
+        this.link = command.getLink();
+        setUpdatedAt(now);
+    }
 
-  public ContributorGroupRecruitmentId getIdValue() {
-    return ContributorGroupRecruitmentId.from(this.id);
-  }
+    @Override
+    public UUID getId() {
+        return id;
+    }
 
-  public ContributorGroupRecruitmentStatus getStatus() {
-    return status;
-  }
+    public ContributorGroupRecruitmentId getIdValue() {
+        return ContributorGroupRecruitmentId.from(this.id);
+    }
+
+    public ContributorGroupRecruitmentStatus getStatus() {
+        return status;
+    }
 }

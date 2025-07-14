@@ -13,6 +13,7 @@ import lab.ujumeonji.literaturebackend.usecase.contributor.RejectJoinRequestUseC
 import lab.ujumeonji.literaturebackend.usecase.contributor.RemoveContributorUseCase
 import lab.ujumeonji.literaturebackend.usecase.novel.*
 import lab.ujumeonji.literaturebackend.usecase.post.CreateNovelRoomRecruitmentPostUseCase
+import lab.ujumeonji.literaturebackend.usecase.post.UpdateNovelRoomRecruitmentPostUseCase
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.validation.annotation.Validated
@@ -32,6 +33,7 @@ class NovelRoomApiController(
     private val findNovelRoomParticipantsUseCase: FindNovelRoomParticipantsUseCase,
     private val updateParticipantOrderUseCase: UpdateParticipantOrderUseCase,
     private val createNovelRoomRecruitmentPostUseCase: CreateNovelRoomRecruitmentPostUseCase,
+    private val updateNovelRoomRecruitmentPostUseCase: UpdateNovelRoomRecruitmentPostUseCase,
     private val findNovelStoryArcsUseCase: FindNovelStoryArcsUseCase,
     private val updateStoryPhaseUseCase: UpdateStoryPhaseUseCase,
     private val findChapterTextsUseCase: FindChapterTextsUseCase,
@@ -284,6 +286,35 @@ class NovelRoomApiController(
 
         return ResponseEntity.status(HttpStatus.CREATED).body(
             CreateNovelRoomRecruitmentResponse(
+                id = result.id,
+            ),
+        )
+    }
+
+    @Operation(summary = "소설 공방 모집글 수정", description = "소설 공방의 모집글을 수정합니다.")
+    @PatchMapping("/{novelRoomId}/recruitments/{recruitmentId}")
+    fun updateRecruitment(
+        @RequiredAuth accountId: String,
+        @PathVariable @ValidUUID novelRoomId: String,
+        @PathVariable @ValidUUID recruitmentId: String,
+        @Valid @RequestBody request: UpdateNovelRoomRecruitmentRequest,
+    ): ResponseEntity<UpdateNovelRoomRecruitmentResponse> {
+        val result =
+            updateNovelRoomRecruitmentPostUseCase.execute(
+                request =
+                    UpdateNovelRoomRecruitmentPostUseCase.Request(
+                        accountId = accountId,
+                        novelRoomId = novelRoomId,
+                        title = request.title,
+                        content = request.content,
+                        link = request.link,
+                        recruitmentId = recruitmentId,
+                    ),
+                executedAt = LocalDateTime.now(),
+            )
+
+        return ResponseEntity.ok(
+            UpdateNovelRoomRecruitmentResponse(
                 id = result.id,
             ),
         )
