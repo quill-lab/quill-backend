@@ -26,6 +26,7 @@ class WebConfig(
             .allowedOrigins(
                 "http://localhost:3000",
                 "https://quill-next-two.vercel.app",
+                "https://api.writergarden.co.kr",
             )
             .allowedMethods("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS")
             .allowedHeaders("*")
