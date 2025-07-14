@@ -25,9 +25,12 @@ class NovelService(
             Novel.create(
                 command.title,
                 command.category,
-                command.coverImage,
                 command.tags,
+                command.summary,
+                command.intention,
+                command.background,
                 command.synopsis,
+                command.coverImage,
                 now,
             ),
         )

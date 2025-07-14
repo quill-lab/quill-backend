@@ -117,9 +117,19 @@ public class Chapter extends BaseEntity<UUID> {
         @Nonnull List<ContributorInfo> contributors,
         @Nullable String title,
         @Nullable String description,
-        @Nonnull LocalDateTime now) {
+        @Nonnull LocalDateTime now
+    ) {
         Chapter chapter =
-            new Chapter(title, description, novel, chapterNumber, contributors, now, now, null);
+            new Chapter(
+                title,
+                description,
+                novel,
+                chapterNumber,
+                contributors,
+                now,
+                now,
+                null
+            );
 
         ContributorInfo contributor = contributors.getFirst();
         chapter.addDefaultText(contributor.getAccountId(), contributor.getContributorId(), now);

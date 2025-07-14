@@ -96,12 +96,15 @@ class NovelRoomApiController(
         return ResponseEntity.ok(
             ViewNovelRoomResponse(
                 id = result.id,
+                title = result.title,
                 category =
                     ViewNovelRoomResponse.Category(
                         name = result.category.name,
                         alias = result.category.alias,
                     ),
-                title = result.title,
+                summary = result.summary,
+                intention = result.intention,
+                background = result.background,
                 synopsis = result.synopsis,
                 createdAt = result.createdAt,
                 completedAt = result.completedAt,
@@ -124,18 +127,22 @@ class NovelRoomApiController(
             createNovelRoomUseCase.execute(
                 request =
                     CreateNovelRoomUseCase.Request(
-                        creatorId = accountId,
+                        maxContributorCount = request.maxContributors,
                         title = request.title,
                         category = request.category,
-                        maxContributorCount = request.maxContributors,
-                        novelCoverImage = request.coverImage,
-                        synopsis = request.synopsis,
                         tags = request.tags,
+                        summary = request.summary,
+                        intention = request.intention,
+                        background = request.background,
+                        synopsis = request.synopsis,
+                        novelCoverImage = request.coverImage,
+                        creatorId = accountId,
                     ),
                 executedAt = LocalDateTime.now(),
             )
 
-        return ResponseEntity.status(HttpStatus.CREATED)
+        return ResponseEntity
+            .status(HttpStatus.CREATED)
             .body(CreateNovelRoomResponse(result.novelRoomId))
     }
 

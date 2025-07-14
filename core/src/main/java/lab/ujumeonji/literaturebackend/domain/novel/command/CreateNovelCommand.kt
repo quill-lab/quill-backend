@@ -5,7 +5,10 @@ import lab.ujumeonji.literaturebackend.domain.novel.NovelCategory
 data class CreateNovelCommand(
     val title: String,
     val category: NovelCategory,
-    val coverImage: String?,
     val tags: List<String>,
+    val summary: String,
+    val intention: String,
+    val background: String?,
     val synopsis: String?,
+    val coverImage: String?,
 )

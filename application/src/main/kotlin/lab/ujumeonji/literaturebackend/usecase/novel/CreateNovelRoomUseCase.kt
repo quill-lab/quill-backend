@@ -53,9 +53,12 @@ class CreateNovelRoomUseCase(
             CreateNovelCommand(
                 title = request.title,
                 category = request.category.toNovelCategory(),
-                coverImage = request.novelCoverImage,
-                synopsis = request.synopsis,
                 tags = request.tags,
+                summary = request.summary,
+                intention = request.intention,
+                background = request.background,
+                synopsis = request.synopsis,
+                coverImage = request.novelCoverImage,
             ),
         now = executedAt,
     )
@@ -76,13 +79,16 @@ class CreateNovelRoomUseCase(
     )
 
     data class Request(
-        val creatorId: String,
+        val maxContributorCount: Int,
         val title: String,
         val category: NovelCategoryEnum,
         val tags: List<String>,
+        val summary: String,
+        val intention: String,
+        val background: String?,
         val synopsis: String?,
-        val maxContributorCount: Int,
         val novelCoverImage: String?,
+        val creatorId: String,
     )
 
     data class Response(

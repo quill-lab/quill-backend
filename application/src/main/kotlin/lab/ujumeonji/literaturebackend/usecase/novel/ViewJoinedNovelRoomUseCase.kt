@@ -29,26 +29,26 @@ class ViewJoinedNovelRoomUseCase(
         val accountId = AccountId.from(request.accountId)
         val contributorGroupId = ContributorGroupId.from(request.contributorGroupId)
 
-        val contributorGroup =
-            contributorService.findGroupById(contributorGroupId)
-                ?: throw BusinessException(ErrorCode.CONTRIBUTOR_GROUP_NOT_FOUND)
+        val contributorGroup = contributorService.findGroupById(contributorGroupId)
+            ?: throw BusinessException(ErrorCode.CONTRIBUTOR_GROUP_NOT_FOUND)
 
-        val me =
-            accountService.findById(accountId)
-                ?: throw BusinessException(ErrorCode.ACCOUNT_NOT_FOUND)
+        val me = accountService.findById(accountId)
+            ?: throw BusinessException(ErrorCode.ACCOUNT_NOT_FOUND)
 
-        val novel =
-            novelService.findNovel(contributorGroup.novelId)
-                ?: throw BusinessException(ErrorCode.NOVEL_NOT_FOUND)
+        val novel = novelService.findNovel(contributorGroup.novelId)
+            ?: throw BusinessException(ErrorCode.NOVEL_NOT_FOUND)
 
         return Response(
             id = contributorGroup.idValue.toString(),
+            title = novel.title,
             category =
                 Response.Category(
                     name = novel.category.name,
                     alias = novel.category.alias,
                 ),
-            title = novel.title,
+            summary = novel.summary,
+            intention = novel.intention,
+            background = novel.background,
             synopsis = novel.synopsis,
             createdAt = contributorGroup.createdAt,
             completedAt = contributorGroup.completedAt,
@@ -70,8 +70,11 @@ class ViewJoinedNovelRoomUseCase(
 
     data class Response(
         val id: String,
-        val category: Category,
         val title: String,
+        val category: Category,
+        val summary: String,
+        val intention: String,
+        val background: String?,
         val synopsis: String?,
         val createdAt: LocalDateTime,
         val completedAt: LocalDateTime?,
