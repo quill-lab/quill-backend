@@ -29,8 +29,8 @@ class RequestTemporaryPasswordUseCase(
 
         mailPort.sendHtmlEmail(
             to = request.email,
-            subject = "",
-            htmlContent = "",
+            subject = "[작가의 정원] 임시 비밀번호 발급",
+            htmlContent = temporaryPassword,
         )
 
         return Response
