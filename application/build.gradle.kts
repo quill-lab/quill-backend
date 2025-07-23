@@ -34,6 +34,9 @@ dependencies {
     // Bean Validation API
     implementation("jakarta.validation:jakarta.validation-api")
 
+    // SMTP
+    implementation("org.springframework.boot:spring-boot-starter-mail")
+
     // 테스트
     testImplementation("org.springframework:spring-test")
     testImplementation("io.kotest:kotest-property:5.5.5")
