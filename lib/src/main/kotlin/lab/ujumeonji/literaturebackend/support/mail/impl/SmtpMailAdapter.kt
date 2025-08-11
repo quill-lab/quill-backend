@@ -3,9 +3,7 @@ package lab.ujumeonji.literaturebackend.support.mail.impl
 import lab.ujumeonji.literaturebackend.support.mail.MailPort
 import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.mail.javamail.MimeMessageHelper
-import org.springframework.stereotype.Component
 
-@Component
 class SmtpMailAdapter(
     private val mailSender: JavaMailSender,
 ) : MailPort {

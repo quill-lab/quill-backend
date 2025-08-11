@@ -41,11 +41,13 @@ class NovelService(
 
     fun findChapterById(id: ChapterId): ChapterData? {
         val chapterOptional = chapterRepository.findById(id.id)
+        
         if (chapterOptional.isEmpty) {
             return null
         }
 
         val chapter = chapterOptional.get()
+
         return ChapterData(
             id = chapter.idValue,
             title = chapter.title,

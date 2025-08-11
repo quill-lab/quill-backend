@@ -9,16 +9,19 @@ import lab.ujumeonji.literaturebackend.graphql.generated.types.*
 import lab.ujumeonji.literaturebackend.usecase.novel.FindChapterUseCase
 import lab.ujumeonji.literaturebackend.usecase.novel.FindChaptersUseCase
 import lab.ujumeonji.literaturebackend.usecase.novel.FindNovelEpisodesUseCase
+import org.slf4j.LoggerFactory
 import java.time.LocalDateTime
 import java.time.ZoneOffset
 import java.util.*
 
 @DgsComponent
 class ChapterDataFetcher(
+    private val findNovelEpisodesUseCase: FindNovelEpisodesUseCase,
     private val findChaptersUseCase: FindChaptersUseCase,
     private val findChapterUseCase: FindChapterUseCase,
-    private val findNovelEpisodesUseCase: FindNovelEpisodesUseCase,
 ) {
+    private val log = LoggerFactory.getLogger(ChapterDataFetcher::class.java)
+
     @DgsQuery
     fun chaptersConnection(
         @RequiredGraphQLAuth accountId: String,
@@ -131,6 +134,7 @@ class ChapterDataFetcher(
                     ),
             )
         } catch (e: Exception) {
+            log.error("Error fetching chapter with id: $id", e)
             return null
         }
     }
